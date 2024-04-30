@@ -1,3 +1,4 @@
+
 const Usuario = require('../../models/usuarios'); //Importa el modelo de usuario
 
 exports.crearUsuario = async (req, res) => {
