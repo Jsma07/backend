@@ -2,6 +2,7 @@ var DataTypes = require("sequelize").DataTypes;
 var _clientes = require("./clientes");
 var _detalleventas = require("./detalleventas");
 var _empleados = require("./empleados");
+var _insumos = require("./insumos");
 var _permisos = require("./permisos");
 var _permisos_roles = require("./permisos_roles");
 var _roles = require("./roles");
@@ -13,6 +14,7 @@ function initModels(sequelize) {
   var clientes = _clientes(sequelize, DataTypes);
   var detalleventas = _detalleventas(sequelize, DataTypes);
   var empleados = _empleados(sequelize, DataTypes);
+  var insumos = _insumos(sequelize, DataTypes);
   var permisos = _permisos(sequelize, DataTypes);
   var permisos_roles = _permisos_roles(sequelize, DataTypes);
   var roles = _roles(sequelize, DataTypes);
@@ -43,6 +45,7 @@ function initModels(sequelize) {
     clientes,
     detalleventas,
     empleados,
+    insumos,
     permisos,
     permisos_roles,
     roles,
