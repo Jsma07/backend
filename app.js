@@ -7,7 +7,7 @@ const ConexionDB = require('./Db/Conexion')
 const VentasRoutes = require('./routes/VentasRoutes');
 const ClientesRouter=require('./routes/ClientesRouter')
 const EmpleadosRoute=require('./routes/EmpleadosRoute')
-
+const DetalleRouter=require('./routes/DetalleRouter')
 
 const PORT = process.env.PORT 
 app.use(cors());
@@ -23,7 +23,7 @@ app.use(usuarioRoutes)
   app.use(VentasRoutes)
   app.use(ClientesRouter)
   app.use(EmpleadosRoute)
-
+  app.use(DetalleRouter)
 
 app.listen(PORT, () => {
     console.log(`Servidor escuchando en el puerto ${PORT}`);
