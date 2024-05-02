@@ -43,14 +43,15 @@ const Usuario = require('../../models/Usuarios/usuarioModel')
 
 exports.crearUsuario = async (req, res)=> {
    try {
-    let { nombreUsuario, apellidoUsuario, correo, telefono, rolId, contrasena } = req.body;
+    let { nombreUsuario, apellidoUsuario, correo, telefono, rolId, contrasena, estado } = req.body;
     const nuevoUsuario = await Usuario.create({
         nombreUsuario,
         apellidoUsuario,
         correo,
         telefono,
         rolId,
-        contrasena
+        contrasena,
+        estado
     })
     res.status(201).json({mensaje: 'usuario creado correctamente', usuario: nuevoUsuario})
    } catch (error) {
