@@ -23,7 +23,7 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.INTEGER,
       allowNull: false
     },
-    Idcategoria: {
+    IdCategoria: {
       type: DataTypes.INTEGER,
       allowNull: false
     },
@@ -45,10 +45,10 @@ module.exports = function(sequelize, DataTypes) {
         ]
       },
       {
-        name: "Id categoria",
+        name: "IdCategoria",
         using: "BTREE",
         fields: [
-          { name: "Idcategoria" },
+          { name: "IdCategoria" },
         ]
       },
     ]
