@@ -9,7 +9,8 @@ router.put('/api/editarUsuario/:id', editarUsuario.editarUsuario) // Usa la func
 router.get('/api/verificarCorreo/:correo', crearUsuario.verificarCorreo)
 module.exports = router;
 const listarUsuario = require("../controllers/Usuarios/listarUsuarioController")
+const guardarUsuario = require("../controllers/Usuarios/crearUsuarioController")
 
 router.get('/api/users', listarUsuario.getAllUsers);
-
+router.post('/api/crearUsuario', guardarUsuario.crearUsuario);
 module.exports = router
