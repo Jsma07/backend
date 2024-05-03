@@ -13,8 +13,11 @@ exports.getAllRoles = async (req, res) => {
 
         // Consulta para obtener todos los usuarios
         const [rolesRows, fields] = await connection.execute(
-            ' SELECT r.idRol, r.nombre AS nombreRol, p.idPermiso, p.nombre AS nombrePermiso FROM roles r LEFT JOIN permisos_roles pr ON r.idRol = pr.rolId LEFT JOIN permisos p ON pr.permisoId = p.idPermiso;'
+'            SELECT r.idRol, r.nombre AS nombreRol, p.idPermiso, p.nombre AS nombrePermiso FROM roles r LEFT JOIN permisos_roles pr ON r.idRol = pr.rolId LEFT JOIN permisos p ON pr.permisoId = p.idPermiso;'     
             );
+
+            console.log(rolesRows);
+
 
         // Consulta para obtener todos los roles
         // const [rolesRows, fields2] = await connection.execute('SELECT * FROM roles');
