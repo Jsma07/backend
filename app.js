@@ -42,6 +42,19 @@ app.use(CategoriasRouters)
   app.use(ClientesRouter)
   app.use(EmpleadosRoute)
   app.use(DetalleRouter)
+  // Manejo de errores
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Algo salió mal!');
+});
+sequelize.authenticate()
+  .then(() => {
+    console.log('Conexión a la base de datos establecida correctamente.');
+  })
+  .catch(err => {
+    console.error('Error al conectar con la base de datos:', err);
+  });
+
 
 app.listen(PORT, () => {
     console.log(`Servidor escuchando en el puerto ${PORT}`);
