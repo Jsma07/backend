@@ -1,18 +1,22 @@
 const Sequelize = require('sequelize');
 
+const sequelize = new Sequelize(process.env.DB_DATABASE, process.env.DB_USER, process.env.DB_PASSWORD, {
+  host: process.env.DB_HOST, 
+  dialect: 'mysql'
+});
+
 const Usuario = sequelize.define('usuarios', {
-  // Define las propiedades del modelo de usuario aquí
-  idUsuario: {
+  id: {
     autoIncrement: true,
     type: Sequelize.INTEGER,
     allowNull: false,
     primaryKey: true
   },
-  nombreUsuario: {
+  nombre: {
     type: Sequelize.STRING(50),
     allowNull: true
   },
-  apellidoUsuario: {
+  apellido: {
     type: Sequelize.STRING(50),
     allowNull: true
   },
@@ -41,7 +45,6 @@ const Usuario = sequelize.define('usuarios', {
     allowNull: true
   }
 }, {
-  // Define las opciones del modelo aquí
   sequelize,
   tableName: 'usuarios',
   timestamps: false,
@@ -51,22 +54,24 @@ const Usuario = sequelize.define('usuarios', {
       unique: true,
       using: "BTREE",
       fields: [
-        { name: "id" },
+        { name: "idUsuario" }
       ]
     },
     {
       name: "rolId",
       using: "BTREE",
       fields: [
-        { name: "rolId" },
+        { name: "rolId" }
       ]
     },
     {
       name: "ix_usuarios_id",
       using: "BTREE",
       fields: [
-        { name: "id" },
+        { name: "idUsuario" }
       ]
-    },
+    }
   ]
 });
+
+module.exports = Usuario;

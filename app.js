@@ -1,6 +1,8 @@
 const express = require('express');
 const app = express()
 const cors = require('cors');
+const bodyParser = require('body-parser');
+
 require('dotenv').config();
 const usuarioRoutes = require('./routes/usuarioRoute');
 const rolesRoutes = require('./routes/rolesRoutes')
@@ -21,6 +23,7 @@ const DetalleRouter=require('./routes/DetalleRouter')
 const PORT = process.env.PORT 
 app.use(cors());
 app.use(express.urlencoded({extended : true}))
+app.use(bodyParser.json());
 
 app.use(express.json());
 // Configuración de archivos estáticos
@@ -35,6 +38,19 @@ app.use(rolesRoutes)
   app.use(ClientesRouter)
   app.use(EmpleadosRoute)
   app.use(DetalleRouter)
+  // Manejo de errores
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Algo salió mal!');
+});
+sequelize.authenticate()
+  .then(() => {
+    console.log('Conexión a la base de datos establecida correctamente.');
+  })
+  .catch(err => {
+    console.error('Error al conectar con la base de datos:', err);
+  });
+
 
 app.listen(PORT, () => {
     console.log(`Servidor escuchando en el puerto ${PORT}`);
