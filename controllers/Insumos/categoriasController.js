@@ -23,6 +23,7 @@ exports.guardarCategoria = async (req , res) => {
         // Si la categoría no existe, procede a guardarla
         const query = 'INSERT INTO categorias (nombre_categoria, estado_categoria) VALUES (?, ?)';
         const values = [nombre_categoria, estado_categoria];
+        
         await connection.query(query, values);
         res.status(200).json({ Estado: 'guardado correctamente' });
     } catch (error) {
@@ -65,10 +66,18 @@ exports.editarCategoria = async (req, res) => {
         await connection.query(query, updateValues);
 
         res.status(200).json({ Estado: 'editado correctamente' });
+
+        const [rows, fields] = await connection.query('SELECT * FROM categorias WHERE IdCategoria = ?', [IdCategoria]);
+        if (rows.length === 0) {
+            res.status(404).json({ error: 'No se encontró un registro con el ID proporcionado', IdCategoria });
+        } else {
+            const query = 'UPDATE categorias SET imagen_categoria = ?, nombre_categoria = ?, estado_categoria = ? WHERE IdCategoria = ?';
+            const values = [imagen_categoria, nombre_categoria, estado_categoria, IdCategoria];
+            await connection.query(query, values);
+            res.status(200).json({ Estado: 'editado correctamente' });
+        }
     } catch (error) {
         console.error("Error al editar la categoria", error);
         res.status(500).json({ error: 'Error al editar la categoria' });
     }
 };
-
-

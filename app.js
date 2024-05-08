@@ -21,7 +21,6 @@ const EmpleadosRoute=require('./routes/EmpleadosRoute')
 const DetalleRouter=require('./routes/DetalleRouter')
 const ProveedoresRouters = require('./routes/proveedoresRouter');
 const CategoriasRouters = require('./routes/categoriasRouter');
-
 const PORT = process.env.PORT 
 app.use(cors());
 app.use(express.urlencoded({extended : true}))

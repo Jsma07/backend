@@ -8,6 +8,5 @@ routes.get('/api/proveedores/:idProveedor', proveedoresController.obtenerProveed
 routes.put('/api/proveedores/editar', proveedoresController.editarProveedor);
 routes.post('/api/proveedores/guardarProveedor', proveedoresController.guardarProveedor);
 routes.get('/api/proveedores/validacionCorreo/:correo', validacionesController.verificarCorreoProveedor);
-// routes.get('/api/proveedores/validacionEmpresa', validacionesController.validarEmpresaProveedor);
 
 module.exports = routes;
