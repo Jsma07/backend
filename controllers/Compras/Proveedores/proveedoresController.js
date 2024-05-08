@@ -1,63 +1,62 @@
-const ConexionDB = require('../Db/Conexion');
+const ConexionDB = require('../../../Db/Conexion');
 
-exports.listarProveedores = (req, res) => { 
-    ConexionDB.query('SELECT * FROM Proveedores', (err, rows, fields)=>{
-        if(!err){
-            res.status(200).json(rows);
-        }else {
-            res.status(500).json({ error: 'Error al buscar' });
-        }
-    })
+exports.listarProveedores = async (req, res) => { 
+    try {
+        const connection = await ConexionDB(); 
+        const [rows, fields] = await connection.query('SELECT * FROM proveedores');
+        res.status(200).json(rows);
+    } catch (error) {
+        console.error("Error al buscar proveedores", error);
+        res.status(500).json({ error: 'Error al buscar proveedores' });
+    }
 };
 
-exports.guardarProveedor = (req , res)=>{
-    const {idProveedor, nombre_proveedor, correo_proveedor, telefono_proveedor, direccion_proveedor, empresa_proveedor} = req.body;
-    const query = 'INSERT INTO Proveedores (idProveedor,nombre_proveedor,correo_proveedor,telefono_proveedor,direccion_proveedor,empresa_proveedor) VALUES (?,?,?,?)';
-    const values = [idProveedor, nombre_proveedor, correo_proveedor, telefono_proveedor, direccion_proveedor, empresa_proveedor];
-    ConexionDB.query(query, values, (err,rows, fields)=>{
-        if (!err) {
-            res.status(200).json({'Estado': 'guardado correctamente'});
-          } else {
-            res.status(500).json({ 'error': 'Error al guardar' });
-          }
-    })
+exports.guardarProveedor = async (req , res) => {
+    try {
+        const {IdProveedor, nombre_proveedor, correo_proveedor, telefono_proveedor, direccion_proveedor, empresa_proveedor, estado_proveedor} = req.body;
+        const connection = await ConexionDB();
+        const query = 'INSERT INTO proveedores (IdProveedor, nombre_proveedor, correo_proveedor, telefono_proveedor, direccion_proveedor, empresa_proveedor, estado_proveedor) VALUES (?, ?, ?, ?, ?, ?, ?)';
+        const values = [IdProveedor, nombre_proveedor, correo_proveedor, telefono_proveedor, direccion_proveedor, empresa_proveedor, estado_proveedor];
+        await connection.query(query, values);
+        res.status(200).json({ Estado: 'guardado correctamente' });
+    } catch (error) {
+        console.error("Error al guardar proveedor", error);
+        res.status(500).json({ error: 'Error al guardar proveedor' });
+    }
 };
 
-exports.obtenerProveedorPorId = (req, res) => {
-    const { idProveedor } = req.params;
-    ConexionDB.query('SELECT * FROM Proveedores WHERE idProveedor = ?', [idProveedor], (err, rows, fields) => {
-      if (!err) {
+exports.obtenerProveedorPorId = async (req, res) => {
+    try {
+        const { IdProveedor } = req.params;
+        const connection = await ConexionDB();
+        const [rows, fields] = await connection.query('SELECT * FROM proveedores WHERE IdProveedor = ?', [IdProveedor]);
         if (rows.length > 0) {
-          res.status(200).json(rows[0]);
+            res.status(200).json(rows[0]);
         } else {
-          res.status(404).json({ error: 'No se encontró un registro con el ID proporcionado',idProveedor});
+            res.status(404).json({ error: 'No se encontró un registro con el ID proporcionado', IdProveedor });
         }
-      } else {
-        res.status(500).json({ error: 'Error al buscar' });
-      }
-    });
+    } catch (error) {
+        console.error("Error al obtener proveedor por ID", error);
+        res.status(500).json({ error: 'Error al obtener proveedor por ID' });
+    }
 };
 
-exports.editarProveedor = (req, res) => {
-    const {idProveedor, nombre_proveedor, correo_proveedor, telefono_proveedor, direccion_proveedor, empresa_proveedor} = req.body;
-  
-    ConexionDB.query('SELECT * FROM Proveedores WHERE idProveedor = ?', [idProveedor], (erorr, Rows) => {
-      if (erorr) {
-        res.status(500).json({ error: 'Error al verificar el ID' , idProveedor});
-      } else if (Rows.length === 0) {
-        res.status(404).json({ error: 'No se encontró un registro con el ID proporcionado' , idProveedor});
-      } else {
-        const query = 'UPDATE Proveedores SET nombre_proveedor = ?, correo_proveedor = ?, telefono_proveedor = ?, direccion_proveedor = ?, empresa_proveedor = ? WHERE idProveedor = ?';
-  
-        const values = [nombre_proveedor, correo_proveedor, telefono_proveedor, direccion_proveedor, empresa_proveedor, idProveedor];
-  
-        ConexionDB.query(query, values, (updateErr, updateRow) => {
-          if (!updateErr) {
+exports.editarProveedor = async (req, res) => {
+    try {
+        const { IdProveedor, nombre_proveedor, correo_proveedor, telefono_proveedor, direccion_proveedor, empresa_proveedor, estado_proveedor } = req.body;
+        const connection = await ConexionDB();
+        const [rows, fields] = await connection.query('SELECT * FROM proveedores WHERE IdProveedor = ?', [IdProveedor]);
+        if (rows.length === 0) {
+            res.status(404).json({ error: 'No se encontró un registro con el ID proporcionado', IdProveedor });
+        } else {
+            const query = 'UPDATE proveedores SET nombre_proveedor = ?, correo_proveedor = ?, telefono_proveedor = ?, direccion_proveedor = ?, empresa_proveedor = ?, estado_proveedor = ? WHERE IdProveedor = ?';
+            const values = [nombre_proveedor, correo_proveedor, telefono_proveedor, direccion_proveedor, empresa_proveedor, estado_proveedor, IdProveedor];
+            await connection.query(query, values);
             res.status(200).json({ Estado: 'editado correctamente' });
-          } else {
-            res.status(500).json({ error: 'Error al editar' });
-          }
-        });
-      }
-    });
+        }
+    } catch (error) {
+        console.error("Error al editar proveedor", error);
+        res.status(500).json({ error: 'Error al editar proveedor' });
+    }
 };
+
