@@ -6,4 +6,5 @@ const editarUsuario = require('../controllers/Usuarios/editarUsuarioController')
 router.get('/api/users', listarUsuario.getAllUsers);
 router.post('/api/crearUsuario', crearUsuario.crearUsuario);
 router.put('/api/editarUsuario/:id', editarUsuario.editarUsuario) // Usa la función crearUsuario en lugar de guardarUsuario.crearUsuario
+router.get('/api/verificarCorreo/:correo', crearUsuario.verificarCorreo)
 module.exports = router;
