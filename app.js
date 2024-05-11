@@ -19,6 +19,8 @@ const VentasRoutes = require('./routes/VentasRoutes');
 const ClientesRouter=require('./routes/ClientesRouter')
 const EmpleadosRoute=require('./routes/EmpleadosRoute')
 const DetalleRouter=require('./routes/DetalleRouter')
+const ServiciosRouter=require('./routes/ServiciosRouter')
+
 
 const PORT = process.env.PORT 
 app.use(cors());
@@ -33,7 +35,7 @@ app.use(usuarioRoutes)
 app.use(rolesRoutes)
 
 
-
+  app.use(ServiciosRouter)
   app.use(VentasRoutes)
   app.use(ClientesRouter)
   app.use(EmpleadosRoute)

@@ -1,21 +1,21 @@
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('detalleventas', {
-    idDetalle: {
+  return sequelize.define('detallecompra', {
+    IdDetalle: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true
     },
-    Idventa: {
+    IdCompra: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'ventas',
-        key: 'idVentas'
+        model: 'compras',
+        key: 'IdCompra'
       }
     },
-    Idinsumo: {
+    IdInsumo: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
@@ -23,17 +23,25 @@ module.exports = function(sequelize, DataTypes) {
         key: 'IdInsumos'
       }
     },
-    Usos: {
+    IdProveedor: {
       type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'proveedores',
+        key: 'IdProveedor'
+      }
+    },
+    precio_unitario: {
+      type: DataTypes.FLOAT,
       allowNull: false
     },
-    Precio_unitario: {
-      type: DataTypes.DOUBLE,
+    cantidad_insumo: {
+      type: DataTypes.INTEGER,
       allowNull: false
     }
   }, {
     sequelize,
-    tableName: 'detalleventas',
+    tableName: 'detallecompra',
     timestamps: false,
     indexes: [
       {
@@ -41,21 +49,28 @@ module.exports = function(sequelize, DataTypes) {
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "idDetalle" },
+          { name: "IdDetalle" },
         ]
       },
       {
-        name: "Idventa",
+        name: "IdCompra",
         using: "BTREE",
         fields: [
-          { name: "Idventa" },
+          { name: "IdCompra" },
         ]
       },
       {
-        name: "Idinsumo",
+        name: "IdInsumo",
         using: "BTREE",
         fields: [
-          { name: "Idinsumo" },
+          { name: "IdInsumo" },
+        ]
+      },
+      {
+        name: "IdProveedor",
+        using: "BTREE",
+        fields: [
+          { name: "IdProveedor" },
         ]
       },
     ]

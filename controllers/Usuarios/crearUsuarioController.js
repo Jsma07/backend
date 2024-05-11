@@ -1,4 +1,4 @@
-const Usuario = require("../../models/usuarios")
+const Usuario = require("../../Models/usuarios")
 
 exports.crearUsuario = async (req, res) => {
     console.log('Controlador crearUsuario alcanzado');
