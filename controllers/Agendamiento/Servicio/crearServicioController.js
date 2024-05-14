@@ -20,7 +20,7 @@ exports.crearServicio = async (req, res) => {
         // Responde con el nuevo Servicio Creado
         res.status(201).json({ mensaje: 'Servicio creado correctamente', servicio: nuevoServicio });
     } catch (error) {
-        console.log('Error al crear servicio', error);
+        console.log('Error al crear servicio:', error);
         res.status(500).json({ error: 'Error interno del servicio' });
     }
 };
