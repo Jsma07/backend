@@ -1,22 +1,21 @@
 const Sequelize = require('sequelize');
-
-const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
+const sequelize = new Sequelize(process.env.DB_DATABASE, process.env.DB_USER, process.env.DB_PASSWORD, {
   host: process.env.DB_HOST, 
   dialect: 'mysql'
 });
 
 const Usuario = sequelize.define('usuarios', {
-  idUsuario: {
+  id: {
     autoIncrement: true,
     type: Sequelize.INTEGER,
     allowNull: false,
     primaryKey: true
   },
-  nombreUsuario: {
+  nombre: {
     type: Sequelize.STRING(50),
     allowNull: true
   },
-  apellidoUsuario: {
+  apellido: {
     type: Sequelize.STRING(50),
     allowNull: true
   },

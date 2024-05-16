@@ -10,6 +10,10 @@ module.exports = function(sequelize, DataTypes) {
     nombre: {
       type: DataTypes.STRING(50),
       allowNull: true
+    },
+    NombreModulo: {
+      type: DataTypes.INTEGER,
+      allowNull: false
     }
   }, {
     sequelize,
