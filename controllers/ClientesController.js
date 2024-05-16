@@ -1,83 +1,94 @@
 // VentasController.js
 const ConexionDB = require('../Db/Conexion');
+const Cliente = require('../Models/clientes');
 
 
 async function Listar_Clientes() {
     try {
-        const conexion = await ConexionDB();
-        const [rows, fields] = await conexion.query('SELECT * FROM clientes');
-        return rows;
+        const clientes = await Cliente.findAll();
+        return clientes;
     } catch (error) {
-        console.log("OCURRIO UN ERROR AL LISTAR LOS Clientes: ", error);
+        console.log("Ocurrió un error al listar los clientes: ", error);
         throw error;
     }
 }
-
-
-async function Crearclientes(Datosactualizars) {
+async function Crearclientes(req, res) {
     try {
-        const conexion = await ConexionDB();
-        const query = 'INSERT INTO clientes (Nombre, Apellido, Correo, Telefono, Estado, FotoPerfil, IdRol) VALUES (?, ?, ?, ?, ?, ?, ?)';
-        const { Nombre, Apellido, Correo, Telefono, Estado, FotoPerfil, IdRol} = Datosactualizars;
-        const values = [Nombre, Apellido, Correo, Telefono, Estado, FotoPerfil, IdRol];
-
-        const [rows, fields] = await conexion.query(query, values);
-        return rows.insertId;
+        const { Nombre, Apellido, Correo, Telefono, Estado, FotoPerfil, IdRol} = req.body;
+        const nuevoCliente = await Cliente.create({
+            Nombre, Apellido, Correo, Telefono, Estado, FotoPerfil, IdRol
+        });
+        
+        console.log(Nombre);
+        res.status(201).json({ mensaje: 'Cliente creado', cliente: nuevoCliente });
     } catch (error) {
-        console.log("OCURRIO UN ERROR AL CREAR El cliente: ", error);
-        throw error;
+        // Manejar el error de validación
+        if (error.name === 'SequelizeValidationError') {
+            const errores = error.errors.map(err => ({
+                campo: err.path,
+                mensaje: err.message
+            }));
+            res.status(400).json({ mensaje: 'Error de validación', errores });
+        } else {
+            console.log("OCURRIO UN ERROR AL CREAR El cliente: ", error);
+            res.status(500).json({ mensaje: 'Ocurrió un error al crear el cliente' });
+        }
     }
 }
 
-
-async function ActualizarCliente(idCliente, Datosactualizar){
-    try{
-        const conexion = await ConexionDB();
-        const query = 'UPDATE Clientes SET Nombre =?, Apellido =?, Correo =?, Telefono =?, Estado =?, FotoPerfil =?, IdRol =? WHERE IdCliente =?';
-        const values = [Datosactualizar.Nombre, Datosactualizar.Apellido, Datosactualizar.Correo, Datosactualizar.Telefono, Datosactualizar.Estado, Datosactualizar.FotoPerfil, Datosactualizar.IdRol, idCliente];
-        const [rows, fields] = await conexion.query(query, values);
-        return rows.affectedRows;
-
-    }catch(error){
-        console.log("OCURRIO UN ERROR AL ACTUALIZAR El cliente: ", error);
-        throw error;
-    }
-    
-
-}
-
-async function Actualizarperfilfoto(idCliente, FotoPerfil){
+async function ActualizarCliente(idCliente, datosActualizar) {
     try {
-        const conexion = await ConexionDB();
-        const query = 'UPDATE Clientes SET FotoPerfil = ? WHERE IdCliente = ?';
-        const values = [FotoPerfil, idCliente];
-        const [rows, fields] = await conexion.query(query, values);
-        return rows.affectedRows;
+        // Validar que los datos a actualizar sean enteros si corresponden a campos numéricos
+        if (datosActualizar.Estado && !Number.isInteger(datosActualizar.Estado)) {
+            throw new Error('El campo Estado debe ser un número entero');
+        }
+        
+        const cliente = await Cliente.findByPk(idCliente);
+        if (!cliente) {
+            throw new Error('Cliente no encontrado');
+        }
+
+        await cliente.update(datosActualizar);
+        return cliente.id; 
+
     } catch (error) {
-        console.log("OCURRIO UN ERROR AL ACTUALIZAR El cliente: ", error);
-        throw error;
+        if (error.name === 'SequelizeValidationError') {
+            const errores = error.errors.map(err => ({
+                campo: err.path,
+                mensaje: err.message
+            }));
+            res.status(400).json({ mensaje: 'Error de validación', errores });
+        } else {
+            console.log("OCURRIO UN ERROR AL CREAR El cliente: ", error);
+            res.status(500).json({ mensaje: 'Ocurrió un error al crear el cliente' });
+        }
     }
 }
 
-async function EliminarCliente(idCliente){
+
+
+async function cambiarEstadoCliente(idCliente, nuevoEstado) {
     try {
-        const conexion = await ConexionDB();
-        const query = 'DELETE FROM clientes WHERE IdCliente = ?';
-        const [rows, fields] = await conexion.query(query, [idCliente]);
-        return rows.affectedRows;
+        const cliente = await Cliente.findByPk(idCliente);
+        if (!cliente) {
+            throw new Error('Cliente no encontrado');
+        }
+
+        cliente.Estado = nuevoEstado; 
+        await cliente.save(); 
+
+        return cliente.id; 
+
     } catch (error) {
-        console.log("OCURRIO UN ERROR AL ELIMINAR El cliente: ", error);
+        console.error("Ocurrió un error al cambiar el estado del cliente:", error);
         throw error;
     }
 }
-
-
 
 module.exports = {
     Listar_Clientes,
     Crearclientes,
     ActualizarCliente,
-    Actualizarperfilfoto,
-    EliminarCliente
-   
+    cambiarEstadoCliente,
+    
 };
