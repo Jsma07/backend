@@ -20,10 +20,9 @@ exports.guardarCategoria = async (req , res) => {
         if (existingRows.length > 0) {
             return res.status(400).json({ error: 'La categoría ya existe' });
         }
-        // Si la categoría no existe, procede a guardarla
-        const query = 'INSERT INTO categorias (nombre_categoria, estado_categoria) VALUES (?, ?)';
-        const values = [nombre_categoria, estado_categoria];
-        
+        // Si la categoría no existe, procede a guardarla 
+        const query = 'INSERT INTO categorias (IdCategoria, imagen_categoria,nombre_categoria, estado_categoria) VALUES (?, ?, ?, ?)';
+        const values = [IdCategoria, imagen_categoria,nombre_categoria, estado_categoria];
         await connection.query(query, values);
         res.status(200).json({ Estado: 'guardado correctamente' });
     } catch (error) {
@@ -67,7 +66,6 @@ exports.editarCategoria = async (req, res) => {
 
         res.status(200).json({ Estado: 'editado correctamente' });
 
-        const [rows, fields] = await connection.query('SELECT * FROM categorias WHERE IdCategoria = ?', [IdCategoria]);
         if (rows.length === 0) {
             res.status(404).json({ error: 'No se encontró un registro con el ID proporcionado', IdCategoria });
         } else {

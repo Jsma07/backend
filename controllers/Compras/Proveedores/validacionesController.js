@@ -1,4 +1,5 @@
 const Proveedores = require('../../../models/proveedores'); 
+const ConexionDB = require('../../../Db/Conexion');
 
 exports.verificarCorreoProveedor = async (req, res) => {
     try {
@@ -23,7 +24,7 @@ exports.verificarCorreoProveedor = async (req, res) => {
 //         res.status(500).json({ error: 'Hubo un error al verificar la empresa. Por favor, inténtalo de nuevo más tarde.' });
 //       }
 // }
-const ConexionDB = require('../../../Db/Conexion');
+
 
 exports.validarCorreoProveedor = async(req, res) => {
     try{

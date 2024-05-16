@@ -15,6 +15,8 @@ exports.crearUsuario = async (req, res) => {
             telefono,
             rolId,
             contrasena,
+            rolId,
+            
             estado: 1 // Establece el estado como 1 al crear un nuevo usuario
         });
         console.log('Nuevo usuario creado:', nuevoUsuario);
@@ -36,6 +38,4 @@ exports.verificarCorreo = async (req, res) => {
       console.error('Error al verificar correo:', error);
       res.status(500).json({ error: 'Hubo un error al verificar el correo. Por favor, inténtalo de nuevo más tarde.' });
     }
-  };
-
-
+};
