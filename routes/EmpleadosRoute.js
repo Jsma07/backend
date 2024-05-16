@@ -8,43 +8,42 @@ router.get('/jackenail/Listar_Empleados', async (req, res) => {
         const ventas = await Empleadocontroller.Listar_Empleados();
         res.json(ventas);
     } catch (error) {
-        res.status(500).json({ message: 'Error al listar los clietnes' });
+        res.status(500).json({ message: 'Error al listar los empleados' });
     }
 });
 
 
-router.post('/Jackenail/RegistrarEmpleados', async (req, res) => {
-    const DatosCrearEmpleados = req.body;
-
-    try {
-        const resultadoCrearEmpleados = await Empleadocontroller.CrearEmpleados(DatosCrearEmpleados);
-        res.status(201).json({ message: 'Crear Empleados creado correctamente', IdEmpleado: resultadoCrearEmpleados });
-    } catch (error) {
-        console.error("Error al crear cliente:", error);
-        res.status(500).json({ message: 'Error al crear Empleados' });
-    }
+router.post('/Jackenail/RegistrarEmpleados', (req, res) => {
+    const datosCrearEmpleados = req.body;
+    Empleadocontroller.CrearEmpleados(datosCrearEmpleados, res);
 });
+
+
 
 router.put('/Jackenail/ActualizarEmpleados/:id', async (req, res) => {
     const idEmpleado = req.params.id;
-    const DatosActualizarEmpleados = req.body;
-    try{
-        const ResultadosEmpleados=await Empleadocontroller.ActualizarEmpleado( idEmpleado, DatosActualizarEmpleados);
-        res.json({ message:'Empleado actualizado  correctamente', ResultadosEmpleados});
-    }catch(error){
-        console.error("Error al actualizar Empleados:", error);
+    const datosActualizarEmpleado = req.body;
+
+    try {
+        const resultadoActualizarEmpleado = await Empleadocontroller.ActualizarEmpleado(idEmpleado, datosActualizarEmpleado);
+        res.json({ message: 'Empleado actualizado correctamente', idEmpleado: resultadoActualizarEmpleado });
+    } catch (error) {
+        console.error("Error al actualizar empleado:", error);
         res.status(500).json({ message: 'Error al actualizar Empleados' });
     }
 });
-router.delete('/Jackenail/EliminarEmpleado/:id', async (req, res) => { 
-    const idEmpleado = req.params.id; // Obteniendo el ID del empleado de los parámetros de la URL
+
+router.put('/Jackenail/CambiarEstadoEmpleado/:id', async (req, res) => {
+    const idEmpleado = req.params.id;
+    const nuevoEstado = req.body.Estado; // Suponiendo que 'estado' es el campo que contiene el nuevo estado en tu solicitud
+
     try {
-        const filasEliminadas = await Empleadocontroller.EliminarEmpleado(idEmpleado); // Llamando a la función EliminarEmpleado con el ID del empleado
-        res.json({ message: 'Empleado eliminado correctamente', filasEliminadas });
+        const idEmpleadoActualizado = await Empleadocontroller.cambiarEstadoEmpleado(idEmpleado, nuevoEstado);
+        res.json({ message: 'Estado del empleado actualizado correctamente', idEmpleado: idEmpleadoActualizado });
     } catch (error) {
-        console.error("Error al eliminar empleado:", error);
-        res.status(500).json({ message: 'Error al eliminar empleado' });
-    }  
+        console.error("Error al cambiar el estado del empleado:", error);
+        res.status(500).json({ message: 'Error al cambiar el estado del empleado' });
+    }
 });
 
 

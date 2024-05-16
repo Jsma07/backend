@@ -4,4 +4,4 @@ const controladorRol = require("../controllers/rolController")
 
 router.get('/api/roles', controladorRol.getAllRoles);
 
-module.exports = router
+module.exports = router;

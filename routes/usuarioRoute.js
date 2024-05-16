@@ -9,3 +9,5 @@ router.put('/api/editarUsuario/:id', editarUsuario.editarUsuario) // Usa la func
 router.get('/api/verificarCorreo/:correo', crearUsuario.verificarCorreo)
 
 module.exports = router;
+
+

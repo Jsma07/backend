@@ -1,12 +1,14 @@
 // VentasController.js
 const ConexionDB = require('../Db/Conexion');
+const empleado=require('../Models/empleados')
+
+
 
 
 async function Listar_Empleados() {
     try {
-        const conexion = await ConexionDB();
-        const [rows, fields] = await conexion.query('SELECT * FROM empleados');
-        return rows;
+        const Empleados= await empleado.findAll();
+        return Empleados;
     } catch (error) {
         console.log("OCURRIO UN ERROR AL LISTAR LOS empleados: ", error);
         throw error;
@@ -14,53 +16,68 @@ async function Listar_Empleados() {
 }
 
 
-async function CrearEmpleados(DatosCrearEmpleados) {
+async function CrearEmpleados(DatosCrearEmpleados, res) {
     try {
-        const conexion = await ConexionDB();
-        const query = 'INSERT INTO empleados (Nombre, Apellido, Correo, Telefono, Estado, FotoPerfil, IdRol) VALUES (?, ?, ?, ?, ?, ?, ?)';
-        const { Nombre, Apellido, Correo, Telefono, Estado, FotoPerfil, IdRol} = DatosCrearEmpleados; // Corregido: DatosCrearEmpleados en lugar de Datosclientes
-        const values = [Nombre, Apellido, Correo, Telefono, Estado, FotoPerfil, IdRol];
-
-        const [rows, fields] = await conexion.query(query, values);
-        return rows.insertId;
+        const empleadoCreado = await empleado.create(DatosCrearEmpleados);
+        res.status(200).json({ mensaje: 'creado correctamente'});
+        return empleadoCreado.id; 
+        
     } catch (error) {
-        console.log("OCURRIO UN ERROR AL CREAR El empleados: ", error);
-        throw error;
+        // Manejar el error de validación
+        if (error.name === 'SequelizeValidationError') {
+            const errores = error.errors.map(err => ({
+                campo: err.path,
+                mensaje: err.message
+            }));
+            // Aquí puedes usar res porque es pasado como un parámetro
+            res.status(400).json({ mensaje: 'Error de validación', errores });
+        } else {
+            console.log("OCURRIO UN ERROR AL CREAR El empleado: ", error);
+            res.status(500).json({ mensaje: 'Ocurrió un error al crear el empleado' });
+        }
     }
 }
 
-async function ActualizarEmpleado(idEmpleado, DatosEmpledo){
-    try{
-        const conexion = await ConexionDB();
-        const query = 'UPDATE empleados SET Nombre =?, Apellido =?, Correo =?, Telefono =?, Estado =?, FotoPerfil =?, IdRol =? WHERE IdEmpleado =?';
-        const values = [DatosEmpledo.Nombre, DatosEmpledo.Apellido, DatosEmpledo.Correo, DatosEmpledo.Telefono, DatosEmpledo.Estado, DatosEmpledo.FotoPerfil, DatosEmpledo.IdRol, idEmpleado];
-        const [rows, fields] = await conexion.query(query, values);
-        return rows.affectedRows;
-
-    }catch(error){
-        console.log("OCURRIO UN ERROR AL ACTUALIZAR El empleados: ", error);
-        throw error;
-    }
-
-}
-async function EliminarEmpleado(idEmpleado){
+async function ActualizarEmpleado(idEmpleado, datosEmpleado) {
     try {
-        const conexion = await ConexionDB();
-        const query = 'DELETE FROM empleados WHERE IdEmpleado = ?';
-        const [rows, fields] = await conexion.query(query, [idEmpleado]); // Usando el parámetro idEmpleado
-        return rows.affectedRows;
+        const empleados = await empleado.findByPk(idEmpleado);
+        if (!empleados) {
+            throw new Error('Empleado no encontrado');
+        }
+
+        await empleados.update(datosEmpleado);
+        return empleados.id; // o cualquier otro valor que desees devolver después de la actualización
+
     } catch (error) {
-        console.log("OCURRIO UN ERROR AL ELIMINAR El empleado: ", error);
+        console.error("Ocurrió un error al actualizar el empleado:", error);
+        throw error;
+    }
+    
+}
+
+async function cambiarEstadoEmpleado(idEmpleado, nuevoEstado) {
+    try {
+        const empleados = await empleado.findByPk(idEmpleado);
+        if (!empleados) {
+            throw new Error('Empleado no encontrado');
+        }
+
+        empleados.Estado = nuevoEstado; 
+        await empleados.save(); 
+
+        return empleados.id;
+
+    } catch (error) {
+        console.error("Ocurrió un error al cambiar el estado del empleado:", error);
         throw error;
     }
 }
-
-
 
 module.exports = {
     Listar_Empleados,
     CrearEmpleados,
     ActualizarEmpleado,
-    EliminarEmpleado
+    cambiarEstadoEmpleado
+    
    
 };
