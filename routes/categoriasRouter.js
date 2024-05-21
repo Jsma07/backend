@@ -1,11 +1,12 @@
 const express = require('express');
 const routes = express.Router();
-const categoriasController = require('../controllers/Insumos/categoriasController');
+const listarCategorias = require('../controllers/Insumos/listarCategoriaController');
+const crearCategoria = require('../controllers/Insumos/crearCategoriaController');
+const editarCategoria = require('../controllers/Insumos/editarCategoriaController');
 
-routes.get('/api/categorias', categoriasController.listarCategorias);
-routes.get('/api/categorias/:idCategoria', categoriasController.obtenerCategoriaPorId);
-routes.put('/api/categorias/editar', categoriasController.editarCategoria);
-routes.post('/api/categorias/guardarCategoria', categoriasController.guardarCategoria);
+routes.get('/api/categorias', listarCategorias.listarCategorias);
+routes.post('/api/categorias/guardarCategoria', crearCategoria.guardarCategoria);
+routes.put('/api/categorias/editar/:IdCategoria', editarCategoria.editarCategoria);
 
 
 module.exports = routes;
