@@ -2,9 +2,6 @@
 const ConexionDB = require('../Db/Conexion');
 const empleado=require('../Models/empleados')
 
-
-
-
 async function Listar_Empleados() {
     try {
         const Empleados= await empleado.findAll();
@@ -14,7 +11,6 @@ async function Listar_Empleados() {
         throw error;
     }
 }
-
 
 async function CrearEmpleados(DatosCrearEmpleados, res) {
     try {
