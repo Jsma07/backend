@@ -15,7 +15,7 @@ exports.crearUsuario = async (req, res) => {
             telefono,
             rolId,
             contrasena,
-            estado: 1 // Establece el estado como 1 al crear un nuevo usuario
+            estado: 1 
         });
         console.log('Nuevo usuario creado:', nuevoUsuario);
 

@@ -14,8 +14,6 @@ exports.getAllUsers = async (req, res) => {
         // Consulta para obtener todos los usuarios
         const [usuariosRows, fields] = await connection.execute('SELECT * FROM usuarios');
 
-        // Consulta para obtener todos los roles
-        // const [rolesRows, fields2] = await connection.execute('SELECT * FROM roles');
 
         // Cerrar la conexión
         await connection.end();
