@@ -57,7 +57,7 @@ const Servicio = sequelize.define('servicios', {
     }
   },
   ImgServicio: {
-    type: Sequelize.STRING(250),
+    type: Sequelize.STRING(2000),
     allowNull: false,
     validate: {
       notEmpty: {

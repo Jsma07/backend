@@ -7,7 +7,7 @@ const validacionesController = require('../controllers/Compras/Proveedores/valid
 
 routes.get('/api/proveedores', listarProveedores.listarProveedores);
 routes.post('/api/proveedores/guardarProveedor', crearProveedor.guardarProveedor);
-routes.put('/api/proveedores/edita/:IdProveedor', editarProveedor.editarProveedor);
+routes.put('/api/proveedores/editar/:IdProveedor', editarProveedor.editarProveedor);
 routes.get('/api/proveedores/validacionCorreo/:correo', validacionesController.verificarCorreoProveedor);
 
 module.exports = routes;

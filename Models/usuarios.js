@@ -14,27 +14,51 @@ const Usuario = sequelize.define('usuarios', {
   },
   nombre: {
     type: Sequelize.STRING(50),
-    allowNull: true
+    allowNull: false,
+    validate:{
+      len: [3, 30],
+      isAlpha: true,
+      notEmpty: true
+    }
   },
   apellido: {
     type: Sequelize.STRING(50),
-    allowNull: true
+    allowNull: false,
+    validate: {
+      len: [3, 30],
+      isAlpha: true,
+      notEmpty: true
+    }
   },
   correo: {
     type: Sequelize.STRING(120),
-    allowNull: true
+    allowNull: false,
+    validate: {
+      isEmail: true
+    }
   },
   telefono: {
     type: Sequelize.STRING(20),
-    allowNull: true
+    allowNull: false,
+    validate: {
+      
+     len: [8,20]
+    }
   },
   contrasena: {
     type: Sequelize.STRING(100),
-    allowNull: true
+    allowNull: false,
+    validate:{
+      isLongEnough(value){
+        if(value.length < 8){
+          throw new Error("La contraseña debe tener al menos 8 caracteres.");
+        }
+      }
+    }
   },
   rolId: {
     type: Sequelize.INTEGER,
-    allowNull: true,
+    allowNull: false,
     references: {
       model: 'roles',
       key: 'idRol'
@@ -42,7 +66,7 @@ const Usuario = sequelize.define('usuarios', {
   },
   estado: {
     type: Sequelize.INTEGER,
-    allowNull: true
+    allowNull: false
   }
 }, {
   sequelize,
@@ -75,3 +99,4 @@ const Usuario = sequelize.define('usuarios', {
 });
 
 module.exports = Usuario;
+
