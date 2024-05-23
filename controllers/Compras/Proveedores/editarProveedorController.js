@@ -3,7 +3,8 @@ const { Op } = require('sequelize');
 
 exports.editarProveedor = async (req, res) => {
     try {
-        const { IdProveedor, nombre_proveedor, correo_proveedor, telefono_proveedor, direccion_proveedor, empresa_proveedor } = req.body;
+        const { IdProveedor } = req.params;
+        const {nombre_proveedor, correo_proveedor, telefono_proveedor, direccion_proveedor, empresa_proveedor } = req.body;
         console.log(req.body)
         // Verificar si el correo electrónico ya está registrado para otro proveedor
         const existingCorreo = await Proveedor.findOne({
