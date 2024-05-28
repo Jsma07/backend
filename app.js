@@ -6,12 +6,14 @@ require('dotenv').config();
 
 const usuarioRoutes = require('./routes/usuarioRoute');
 const rolesRoutes = require('./routes/rolesRoutes');
-const uploadRoutes = require('./routes/uploadRoutes');  // Importar la nueva ruta
+const uploadRoutes = require('./routes/uploadRoutes');  
 const VentasRoutes = require('./routes/VentasRoutes');
 const ClientesRouter = require('./routes/ClientesRouter');
 const EmpleadosRoute = require('./routes/EmpleadosRoute');
 const DetalleRouter = require('./routes/DetalleRouter');
 const ProveedoresRouters = require('./routes/proveedoresRouter');
+const ComprasRouters = require('./routes/comprasRouter');
+const InsumosRouters = require('./routes/insumosRouter');
 const CategoriasRouters = require('./routes/categoriasRouter');
 const ServiciosRouters = require('./routes/serviciosRouter');
 const PORT = process.env.PORT;
@@ -36,6 +38,8 @@ app.use(usuarioRoutes);
 app.use(rolesRoutes);
 app.use(uploadRoutes);  // Usar la nueva ruta
 app.use(ProveedoresRouters);
+app.use(ComprasRouters);
+app.use(InsumosRouters);
 app.use(CategoriasRouters);
 app.use(ServiciosRouters);
 app.use(VentasRoutes);

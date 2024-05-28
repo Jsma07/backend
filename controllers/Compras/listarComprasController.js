@@ -1,4 +1,4 @@
-const ConexionDB = require('../Db/Conexion');
+const ConexionDB = require('../../Db/Conexion');
 
 exports.listarCompras = async (req, res) => { 
     try {

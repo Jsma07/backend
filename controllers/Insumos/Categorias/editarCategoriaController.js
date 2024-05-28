@@ -1,4 +1,4 @@
-const Categoria = require('../../models/categorias');
+const Categoria = require('../../../models/categorias');
 const { Op } = require('sequelize');
 
 exports.editarCategoria = async (req, res) => {

@@ -1,4 +1,4 @@
-const Categoria = require('../../models/categorias');
+const Categoria = require('../../../models/categorias');
 
 exports.guardarCategoria = async (req, res) => {
     console.log('Controlador guardarCategoria alcanzado');
