@@ -56,16 +56,47 @@ const Cliente = sequelize.define('clientes', {
         }
     }
 },
-  FotoPerfil: {
-    type: Sequelize.STRING(250),
-    allowNull: false
-  },
   IdRol: {
     type: Sequelize.INTEGER,
     allowNull: false,
     references: {
       model: 'roles',
       key: 'idRol'
+    }
+  },
+  Documento: {
+    type: Sequelize.STRING(20),
+    allowNull: false,
+    validate: {
+      notNull: {
+        msg: 'El campo Documento es obligatorio'
+      },
+      len: {
+        args: [8, 20],
+        msg: 'El campo Documento debe tener entre 8 y 20 caracteres'
+      }
+    }
+  },
+  Direccion: {
+    type: Sequelize.STRING(100),
+    allowNull: false,
+    validate: {
+      notNull: {
+        msg: 'El campo Dirección es obligatorio'
+      }
+    }
+  },
+  Contrasena: {
+    type: Sequelize.STRING(100),
+    allowNull: false,
+    validate: {
+      notNull: {
+        msg: 'El campo Contrasena es obligatorio'
+      },
+      len: {
+        args: [8, 100],
+        msg: 'El campo Contrasena debe tener entre 8 y 100 caracteres'
+      }
     }
   }
 }, {

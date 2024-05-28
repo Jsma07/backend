@@ -13,9 +13,10 @@ router.get('/jackenail/Listar_Clientes', async (req, res) => {
 
 });
 
-
-router.post('/Jackenail/RegistrarClientes', ClientesController.Crearclientes)
-
+router.post('/Jackenail/RegistrarClientes', (req, res) => {
+    const RegistrarClientes = req.body;
+    ClientesController.Crearclientes(RegistrarClientes, res);
+});
 
 router.put('/Jackenail/Actualizar/:id', async (req, res) => { 
     const idCliente = req.params.id;
@@ -30,18 +31,21 @@ router.put('/Jackenail/Actualizar/:id', async (req, res) => {
 });
 
 router.put('/Jackenail/CambiarEstado/:id', async (req, res) => { 
-    const idCliente = req.params.id;
+    const idCliente = parseInt(req.params.id); // Convertir el ID a un número
     const nuevoEstado = req.body.Estado; 
 
     try {
         const clienteActualizadoId = await ClientesController.cambiarEstadoCliente(idCliente, nuevoEstado);
-        res.json({ message: 'Estado del cliente actualizado correctamente', id: clienteActualizadoId });
+        if (clienteActualizadoId) {
+            res.json({ message: 'Estado del cliente actualizado correctamente', id: clienteActualizadoId });
+        } else {
+            res.status(404).json({ message: 'Cliente no encontrado' });
+        }
     } catch (error) {
         console.error("Error al cambiar el estado del cliente:", error);
         res.status(500).json({ message: 'Error al cambiar el estado del cliente' });
     }
 });
-
 
 
 
