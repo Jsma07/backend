@@ -1,11 +1,10 @@
 const Sequelize = require('sequelize');
 
 const sequelize = new Sequelize(process.env.DB_DATABASE, process.env.DB_USER, process.env.DB_PASSWORD, {
-  host: process.env.DB_HOST, 
+  host: process.env.DB_HOST,
   dialect: 'mysql'
 });
 
-// Definir el modelo de empleado
 const Empleado = sequelize.define('empleados', {
   IdEmpleado: {
     autoIncrement: true,
@@ -18,11 +17,10 @@ const Empleado = sequelize.define('empleados', {
     allowNull: false,
     validate: {
       notNull: {
-        msg: 'El campo Nombre es obligatorio'
+        msg: 'El campo nombre es obligatorio'
       },
-      isAlpha: {
-        msg: 'El campo Nombre solo puede contener letras'
-      }
+
+      is: /^[a-zA-Z\s]*$/, 
     }
   },
   Apellido: {
@@ -31,9 +29,6 @@ const Empleado = sequelize.define('empleados', {
     validate: {
       notNull: {
         msg: 'El campo Apellido es obligatorio'
-      },
-      isAlpha: {
-        msg: 'El campo Apellido solo puede contener letras'
       }
     }
   },
@@ -50,14 +45,14 @@ const Empleado = sequelize.define('empleados', {
     }
   },
   Telefono: {
-    type: Sequelize.INTEGER,
+    type: Sequelize.STRING(15), // Cambiado de INTEGER a STRING
     allowNull: false,
     validate: {
       notNull: {
         msg: 'El campo Teléfono es obligatorio'
       },
-      isInt: {
-        msg: 'El campo Teléfono debe ser un número entero'
+      isNumeric: {
+        msg: 'El campo Teléfono debe contener solo números'
       }
     }
   },
@@ -73,15 +68,6 @@ const Empleado = sequelize.define('empleados', {
       }
     }
   },
-  FotoPerfil: {
-    type: Sequelize.STRING(250),
-    allowNull: false,
-    validate: {
-      notNull: {
-        msg: 'El campo FotoPerfil es obligatorio'
-      }
-    }
-  },
   IdRol: {
     type: Sequelize.INTEGER,
     allowNull: false,
@@ -91,6 +77,41 @@ const Empleado = sequelize.define('empleados', {
       },
       isInt: {
         msg: 'El campo IdRol debe ser un número entero'
+      }
+    }
+  },
+  Documento: {
+    type: Sequelize.STRING(20),
+    allowNull: false,
+    validate: {
+      notNull: {
+        msg: 'El campo Documento es obligatorio'
+      },
+      len: {
+        args: [10, 15],
+        msg: 'El campo Documento debe tener entre 8 y 20 caracteres'
+      }
+    }
+  },
+  Direccion: {
+    type: Sequelize.STRING(100),
+    allowNull: false,
+    validate: {
+      notNull: {
+        msg: 'El campo Dirección es obligatorio'
+      }
+    }
+  },
+  Contrasena: {
+    type: Sequelize.STRING(100),
+    allowNull: false,
+    validate: {
+      notNull: {
+        msg: 'El campo Contrasena es obligatorio'
+      },
+      len: {
+        args: [10, 30],
+        msg: 'El campo Contrasena debe tener entre 8 y 100 caracteres'
       }
     }
   }
