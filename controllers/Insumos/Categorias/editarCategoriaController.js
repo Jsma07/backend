@@ -6,27 +6,30 @@ exports.editarCategoria = async (req, res) => {
         const { IdCategoria } = req.params;
         const { nombre_categoria, estado_categoria } = req.body;
 
-        // Verificar si el nombre de la categoría ya está registrado para otra categoría
-        const existingCategoria = await Categoria.findOne({
-            where: {
-                nombre_categoria,
-                IdCategoria: {
-                    [Op.ne]: IdCategoria
-                }
-            }
-        });
-        if (existingCategoria) {
-            return res.status(400).json({ error: 'El nombre de la categoría ya está registrado para otra categoría.' });
-        }
-
         const updateCategoria = await Categoria.findByPk(IdCategoria);
         if (!updateCategoria) {
             return res.status(404).json({ error: 'Categoría no encontrada' });
         }
 
+        // Verificar si el nombre de la categoría ya está registrado para otra categoría
+        if (nombre_categoria) {
+            const existingCategoria = await Categoria.findOne({
+                where: {
+                    nombre_categoria,
+                    IdCategoria: {
+                        [Op.ne]: IdCategoria
+                    }
+                }
+            });
+            if (existingCategoria) {
+                return res.status(400).json({ error: 'El nombre de la categoría ya está registrado para otra categoría.' });
+            }
+        }
+
+        // Actualizar los campos proporcionados
         await updateCategoria.update({
-            nombre_categoria,
-            estado_categoria,
+            nombre_categoria: nombre_categoria ?? updateCategoria.nombre_categoria,
+            estado_categoria: estado_categoria ?? updateCategoria.estado_categoria,
         });
 
         res.status(200).json({ mensaje: 'Categoría actualizada correctamente', categoria: updateCategoria });

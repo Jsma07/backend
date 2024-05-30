@@ -18,7 +18,7 @@ exports.guardarInsumo = async (req, res) => {
         NombreInsumos,
         Cantidad,
         UsosDisponibles,
-        Estado,
+        Estado: 'Disponible',
         IdCategoria
       });
   
@@ -30,7 +30,6 @@ exports.guardarInsumo = async (req, res) => {
         const errores = error.errors.map(err => err.message);
         return res.status(400).json({ errores });
       } else {
-        // Manejar otros tipos de errores
         console.error("Error al guardar el insumo", error);
         res.status(500).json({ error: 'Error al guardar el insumo' });
       }
