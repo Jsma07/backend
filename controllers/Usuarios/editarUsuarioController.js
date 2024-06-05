@@ -1,12 +1,12 @@
-const Usuario = require('../../models/usuarios');
+const Usuario = require('../../Models/usuarios');
 
 exports.editarUsuario = async(req, res)=>{
     try {
         const {id} = req.params;
-        const {nombre, apellido, correo, telefono, rolId, contrasena, estado} = req.body;
+        const {nombre, apellido, correo, telefono, rolId, contrasena, estado,Documento} = req.body;
 
         const usuarioActualizado = await Usuario.update(
-            {nombre, apellido, correo, telefono, rolId, contrasena, estado},
+            {nombre, apellido, correo, telefono, rolId, contrasena, estado, Documento},
             { where : {id} }
 
         );

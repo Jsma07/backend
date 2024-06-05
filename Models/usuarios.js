@@ -30,6 +30,19 @@ const Usuario = sequelize.define('usuarios', {
       notEmpty: true
     }
   },
+  Documento: {
+    type: Sequelize.STRING(20),
+    allowNull: false,
+    validate: {
+      notNull: {
+        msg: 'El campo Documento es obligatorio'
+      },
+      len: {
+        args: [8, 20],
+        msg: 'El campo Documento debe tener entre 8 y 20 caracteres'
+      }
+    }
+  },
   correo: {
     type: Sequelize.STRING(120),
     allowNull: false,

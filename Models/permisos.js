@@ -1,14 +1,19 @@
 const Sequelize = require('sequelize');
-module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('permisos', {
+
+const sequelize = new Sequelize(process.env.DB_DATABASE, process.env.DB_USER, process.env.DB_PASSWORD, {
+  host: process.env.DB_HOST, 
+  dialect: 'mysql'
+});
+const Roles = require('../Models/roles')
+  const Permisos = sequelize.define('permisos', {
     idPermiso: {
       autoIncrement: true,
-      type: DataTypes.INTEGER,
+      type: Sequelize.INTEGER,
       allowNull: false,
       primaryKey: true
     },
     nombre: {
-      type: DataTypes.STRING(50),
+      type: Sequelize.STRING(50),
       allowNull: true
     }
   }, {
@@ -26,4 +31,10 @@ module.exports = function(sequelize, DataTypes) {
       },
     ]
   });
-};
+    Permisos.belongsToMany(Roles, {
+      through: 'permisos_roles',
+      foreignKey: 'permisoId',
+      otherKey: 'rolId'
+    });
+  
+module.exports = Permisos
