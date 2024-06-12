@@ -5,7 +5,7 @@ const { Op } = require('sequelize');
 exports.editarInsumo = async (req, res) => {
     try {
         const { IdInsumos } = req.params;
-        const { NombreInsumos, Imagen, Cantidad, UsosDisponibles, Estado, IdCategoria } = req.body;
+        const { NombreInsumos, Imagen, Cantidad, PrecioUnitario, Estado, IdCategoria } = req.body;
 
         // Verificar si el nombre del insumo ya está registrado para otro insumo
         const existingInsumo = await Insumo.findOne({
@@ -28,8 +28,7 @@ exports.editarInsumo = async (req, res) => {
         await updateInsumo.update({
             NombreInsumos,
             Imagen,
-            Cantidad,
-            UsosDisponibles,
+            PrecioUnitario,
             Estado,
             IdCategoria
         });

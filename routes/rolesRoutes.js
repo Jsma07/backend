@@ -10,5 +10,11 @@ router.post('/api/roles/crearRol', crearRol.crearRol);
 router.get('/api/permisos', permisos.listarPermisos)
 router.put('/api/editarRol/:id', editarRol)
 router.get('/api/rol/:id', traerRol)
+router.get('/api/roles', listarRol.listarRoles);
+router.post('/api/roles/crearRol', crearRol.crearRol);
+router.get('/api/permisos', permisos.listarPermisos)
+router.put('/api/editarRol/:id', editarRol)
+router.get('/api/rol/:id', traerRol)
 module.exports = router;
+
 

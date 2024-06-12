@@ -43,3 +43,5 @@ const PermisosXRol = sequelize.define('permisos_roles', {
 });
 
 module.exports = PermisosXRol;
+
+module.exports = PermisosXRol;

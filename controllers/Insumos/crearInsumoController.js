@@ -4,7 +4,7 @@ const Categoria = require('../../models/categorias');
 exports.guardarInsumo = async (req, res) => {
     console.log('Controlador guardar alcanzado'); 
     try {
-      const { Imagen, NombreInsumos, Cantidad, UsosDisponibles, Estado, IdCategoria } = req.body;
+      const { Imagen, NombreInsumos, Cantidad, usos_unitarios, UsosDisponibles, PrecioUnitario, Estado, IdCategoria } = req.body;
   
       // Verificar si el nombre del insumo ya está registrado
       const existingInsumo = await Insumo.findOne({ where: { NombreInsumos } });
@@ -17,6 +17,8 @@ exports.guardarInsumo = async (req, res) => {
         Imagen,
         NombreInsumos,
         Cantidad,
+        usos_unitarios,
+        PrecioUnitario,
         UsosDisponibles,
         Estado: 'Disponible',
         IdCategoria
