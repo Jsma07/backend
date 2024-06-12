@@ -13,6 +13,7 @@ const EmpleadosRoute = require('./routes/EmpleadosRoute');
 const DetalleRouter = require('./routes/DetalleRouter');
 const ProveedoresRouters = require('./routes/proveedoresRouter');
 const ComprasRouters = require('./routes/comprasRouter');
+const DetalleComprasRouters = require('./routes/detalleCompraRoute');
 const InsumosRouters = require('./routes/insumosRouter');
 const CategoriasRouters = require('./routes/categoriasRouter');
 const ServiciosRouters = require('./routes/serviciosRouter');
@@ -39,6 +40,7 @@ app.use(rolesRoutes);
 app.use(uploadRoutes);  // Usar la nueva ruta
 app.use(ProveedoresRouters);
 app.use(ComprasRouters);
+app.use(DetalleComprasRouters);
 app.use(InsumosRouters);
 app.use(CategoriasRouters);
 app.use(ServiciosRouters);
