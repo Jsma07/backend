@@ -1,4 +1,4 @@
-const Usuario = require('../../Models/usuarios');
+const Usuario = require('../../models/usuarios');
 
 exports.editarUsuario = async(req, res)=>{
     try {

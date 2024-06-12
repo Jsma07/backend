@@ -62,12 +62,12 @@ const Servicio = sequelize.define('servicios', {
     validate: {
       notEmpty: {
         msg: "La URL de la imagen del servicio no puede estar vacía"
-      },
-      isUrl: {
-        msg: "La URL de la imagen del servicio debe ser una URL válida"
       }
+      // Comentamos la validación isUrl si se usa ruta relativa
+      // isUrl: true 
     }
   },
+  
   EstadoServicio: {
     type: Sequelize.INTEGER,
     allowNull: false,

@@ -1,4 +1,5 @@
 var DataTypes = require("sequelize").DataTypes;
+var _agendamiento = require("./agendamiento");
 var _categorias = require("./categorias");
 var _clientes = require("./clientes");
 var _compras = require("./compras");
@@ -15,6 +16,7 @@ var _usuarios = require("./usuarios");
 var _ventas = require("./ventas");
 
 function initModels(sequelize) {
+  var agendamiento = _agendamiento(sequelize, DataTypes);
   var categorias = _categorias(sequelize, DataTypes);
   var clientes = _clientes(sequelize, DataTypes);
   var compras = _compras(sequelize, DataTypes);
@@ -30,10 +32,14 @@ function initModels(sequelize) {
   var usuarios = _usuarios(sequelize, DataTypes);
   var ventas = _ventas(sequelize, DataTypes);
 
+  agendamiento.belongsTo(clientes, { as: "IdCliente_cliente", foreignKey: "IdCliente"});
+  clientes.hasMany(agendamiento, { as: "agendamientos", foreignKey: "IdCliente"});
   ventas.belongsTo(clientes, { as: "idCliente_cliente", foreignKey: "idCliente"});
   clientes.hasMany(ventas, { as: "venta", foreignKey: "idCliente"});
   detallecompra.belongsTo(compras, { as: "IdCompra_compra", foreignKey: "IdCompra"});
   compras.hasMany(detallecompra, { as: "detallecompras", foreignKey: "IdCompra"});
+  agendamiento.belongsTo(empleados, { as: "IdEmpleado_empleado", foreignKey: "IdEmpleado"});
+  empleados.hasMany(agendamiento, { as: "agendamientos", foreignKey: "IdEmpleado"});
   ventas.belongsTo(empleados, { as: "idEmpleado_empleado", foreignKey: "idEmpleado"});
   empleados.hasMany(ventas, { as: "venta", foreignKey: "idEmpleado"});
   detallecompra.belongsTo(insumos, { as: "IdInsumo_insumo", foreignKey: "IdInsumo"});
@@ -52,12 +58,15 @@ function initModels(sequelize) {
   roles.hasMany(permisos_roles, { as: "permisos_roles", foreignKey: "rolId"});
   usuarios.belongsTo(roles, { as: "rol", foreignKey: "rolId"});
   roles.hasMany(usuarios, { as: "usuarios", foreignKey: "rolId"});
+  agendamiento.belongsTo(servicios, { as: "IdServicio_servicio", foreignKey: "IdServicio"});
+  servicios.hasMany(agendamiento, { as: "agendamientos", foreignKey: "IdServicio"});
   ventas.belongsTo(servicios, { as: "idServico_servicio", foreignKey: "idServico"});
   servicios.hasMany(ventas, { as: "venta", foreignKey: "idServico"});
   detalleventas.belongsTo(ventas, { as: "Idventa_venta", foreignKey: "Idventa"});
   ventas.hasMany(detalleventas, { as: "detalleventa", foreignKey: "Idventa"});
 
   return {
+    agendamiento,
     categorias,
     clientes,
     compras,
