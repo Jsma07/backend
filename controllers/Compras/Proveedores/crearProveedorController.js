@@ -5,7 +5,6 @@ exports.guardarProveedor = async (req, res) => {
     try {
         const { NIT, nombre_proveedor, correo_proveedor, telefono_proveedor, direccion_proveedor, empresa_proveedor, estado_proveedor } = req.body;
 
-        // Verificar si ya existe un proveedor con el mismo NIT, correo, teléfono, dirección o empresa
         const proveedorExistente = await Proveedor.findOne({
             where: {
                 [Op.or]: [
@@ -22,7 +21,6 @@ exports.guardarProveedor = async (req, res) => {
             return res.status(400).json({ error: 'Ya existe un proveedor con el mismo NIT, correo, teléfono, dirección o empresa.' });
         }
 
-        // Si todo está bien, proceder a guardar el proveedor
         const nuevoProveedor = await Proveedor.create({
             NIT,
             nombre_proveedor,
