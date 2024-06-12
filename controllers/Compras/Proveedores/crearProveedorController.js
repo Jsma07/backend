@@ -1,4 +1,4 @@
-const Proveedor = require('../../../models/proveedores');
+const Proveedor = require('../../../Models/proveedores');
 
 exports.guardarProveedor = async (req, res) => {
     try {

@@ -1,4 +1,4 @@
-const Servicio = require('../../models/servicios');
+const Servicio = require('../../Models/servicios');
 const { Op } = require('sequelize');
 
 exports.editarServicio = async (req, res) => {

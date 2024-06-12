@@ -1,4 +1,4 @@
-const Servicio = require('../../models/servicios');
+const Servicio = require('../../Models/servicios');
 
 exports.guardarServicio = async (req, res) => {
   try {
