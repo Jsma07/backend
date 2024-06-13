@@ -7,7 +7,7 @@ const sequelize = new Sequelize(process.env.DB_DATABASE, process.env.DB_USER, pr
 
 const Insumo = sequelize.define('insumos', {
   IdInsumos: {
-    autoIncrement: true,
+    autoIncrement: true, 
     type: Sequelize.INTEGER,
     allowNull: false,
     primaryKey: true
