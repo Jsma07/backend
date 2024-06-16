@@ -9,7 +9,7 @@ exports.guardarInsumo = async (req, res) => {
       // Verificar si el nombre del insumo ya está registrado
       const existingInsumo = await Insumo.findOne({ where: { NombreInsumos } });
       if (existingInsumo) {
-        return res.status(400).json({ error: 'El nombre del insumo ya está registrado.' });
+        return res.status(400).json({ error: 'El nombre del insumo ya está registrado en la base de datos.' });
       }
 
       // Verificamos si hay un archivo subido
