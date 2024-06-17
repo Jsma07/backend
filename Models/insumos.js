@@ -22,6 +22,14 @@ const Insumo = sequelize.define('insumos', {
     type: Sequelize.FLOAT,
     allowNull: false
   },
+  usos_unitarios: {
+    type: Sequelize.INTEGER,
+    allowNull: false
+  },
+  PrecioUnitario: {
+    type: Sequelize.FLOAT,
+    allowNull: false
+  },
   UsosDisponibles: {
     type: Sequelize.INTEGER,
     allowNull: false

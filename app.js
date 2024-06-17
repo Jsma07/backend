@@ -16,6 +16,8 @@ const ComprasRouters = require('./routes/comprasRouter');
 const InsumosRouters = require('./routes/insumosRouter');
 const CategoriasRouters = require('./routes/categoriasRouter');
 const ServiciosRouters = require('./routes/serviciosRouter');
+const DetalleventasRouter = require('./routes/DetalleventasRouter');
+
 const PORT = process.env.PORT;
 
 const Sequelize = require('sequelize');
@@ -36,7 +38,7 @@ app.use('/uploads', express.static('public/uploads'));  // Nueva configuración 
 
 app.use(usuarioRoutes);
 app.use(rolesRoutes);
-app.use(uploadRoutes);  // Usar la nueva ruta
+app.use(uploadRoutes); 
 app.use(ProveedoresRouters);
 app.use(ComprasRouters);
 app.use(InsumosRouters);
@@ -46,6 +48,8 @@ app.use(VentasRoutes);
 app.use(ClientesRouter);
 app.use(EmpleadosRoute);
 app.use(DetalleRouter);
+app.use(DetalleventasRouter);
+
 
 // Manejo de errores
 app.use((err, req, res, next) => {

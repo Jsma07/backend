@@ -46,3 +46,38 @@ exports.editarInsumo = async (req, res) => {
         }
     }
 };
+
+
+exports.existenciaseditar = async (req, res) => {
+    try {
+        const { IdInsumos } = req.params;
+        const {  Cantidad, UsosDisponibles } = req.body;
+
+     
+
+        const updateInsumo = await Insumo.findByPk(IdInsumos);
+        if (!updateInsumo) {
+            return res.status(404).json({ error: 'Insumo no encontrado' });
+        }
+
+        await updateInsumo.update({
+            
+            Cantidad,
+            UsosDisponibles,
+            
+        });
+
+        res.status(200).json({ mensaje: 'Insumo actualizado correctamente', insumo: updateInsumo });
+    } catch (error) {
+        if (error.name === 'SequelizeValidationError') {
+            // Manejo de errores de validación de Sequelize
+            const errores = error.errors.map(err => err.message);
+            return res.status(400).json({ errores });
+        } else {
+            console.error("Error al editar el insumo", error);
+            res.status(500).json({ error: 'Error al editar el insumo' });
+        }
+    }
+};
+
+
