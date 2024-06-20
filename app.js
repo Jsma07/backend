@@ -40,7 +40,7 @@ if (!fs.existsSync(insumosDir)) {
   fs.mkdirSync(insumosDir, { recursive: true });
 }
 
-// Importar rutas
+//----------------------------------------------------------
 const usuarioRoutes = require('./routes/usuarioRoute');
 const rolesRoutes = require('./routes/rolesRoutes');
 const VentasRoutes = require('./routes/VentasRoutes');

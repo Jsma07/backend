@@ -3,8 +3,7 @@ const Servicio = require('../../Models/servicios');
 const path = require('path');
 const fs = require('fs');
 
-// Definir el tamaño máximo permitido en bytes (1 MB en este caso)
-const MAX_FILE_SIZE = 20000 * 20000; // 1 MB en bytes
+const MAX_FILE_SIZE = 20000 * 20000; 
 
 exports.guardarServicio = async (req, res) => {
     try {
