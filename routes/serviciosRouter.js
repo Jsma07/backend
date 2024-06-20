@@ -1,11 +1,14 @@
 const express = require('express');
-const routes = express.Router();
 const listarServicios = require('../controllers/Servicios/listarServiciosController');
 const crearServicio = require('../controllers/Servicios/crearServicioController');
 const editarServicio = require('../controllers/Servicios/editarServicioController');
 
-routes.get('/api/servicios', listarServicios.listarServicios);
-routes.post('/api/servicios/guardarServicio', crearServicio.guardarServicio);
-routes.put('/api/servicios/editar/:IdServicio', editarServicio.editarServicio);
+module.exports = (upload) => {
+    const routes = express.Router();
 
-module.exports = routes;
+    routes.get('/api/servicios', listarServicios.listarServicios);
+    routes.post('/api/servicios/guardarServicio', upload.single('ImgServicio'), crearServicio.guardarServicio);
+    routes.put('/api/servicios/editar/:IdServicio', upload.single('ImgServicio'), editarServicio.editarServicio);
+
+    return routes;
+};

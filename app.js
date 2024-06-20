@@ -3,20 +3,65 @@ const app = express();
 const cors = require('cors');
 const bodyParser = require('body-parser');
 require('dotenv').config();
+const path = require('path');
+const fs = require('fs');
+
+
+//---------MULTER IMAGE ---------------------------
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb){
+    cb(null, path.join(__dirname, 'uploads'));
+  },
+  filename: function (req, file, cb){
+    cb(null, Date.now() + path.extname(file.originalname)); // Nombre de cada archivo sea unico
+  },
+});
+
+const upload = multer({ storage})
+
+
+ // Multer para la subida de imagenes de insumos.
+ const storageInsumos = multer.diskStorage({
+  destination: function (req ,file, cb){
+    cb(null, path.join(__dirname,'uploads/insumos')); // Carpeta donde se almacenara las imagenes de insumos
+  },
+  filename: function (req, file, cb){
+    cb(null, Date.now() + path.extname(file.originalname)) // Nuevamente un nombre unico para coda img
+  },
+ })
+
+ const uploadInsumos = multer({storage : storageInsumos})
+
+ // Nos aseguramos de que la carpeta donde se almacenaran las imagenes
+const insumosDir = path.join(__dirname, 'uploads/insumos');
+if (!fs.existsSync(insumosDir)){
+  fs.mkdirSync(insumosDir, {recursive: true});
+}
+
+//----------------------------------------------------------
+
+
 
 const usuarioRoutes = require('./routes/usuarioRoute');
 const rolesRoutes = require('./routes/rolesRoutes');
-const uploadRoutes = require('./routes/uploadRoutes');  
 const VentasRoutes = require('./routes/VentasRoutes');
 const ClientesRouter = require('./routes/ClientesRouter');
 const EmpleadosRoute = require('./routes/EmpleadosRoute');
 const DetalleRouter = require('./routes/DetalleRouter');
 const ProveedoresRouters = require('./routes/proveedoresRouter');
 const ComprasRouters = require('./routes/comprasRouter');
-const InsumosRouters = require('./routes/insumosRouter');
+const DetalleComprasRouters = require('./routes/detalleCompraRoute');
+const InsumosRouters = require('./routes/insumosRouter')(uploadInsumos); //Multer especifico para insumps
 const CategoriasRouters = require('./routes/categoriasRouter');
+<<<<<<< HEAD
 const ServiciosRouters = require('./routes/serviciosRouter');
 const DetalleventasRouter = require('./routes/DetalleventasRouter');
+=======
+const ServiciosRouters = require('./routes/serviciosRouter')(upload); //Multer especifico para servicios
+const AgendasRouters = require('./routes/AgendasRouter');
+>>>>>>> d7eb69f55c01dcf1a322014370365ceb179513a1
 
 const PORT = process.env.PORT;
 
@@ -34,16 +79,22 @@ app.use(express.json());
 
 // Configuración de archivos estáticos
 app.use('/static', express.static('public/static'));
-app.use('/uploads', express.static('public/uploads'));  // Nueva configuración de archivos estáticos
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 
 app.use(usuarioRoutes);
 app.use(rolesRoutes);
+<<<<<<< HEAD
 app.use(uploadRoutes); 
+=======
+>>>>>>> d7eb69f55c01dcf1a322014370365ceb179513a1
 app.use(ProveedoresRouters);
 app.use(ComprasRouters);
+app.use(DetalleComprasRouters);
 app.use(InsumosRouters);
 app.use(CategoriasRouters);
 app.use(ServiciosRouters);
+app.use(AgendasRouters);
 app.use(VentasRoutes);
 app.use(ClientesRouter);
 app.use(EmpleadosRoute);

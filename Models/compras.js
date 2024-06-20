@@ -1,37 +1,30 @@
 const Sequelize = require('sequelize');
-
-// Conexión a la base de datos
-const sequelize = new Sequelize(process.env.DB_DATABASE, process.env.DB_USER, process.env.DB_PASSWORD, {
-  host: process.env.DB_HOST,
-  dialect: 'mysql'
-});
-
-// Definición del modelo Servicios
-const Compra = sequelize.define('compras', {
+module.exports = function(sequelize, DataTypes) {
+  return sequelize.define('compras', {
     IdCompra: {
       autoIncrement: true,
-      type: Sequelize.INTEGER,
+      type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true
     },
     fecha_compra: {
-      type: Sequelize.DATEONLY,
+      type: DataTypes.DATEONLY,
       allowNull: false
     },
     descuento_compra: {
-      type: Sequelize.FLOAT,
+      type: DataTypes.FLOAT,
       allowNull: false
     },
     iva_compra: {
-      type: Sequelize.FLOAT,
+      type: DataTypes.FLOAT,
       allowNull: false
     },
     subtotal_compra: {
-      type: Sequelize.FLOAT,
+      type: DataTypes.FLOAT,
       allowNull: false
     },
     estado_compra: {
-      type: Sequelize.STRING(20),
+      type: DataTypes.STRING(20),
       allowNull: false
     }
   }, {
@@ -46,8 +39,7 @@ const Compra = sequelize.define('compras', {
         fields: [
           { name: "IdCompra" },
         ]
-      }
+      },
     ]
   });
-  
-  module.exports = Compra;
+};
