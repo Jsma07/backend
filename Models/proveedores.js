@@ -22,6 +22,10 @@ const Proveedor = sequelize.define('proveedores', {
       },
       isNumeric: {
         msg: 'El NIT del proveedor debe contener solo números.'
+      },
+      len: {
+        args: [1, 10],
+        msg: "El NIT del proveedor debe tener 10 numeros"
       }
     }
   },
@@ -65,6 +69,10 @@ const Proveedor = sequelize.define('proveedores', {
       },
       isNumeric: {
         msg: 'El teléfono del proveedor debe contener solo números.'
+      },
+      len: {
+        args: [1, 10],
+        msg: "El telefono del proveedor debe tener 10 numeros"
       }
     }
   },

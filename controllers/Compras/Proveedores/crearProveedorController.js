@@ -3,22 +3,48 @@ const { Op } = require('sequelize');
 
 exports.guardarProveedor = async (req, res) => {
     try {
-        const { NIT, nombre_proveedor, correo_proveedor, telefono_proveedor, direccion_proveedor, empresa_proveedor, estado_proveedor } = req.body;
+        let { NIT, nombre_proveedor, correo_proveedor, telefono_proveedor, direccion_proveedor, empresa_proveedor, estado_proveedor } = req.body;
 
-        const proveedorExistente = await Proveedor.findOne({
-            where: {
-                [Op.or]: [
-                    { NIT },
-                    { correo_proveedor },
-                    { telefono_proveedor },
-                    { direccion_proveedor },
-                    { empresa_proveedor }
-                ]
-            }
-        });
+        const formatNombreProveedor = (nombre) => {
+            return nombre
+                .toLowerCase() 
+                .replace(/\b\w/g, (letra) => letra.toUpperCase()); 
+        };
 
-        if (proveedorExistente) {
-            return res.status(400).json({ error: 'Ya existe un proveedor con el mismo NIT, correo, teléfono, dirección o empresa.' });
+        nombre_proveedor = formatNombreProveedor(nombre_proveedor);
+
+        const formatEmpresaProveedor = (nombre) => {
+            return nombre
+                .toLowerCase() 
+                
+                .replace(/\b\w/g, (letra) => letra.toUpperCase()); 
+        };
+
+        empresa_proveedor = formatEmpresaProveedor(empresa_proveedor);
+
+        const existingNitProveedor = await Proveedor.findOne({ where: { NIT } });
+        if (existingNitProveedor) {
+            return res.status(400).json({ error: 'El NIT del proveedor ya está registrado.' });
+        }
+
+        const existingCorreoProveedor = await Proveedor.findOne({ where: { correo_proveedor } });
+        if (existingCorreoProveedor) {
+            return res.status(400).json({ error: 'El correo del proveedor ya está registrado.' });
+        }
+
+        const existingTelefonoProveedor = await Proveedor.findOne({ where: { telefono_proveedor } });
+        if (existingTelefonoProveedor) {
+            return res.status(400).json({ error: 'El telefono del proveedor ya está registrado.' });
+        }
+
+        const existingDireccionProveedor = await Proveedor.findOne({ where: { direccion_proveedor } });
+        if (existingDireccionProveedor) {
+            return res.status(400).json({ error: 'La direccion del proveedor ya está registrado.' });
+        }
+
+        const existingEmpresaProveedor = await Proveedor.findOne({ where: { empresa_proveedor } });
+        if (existingEmpresaProveedor) {
+            return res.status(400).json({ error: 'La empresa del proveedor ya está registrado.' });
         }
 
         const nuevoProveedor = await Proveedor.create({

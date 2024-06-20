@@ -4,23 +4,36 @@ const Categoria = require('../../models/categorias');
 exports.guardarInsumo = async (req, res) => {
     console.log('Controlador guardar alcanzado'); 
     try {
-        const { NombreInsumos, Cantidad, usos_unitarios, PrecioUnitario, Estado, IdCategoria } = req.body;
+        let { NombreInsumos, Cantidad, usos_unitarios, PrecioUnitario, Estado, IdCategoria } = req.body;
+
+        const formatNombreInsumo = (nombre) => {
+            return nombre
+                .toLowerCase() 
+                .replace(/\b\w/g, (letra) => letra.toUpperCase()); 
+        };
+
+        NombreInsumos = formatNombreInsumo(NombreInsumos);
         
-        // Verificar si el nombre del insumo ya está registrado
-        const existingInsumo = await Insumo.findOne({ where: { NombreInsumos } });
+        const existingInsumo = await Insumo.findOne({ where: { NombreInsumos }});
         if (existingInsumo) {
             return res.status(400).json({ error: 'El nombre del insumo ya está registrado en la base de datos.' });
         }
 
-        // Verificamos si hay un archivo subido
         let imgennPath = null;
         if (req.file) {
-            imgennPath = `/uploads/insumos/${req.file.filename}`; // Ruta donde se almacenará la imagen
+            imgennPath = `/uploads/insumos/${req.file.filename}`; 
         } else {
             return res.status(400).json({ error: 'Es necesario subir una imagen del insumo.' });
         }
         
         let UsosDisponibles = Cantidad * usos_unitarios; 
+
+        if (Cantidad > 0) {
+            Estado = 'Disponible'
+        }else{
+            Estado = 'Terminado'
+        }
+
         const nuevoInsumo = await Insumo.create({
             Imagen: imgennPath,
             NombreInsumos,
@@ -28,7 +41,7 @@ exports.guardarInsumo = async (req, res) => {
             usos_unitarios,
             PrecioUnitario,
             UsosDisponibles,
-            Estado: 'Disponible',
+            Estado,
             IdCategoria
         });
 
