@@ -4,7 +4,6 @@ const { registrarDetalleVenta } = require('../controllers/Ventas/Detalle/Registr
 const { ListarDetalleVentas } = require('../controllers/Ventas/Detalle/Listar');
 const { BuscarDetalleVentaPorId } = require('../controllers/Ventas/Detalle/Listar'); 
 
-
 router.post('/Jackenail/Detalleregistrar', registrarDetalleVenta);
 router.get('/detallelistar', ListarDetalleVentas);
 router.get('/Buscardetalle/:id', BuscarDetalleVentaPorId);

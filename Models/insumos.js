@@ -150,9 +150,6 @@ const Insumo = sequelize.define('insumos', {
   ]
 });
 
-<<<<<<< HEAD
 module.exports = Insumo;
-=======
 module.exports = Insumo;
 
->>>>>>> d7eb69f55c01dcf1a322014370365ceb179513a1
