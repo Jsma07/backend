@@ -52,7 +52,7 @@ const DetalleComprasRouters = require('./routes/detalleCompraRoute');
 const InsumosRouters = require('./routes/insumosRouter'); // La importación correcta sin pasar `uploadInsumos` aquí
 const CategoriasRouters = require('./routes/categoriasRouter');
 const DetalleventasRouter = require('./routes/DetalleventasRouter');
-const ServiciosRouters = require('./routes/serviciosRouter'); // La importación correcta sin pasar `upload` aquí
+const ServiciosRouters = require('./routes/serviciosRouter')(upload); // La importación correcta sin pasar `upload` aquí
 const AgendasRouters = require('./routes/AgendasRouter');
 
 // Configuración del puerto
