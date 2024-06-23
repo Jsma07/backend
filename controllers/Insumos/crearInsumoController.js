@@ -1,4 +1,4 @@
-const Insumo = require('../../models/insumos');
+const Insumo = require('../../Models/insumos');
 const Categoria = require('../../models/categorias'); 
 
 exports.guardarInsumo = async (req, res) => {
