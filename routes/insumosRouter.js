@@ -1,5 +1,4 @@
 const express = require('express');
-const routes = express.Router();
 const listarInsumos = require('../controllers/Insumos/listarInsumoController');
 const crearInsumo = require('../controllers/Insumos/crearInsumoController');
 const editarInsumo = require('../controllers/Insumos/editarInsumoController');

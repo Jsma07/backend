@@ -4,13 +4,28 @@ const { Op } = require('sequelize');
 exports.editarProveedor = async (req, res) => {
     try {
         const { IdProveedor } = req.params;
-        const { nombre_proveedor, correo_proveedor, telefono_proveedor, direccion_proveedor, empresa_proveedor, estado_proveedor } = req.body;
+        const { NIT, nombre_proveedor, correo_proveedor, telefono_proveedor, direccion_proveedor, empresa_proveedor, estado_proveedor } = req.body;
         console.log(req.body);
 
         // Buscar el proveedor por su ID
         const proveedor = await Proveedor.findByPk(IdProveedor);
         if (!proveedor) {
             return res.status(404).json({ error: 'Proveedor no encontrado' });
+        }
+
+          // Verificar si el correo electrónico ya está registrado para otro proveedor
+          if (NIT) {
+            const existingNIT = await Proveedor.findOne({
+                where: {
+                    NIT,
+                    IdProveedor: {
+                        [Op.ne]: IdProveedor
+                    }
+                }
+            });
+            if (existingNIT) {
+                return res.status(400).json({ error: 'El NIT de la empresa que ingresaste ya está registrado para otro proveedor.' });
+            }
         }
 
         // Verificar si el correo electrónico ya está registrado para otro proveedor
@@ -72,9 +87,9 @@ exports.editarProveedor = async (req, res) => {
                 return res.status(400).json({ error: 'La empresa ya está registrada para otro proveedor.' });
             }
         }
-
         // Si no hay conflictos, proceder con la actualización del proveedor
         await proveedor.update({
+            NIT: NIT ?? proveedor.NIT,
             nombre_proveedor: nombre_proveedor ?? proveedor.nombre_proveedor,
             correo_proveedor: correo_proveedor ?? proveedor.correo_proveedor,
             telefono_proveedor: telefono_proveedor ?? proveedor.telefono_proveedor,
