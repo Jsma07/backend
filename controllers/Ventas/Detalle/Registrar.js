@@ -20,6 +20,16 @@ const registrarDetalleVenta = async (req, res) => {
   } catch (error) {
     console.error('Error al registrar detalles de venta:', error);
     res.status(500).json({ mensaje: 'Error al registrar detalles de venta', error: error.message });
+    const { Idventa, Idinsumo, Usos, Precio_unitario } = req.body;
+
+    const detalleVenta = await DetalleVentas.create({
+      Idventa,
+      Idinsumo,
+      Usos,
+      Precio_unitario
+    });
+
+    res.status(201).json({ mensaje: 'Detalle de venta registrado', detalleVenta });
   }
 };
 

@@ -98,3 +98,4 @@ const Insumo = sequelize.define('insumos', {
 });
 
 module.exports = Insumo;
+
