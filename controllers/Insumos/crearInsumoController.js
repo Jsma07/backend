@@ -20,8 +20,6 @@ exports.guardarInsumo = async (req, res) => {
         NombreInsumos = formatNombreInsumo(NombreInsumos);
 
         const existingInsumo = await Insumo.findOne({ where: { NombreInsumos } });
-
-        const existingInsumo = await Insumo.findOne({ where: { NombreInsumos } });
         if (existingInsumo) {
             // Eliminar archivo de imagen si ya existe el insumo
             if (req.file) {
