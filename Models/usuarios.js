@@ -25,7 +25,7 @@ const Usuario = sequelize.define('usuarios', {
     allowNull: false,
     validate:{
       len: [3, 30],
-      isAlpha: true,
+      // isAlpha: true,
       notEmpty: true
     }
   },
@@ -34,7 +34,7 @@ const Usuario = sequelize.define('usuarios', {
     allowNull: false,
     validate: {
       len: [3, 30],
-      isAlpha: true,
+      // isAlpha: true,
       notEmpty: true
     }
   },
