@@ -4,7 +4,7 @@ exports.crearUsuario = async (req, res) => {
     console.log('Controlador crearUsuario alcanzado');
     try {
         // Extrae los datos del cuerpo de la solicitud
-        const { nombre, apellido, correo, telefono, rolId, contrasena,Documento } = req.body;
+        const { nombre, apellido, correo, telefono, rolId, contrasena,Documento, tipoDocumento } = req.body;
         console.log('Datos del cuerpo de la solicitud:', req.body);
         // Utiliza el método create del modelo Usuario para crear un nuevo usuario en la base de datos
         const nuevoUsuario = await Usuario.create({
@@ -16,6 +16,7 @@ exports.crearUsuario = async (req, res) => {
             contrasena,
             estado: 1,
             Documento,
+            tipoDocumento
         });
         console.log('Nuevo usuario creado:', nuevoUsuario);
 

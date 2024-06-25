@@ -12,6 +12,14 @@ const Usuario = sequelize.define('usuarios', {
     allowNull: false,
     primaryKey: true
   },
+  tipoDocumento: {
+    type: Sequelize.STRING(50),
+    allowNull: false,
+    validate:{
+      len: [3, 30],
+      notEmpty: true
+    }
+  },
   nombre: {
     type: Sequelize.STRING(50),
     allowNull: false,
