@@ -67,7 +67,7 @@ const Insumo = sequelize.define('insumos', {
     }
   },
   Imagen: {
-    type: Sequelize.STRING,
+    type: Sequelize.STRING(2000),
     allowNull: false,
     validate: {
       notEmpty: {

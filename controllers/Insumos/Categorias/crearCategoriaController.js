@@ -1,16 +1,24 @@
 const Categoria = require('../../../models/categorias');
 
+// Función para formatear el nombre de la categoría
+const formatNombreCategoria = (nombre) => {
+    // Eliminar espacios al inicio y al final del nombre
+    const nombreSinEspacios = nombre.trim();
+  
+    // Aplicar formato de capitalización
+    const nombreFormateado = nombreSinEspacios
+      .toLowerCase()
+      .replace(/\b\w/g, (letra) => letra.toUpperCase());
+  
+    return nombreFormateado;
+};
+
 exports.guardarCategoria = async (req, res) => {
     console.log('Controlador guardarCategoria alcanzado');
     try {
         let { nombre_categoria, estado_categoria } = req.body;
 
-        const formatNombreCategoria = (nombre) => {
-            return nombre
-                .toLowerCase() 
-                .replace(/\b\w/g, (letra) => letra.toUpperCase()); 
-        };
-
+        // Aplicar formato al nombre de la categoría
         nombre_categoria = formatNombreCategoria(nombre_categoria);
 
         const existingCategoria = await Categoria.findOne({ where: { nombre_categoria } });

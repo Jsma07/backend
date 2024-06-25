@@ -8,6 +8,7 @@ exports.listarInsumos = async (req, res) => {
             FROM insumos
             JOIN categorias ON insumos.IdCategoria = categorias.IdCategoria
         `);
+        console.log(rows)
         res.status(200).json(rows);
     } catch (error) {
         console.error("Error al buscar insumos", error);
