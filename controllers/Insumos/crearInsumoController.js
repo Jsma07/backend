@@ -8,8 +8,8 @@ exports.guardarInsumo = async (req, res) => {
 
         const formatNombreInsumo = (nombre) => {
             return nombre
-                .toLowerCase() 
-                .replace(/\b\w/g, (letra) => letra.toUpperCase()); 
+                // .toLowerCase() 
+                // .replace(/\b\w/g, (letra) => letra.toUpperCase()); 
         };
 
         NombreInsumos = formatNombreInsumo(NombreInsumos);
@@ -18,6 +18,7 @@ exports.guardarInsumo = async (req, res) => {
         if (existingInsumo) {
             return res.status(400).json({ error: 'El nombre del insumo ya está registrado en la base de datos.' });
         }
+        
 
         let imgennPath = null;
         if (req.file) {

@@ -1,6 +1,7 @@
 // VentasController.js
 const ConexionDB = require('../Db/Conexion');
-const empleado=require('../Models/empleados')
+const empleado=require('../models/empleados')
+const Rol = require('../models/roles'); // Asegúrate de tener el archivo y ruta correctos aquí
 
 async function Listar_Empleados() {
     try {
@@ -14,8 +15,15 @@ async function Listar_Empleados() {
 
 async function CrearEmpleados(DatosCrearEmpleados, res) {
     try {
+        // Verifica si el rol especificado existe en la tabla de roles
+        const rolExistente = await Rol.findByPk(DatosCrearEmpleados.IdRol);
+        if (!rolExistente) {
+            return res.status(400).json({ mensaje: 'El rol especificado no existe' });
+        }
+
+        // Crea el empleado solo si el rol existe
         const empleadoCreado = await empleado.create(DatosCrearEmpleados);
-        res.status(200).json({ mensaje: 'creado correctamente'});
+        res.status(200).json({ mensaje: 'Empleado creado correctamente' });
         return empleadoCreado.id; 
         
     } catch (error) {
@@ -25,15 +33,13 @@ async function CrearEmpleados(DatosCrearEmpleados, res) {
                 campo: err.path,
                 mensaje: err.message
             }));
-            // Aquí puedes usar res porque es pasado como un parámetro
             res.status(400).json({ mensaje: 'Error de validación', errores });
         } else {
-            console.log("OCURRIO UN ERROR AL CREAR El empleado: ", error);
+            console.log("Ocurrió un error al crear el empleado: ", error);
             res.status(500).json({ mensaje: 'Ocurrió un error al crear el empleado' });
         }
     }
 }
-
 async function ActualizarEmpleado(idEmpleado, datosEmpleado) {
     try {
         const empleados = await empleado.findByPk(idEmpleado);
