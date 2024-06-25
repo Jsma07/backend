@@ -20,6 +20,8 @@ exports.guardarInsumo = async (req, res) => {
         NombreInsumos = formatNombreInsumo(NombreInsumos);
 
         const existingInsumo = await Insumo.findOne({ where: { NombreInsumos } });
+
+        const existingInsumo = await Insumo.findOne({ where: { NombreInsumos } });
         if (existingInsumo) {
             // Eliminar archivo de imagen si ya existe el insumo
             if (req.file) {
@@ -57,14 +59,17 @@ exports.guardarInsumo = async (req, res) => {
             PrecioUnitario,
             UsosDisponibles,
             Estado,
-            IdCategoria
+            IdCategoria,
+            
         });
 
+        console.log('Insumo guardado:', nuevoInsumo);
         res.status(200).json({ Estado: 'guardado correctamente', insumo: nuevoInsumo });
 
     } catch (error) {
         if (error.name === 'SequelizeValidationError') {
             const errores = error.errors.map(err => err.message);
+            console.log('Errores de validación:', errores);
             return res.status(400).json({ errores });
         } else {
             console.error("Error al guardar el insumo", error);
