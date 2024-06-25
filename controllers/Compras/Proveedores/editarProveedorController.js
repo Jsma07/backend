@@ -7,13 +7,11 @@ exports.editarProveedor = async (req, res) => {
         const { NIT, nombre_proveedor, correo_proveedor, telefono_proveedor, direccion_proveedor, empresa_proveedor, estado_proveedor } = req.body;
         console.log(req.body);
 
-        // Buscar el proveedor por su ID
         const proveedor = await Proveedor.findByPk(IdProveedor);
         if (!proveedor) {
             return res.status(404).json({ error: 'Proveedor no encontrado' });
         }
 
-          // Verificar si el correo electrónico ya está registrado para otro proveedor
           if (NIT) {
             const existingNIT = await Proveedor.findOne({
                 where: {
@@ -28,7 +26,6 @@ exports.editarProveedor = async (req, res) => {
             }
         }
 
-        // Verificar si el correo electrónico ya está registrado para otro proveedor
         if (correo_proveedor) {
             const existingCorreo = await Proveedor.findOne({
                 where: {
@@ -43,7 +40,6 @@ exports.editarProveedor = async (req, res) => {
             }
         }
 
-        // Verificar si el número de teléfono ya está registrado para otro proveedor
         if (telefono_proveedor) {
             const existingTelefono = await Proveedor.findOne({
                 where: {
@@ -58,7 +54,6 @@ exports.editarProveedor = async (req, res) => {
             }
         }
 
-        // Verificar si la dirección ya está registrada para otro proveedor
         if (direccion_proveedor) {
             const existingDireccion = await Proveedor.findOne({
                 where: {
@@ -73,7 +68,6 @@ exports.editarProveedor = async (req, res) => {
             }
         }
 
-        // Verificar si la empresa ya está registrada para otro proveedor
         if (empresa_proveedor) {
             const existingEmpresa = await Proveedor.findOne({
                 where: {
@@ -87,7 +81,6 @@ exports.editarProveedor = async (req, res) => {
                 return res.status(400).json({ error: 'La empresa ya está registrada para otro proveedor.' });
             }
         }
-        // Si no hay conflictos, proceder con la actualización del proveedor
         await proveedor.update({
             NIT: NIT ?? proveedor.NIT,
             nombre_proveedor: nombre_proveedor ?? proveedor.nombre_proveedor,
