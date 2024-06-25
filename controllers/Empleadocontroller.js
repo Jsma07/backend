@@ -1,7 +1,7 @@
 // VentasController.js
 const ConexionDB = require('../Db/Conexion');
-const empleado=require('../models/empleados')
-const Rol = require('../models/roles'); // Asegúrate de tener el archivo y ruta correctos aquí
+const empleado=require('../Models/empleados')
+const Rol = require('../Models/roles'); // Asegúrate de tener el archivo y ruta correctos aquí
 
 async function Listar_Empleados() {
     try {
