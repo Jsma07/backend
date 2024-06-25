@@ -13,7 +13,7 @@ const Proveedor = sequelize.define('proveedores', {
     primaryKey: true
   },
   NIT: {
-    type: Sequelize.INTEGER,
+    type: Sequelize.STRING(10),
     allowNull: false,
     unique: true,
     validate: {
@@ -24,8 +24,8 @@ const Proveedor = sequelize.define('proveedores', {
         msg: 'El NIT del proveedor debe contener solo números.'
       },
       len: {
-        args: [1, 10],
-        msg: "El NIT del proveedor debe tener 10 numeros"
+        args: [9, 10],
+        msg: "El NIT del proveedor debe tener por lo menos 9 o 10 numeros"
       }
     }
   },
@@ -71,8 +71,8 @@ const Proveedor = sequelize.define('proveedores', {
         msg: 'El teléfono del proveedor debe contener solo números.'
       },
       len: {
-        args: [1, 10],
-        msg: "El telefono del proveedor debe tener 10 numeros"
+        args: [10, 15],
+        msg: "El telefono del proveedor debe tener entre 10 y 15 numeros"
       }
     }
   },

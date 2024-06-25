@@ -1,6 +1,5 @@
-// controllers/Insumos/editarInsumoController.js
 
-const Insumo = require('../../models/insumos');
+const Insumo = require('../../Models/insumos');
 const { Op } = require('sequelize');
 const fs = require('fs');
 const path = require('path');

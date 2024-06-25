@@ -38,8 +38,8 @@ const Servicio = sequelize.define('servicios', {
         msg: "El precio del servicio debe ser un número válido"
       },
       min: {
-        args: [0],
-        msg: "El precio del servicio debe ser un valor positivo"
+        args: [20000],
+        msg: "El precio del servicio debe ser minimo de $20.000"
       }
     }
   },
