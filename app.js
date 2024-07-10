@@ -54,7 +54,7 @@ const CategoriasRouters = require('./routes/categoriasRouter');
 const DetalleventasRouter = require('./routes/DetalleventasRouter');
 const ServiciosRouters = require('./routes/serviciosRouter')(upload); // Usar el middleware de subida para servicios
 const AgendasRouters = require('./routes/AgendasRouter');
-
+const LoginRoutes = require('./routes/loginRouter')
 // Configuración del puerto
 const PORT = process.env.PORT || 3000;
 
@@ -87,6 +87,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Configurar las rutas
 app.use(usuarioRoutes);
+app.use(LoginRoutes);
 app.use(rolesRoutes);
 app.use(VentasRoutes);
 app.use(ClientesRouter);
