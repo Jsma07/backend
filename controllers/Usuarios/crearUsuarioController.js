@@ -1,4 +1,5 @@
 const Usuario = require('../../Models/usuarios'); //Importa el modelo de usuario
+const bcrypt = require('bcrypt');
 
 exports.crearUsuario = async (req, res) => {
     console.log('Controlador crearUsuario alcanzado');
