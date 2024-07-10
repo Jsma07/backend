@@ -1,54 +1,54 @@
-const Insumo = require('../../models/insumos');
+const Insumo = require('../../Models/insumos');
+const path = require('path');
+const fs = require('fs');
+
+const MAX_FILE_SIZE = 1024 * 1024; 
 
 exports.guardarInsumo = async (req, res) => {
-    console.log('Controlador guardarInsumo alcanzado');
-    console.log('Cuerpo de la solicitud:', req.body);  
-
+    console.log('Controlador guardar alcanzado');
     try {
-        let { NombreInsumos, Cantidad, usos_unitarios, PrecioUnitario, IdCategoria, Imagen } = req.body;
+        console.log("Body:", req.body);
+        console.log("File:", req.file);
 
-        console.log('Datos recibidos:', {
-            NombreInsumos,
-            Cantidad,
-            usos_unitarios,
-            PrecioUnitario,
-            IdCategoria,
-            Imagen:imagennPath
-        });
-
-        if (!NombreInsumos) {
-            return res.status(400).json({ error: 'NombreInsumos es obligatorio.' });
-        }
+        let { NombreInsumos, Cantidad, usos_unitarios, PrecioUnitario, Estado, IdCategoria } = req.body;
 
         const formatNombreInsumo = (nombre) => {
-            return nombre
-                .toLowerCase()
-                .replace(/\b\w/g, (letra) => letra.toUpperCase());
+            return nombre.charAt(0).toUpperCase() + nombre.slice(1).toLowerCase();
         };
 
         NombreInsumos = formatNombreInsumo(NombreInsumos);
 
         const existingInsumo = await Insumo.findOne({ where: { NombreInsumos } });
         if (existingInsumo) {
-            console.log('Insumo existente encontrado:', existingInsumo);
-            return res.status(400).json({ error: 'El nombre del insumo ya está registrado.' });
+            if (req.file) {
+                fs.unlinkSync(req.file.path);
+            }
+            return res.status(400).json({ error: 'El nombre del insumo ya está registrado en la base de datos.' });
         }
 
-        let imagennPath = null;
-        if (req.file){
-            imagennPath = `/uploads/insumos/${req.file.filename}`;
-        } else{
-            return res.status(400).json({error: 'Es necesario subir la imagen del insumo.'})
+        let imgPath = null;
+        if (req.file) {
+            // Verificar tamaño del archivo
+            if (req.file.size > MAX_FILE_SIZE) {
+                // Eliminar archivo subido
+                fs.unlinkSync(req.file.path);
+                return res.status(400).json({ error: 'El tamaño del archivo excede el límite permitido (1 MB).' });
+            }
+            imgPath = `/uploads/insumos/${req.file.filename}`;
+        } else {
+            return res.status(400).json({ error: 'Es necesario subir una imagen del insumo.' });
         }
 
         let UsosDisponibles = Cantidad * usos_unitarios;
-        console.log('UsosDisponibles calculado:', UsosDisponibles);
 
-        let Estado = Cantidad > 0 ? 'Disponible' : 'Terminado';
-        console.log('Estado determinado:', Estado);
+        if (Cantidad > 0) {
+            Estado = 'Disponible';
+        } else {
+            Estado = 'Terminado';
+        }
 
         const nuevoInsumo = await Insumo.create({
-            Imagen: imagennPath,
+            Imagen: imgPath,
             NombreInsumos,
             Cantidad,
             usos_unitarios,

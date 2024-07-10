@@ -3,15 +3,19 @@
 const express = require('express');
 const router = express.Router();
 
+// Importar los controladores
 const listarInsumos = require('../controllers/Insumos/listarInsumoController');
 const crearInsumo = require('../controllers/Insumos/crearInsumoController');
 const editarInsumo = require('../controllers/Insumos/editarInsumoController').editarInsumo;
-const existenciasEditar = require('../controllers/Insumos/editarInsumoController').existenciaseditar; // Cambiado para usar el controlador correcto
+const existenciasEditar = require('../controllers/Insumos/editarInsumoController').existenciaseditar;
 
-// Rutas para insumos
-router.get('/api/insumos', listarInsumos.listarInsumos);
-router.post('/api/insumos/guardarInsumo', crearInsumo.guardarInsumo);
-router.put('/api/insumos/editar/:IdInsumos', editarInsumo); // Usar el controlador 'editarInsumo' para esta ruta
-router.put('/api/existenciainsumos/editar/:IdInsumos', existenciasEditar); // Usar el controlador 'existenciaseditar' para esta ruta
+// Se espera que multer se haya pasado al importar este módulo en app.js
+module.exports = (uploadInsumos) => {
+  // Rutas para insumos
+  router.get('/api/insumos', listarInsumos.listarInsumos);
+  router.post('/api/insumos/guardarInsumo', uploadInsumos.single('Imagen'), crearInsumo.guardarInsumo); // Usar el middleware de multer para subir imágenes
+  router.put('/api/insumos/editar/:IdInsumos', uploadInsumos.single('Imagen'), editarInsumo); // Usar el middleware de multer para subir imágenes
+  router.put('/api/existenciainsumos/editar/:IdInsumos', existenciasEditar); // No necesita subir imágenes
 
-module.exports = router;
+  return router;
+};
