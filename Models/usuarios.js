@@ -133,6 +133,8 @@ const Usuario = sequelize.define('usuarios', {
     }
   ]
 });
+const Roles = require('./roles');
+Usuario.belongsTo(Roles, { foreignKey: 'rolId' });
 
 module.exports = Usuario;
 
