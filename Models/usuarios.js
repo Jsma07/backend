@@ -64,6 +64,21 @@ const Usuario = sequelize.define('usuarios', {
       }
     }
   },
+  contrasenaCifrada: {
+    type: Sequelize.VIRTUAL,
+    set(value) {
+      // Cifrar la contraseña y guardarla en el campo 'contrasena'
+      const hashedPassword = bcrypt.hashSync(value, 10);
+      this.setDataValue('contrasena', hashedPassword);
+    },
+    validate: {
+      isLongEnough(value) {
+        if (value.length < 8) {
+          throw new Error("La contraseña debe tener al menos 8 caracteres.");
+        }
+      }
+    }
+  },
   rolId: {
     type: Sequelize.INTEGER,
     allowNull: false,
@@ -118,6 +133,8 @@ const Usuario = sequelize.define('usuarios', {
     }
   ]
 });
+const Roles = require('./roles');
+Usuario.belongsTo(Roles, { foreignKey: 'rolId' });
 
 module.exports = Usuario;
 

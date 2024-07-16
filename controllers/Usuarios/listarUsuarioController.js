@@ -30,3 +30,56 @@ exports.getAllUsers = async (req, res) => {
         res.status(500).json({ error: 'Error interno del servidor' });
     }
 };
+
+// Importa los modelos necesarios
+const Usuario = require('../../Models/usuarios');
+const Roles = require('../../Models/roles');
+const PermisosXRol = require('../../Models/permisos_roles');
+const Permiso = require('../../Models/permisos');
+
+exports.getUser = async (req, res) => {
+    try {
+      const usuario = await Usuario.findByPk(req.usuario.id, {
+        include: [
+          {
+            model: Roles,
+            include: [
+              {
+                model: Permiso,
+                through: {
+                  model: PermisosXRol,
+                  attributes: [],
+                },
+              },
+            ],
+          },
+        ],
+      });
+  
+      if (!usuario) {
+        return res.status(404).json({ error: 'Usuario no encontrado' });
+      }
+  
+      // Verificar si el usuario tiene roles y permisos asignados
+      if (!usuario.role || !usuario.role.permisos) {
+        return res.status(403).json({ error: 'El usuario no tiene roles o permisos asignados' });
+      }
+  
+      // Obtener los permisos del usuario a partir de sus roles y permisosXrol
+      const userPermissions = usuario.role.permisos.map(permiso => permiso.nombre);
+  
+      // Devolver los datos del usuario junto con los permisos
+      res.json({
+        user: {
+          id: usuario.id,
+          nombre: usuario.nombre,
+          apellido: usuario.apellido,
+          correo: usuario.correo,
+        },
+        permisos: userPermissions,
+      });
+    } catch (error) {
+      console.error('Error al obtener el usuario:', error);
+      res.status(500).json({ error: 'Error interno del servidor' });
+    }
+  };

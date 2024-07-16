@@ -1,4 +1,5 @@
 const Usuario = require('../../Models/usuarios');
+const bcrypt = require('bcrypt');
 
 exports.editarUsuario = async(req, res)=>{
     try {
@@ -20,8 +21,10 @@ exports.actualizarContrasena = async (req, res) => {
         const { id } = req.params;
         const { newPassword } = req.body;
 
+        const contrasenaCifrada = await bcrypt.hash(newPassword, 10);
+
         const usuarioActualizado = await Usuario.update(
-            { contrasena: newPassword },
+            { contrasena: contrasenaCifrada },
             { where: { id } }
         );
 
