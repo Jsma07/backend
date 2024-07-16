@@ -1,10 +1,11 @@
 
 const express = require('express');
 const router = express.Router();
+const authorize = require('../middleware/auth')
 const Empleadocontroller = require("../controllers/Empleadocontroller")
 
 
-router.get('/jackenail/Listar_Empleados', async (req, res) => {
+router.get('/jackenail/Listar_Empleados', authorize(['Empleados']), async (req, res) => {
     try {
         const ventas = await Empleadocontroller.Listar_Empleados();
         res.json(ventas);
@@ -14,14 +15,14 @@ router.get('/jackenail/Listar_Empleados', async (req, res) => {
 });
 
 
-router.post('/Jackenail/RegistrarEmpleados', (req, res) => {
+router.post('/Jackenail/RegistrarEmpleados',authorize(['Empleados']), (req, res) => {
     const datosCrearEmpleados = req.body;
     Empleadocontroller.CrearEmpleados(datosCrearEmpleados, res);
 });
 
 
 
-router.put('/Jackenail/ActualizarEmpleados/:id', async (req, res) => {
+router.put('/Jackenail/ActualizarEmpleados/:id',authorize(['Empleados']), async (req, res) => {
     const idEmpleado = req.params.id;
     const datosActualizarEmpleado = req.body;
 
@@ -34,7 +35,7 @@ router.put('/Jackenail/ActualizarEmpleados/:id', async (req, res) => {
     }
 });
 
-router.put('/Jackenail/CambiarEstadoEmpleado/:id', async (req, res) => {
+router.put('/Jackenail/CambiarEstadoEmpleado/:id',authorize(['Empleados']), async (req, res) => {
     const idEmpleado = req.params.id;
     const nuevoEstado = req.body.Estado; // Suponiendo que 'estado' es el campo que contiene el nuevo estado en tu solicitud
 
