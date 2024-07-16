@@ -1,5 +1,3 @@
-// app.js
-
 const express = require('express');
 const app = express();
 const cors = require('cors');
@@ -7,10 +5,9 @@ const bodyParser = require('body-parser');
 require('dotenv').config();
 const path = require('path');
 const fs = require('fs');
-
-// Configuración de Multer para la subida de imágenes
 const multer = require('multer');
 
+// Configuración de Multer para la subida de imágenes
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, path.join(__dirname, 'uploads'));
@@ -83,7 +80,6 @@ app.use(express.json());
 // Configuración de archivos estáticos
 app.use('/static', express.static('public/static'));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
 
 // Configurar las rutas
 app.use(usuarioRoutes);
