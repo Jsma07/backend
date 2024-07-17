@@ -77,7 +77,7 @@ const Agendamiento = sequelize.define('Agendamiento', {
         msg: "El estado de la agenda no puede estar vacío"
       },
       isIn: {
-        args: [[0, 1]], // Asumiendo 0: Inactivo, 1: Activo
+        args: [[0, 1,2,3]], // Asumiendo 0: Inactivo, 1: Activo
         msg: "El estado de la agenda debe ser 0 (inactivo) o 1 (activo)"
       }
     }
