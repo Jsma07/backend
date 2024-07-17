@@ -20,8 +20,8 @@ exports.guardarCompra = async (req, res) => {
             } else {
                 insumoExistente = await Insumo.create({
                     IdCategoria: detalle.IdCategoria,
-                    NombreInsumos: detalle.Dnombre_insumo,
                     Imagen: detalle.Dimagen_insumo,
+                    NombreInsumos: detalle.Dnombre_insumo,
                     Cantidad: detalle.cantidad_insumo,
                     UsosDisponibles: 0,
                     Estado: detalle.cantidad_insumo > 0 ? 'Disponible' : 'Terminada'

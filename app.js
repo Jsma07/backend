@@ -1,5 +1,3 @@
-// app.js
-
 const express = require('express');
 const app = express();
 const cors = require('cors');
@@ -7,10 +5,9 @@ const bodyParser = require('body-parser');
 require('dotenv').config();
 const path = require('path');
 const fs = require('fs');
-
-// Configuración de Multer para la subida de imágenes
 const multer = require('multer');
 
+// Configuración de Multer para la subida de imágenes
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, path.join(__dirname, 'uploads'));
@@ -54,7 +51,7 @@ const CategoriasRouters = require('./routes/categoriasRouter');
 const DetalleventasRouter = require('./routes/DetalleventasRouter');
 const ServiciosRouters = require('./routes/serviciosRouter')(upload); // Usar el middleware de subida para servicios
 const AgendasRouters = require('./routes/AgendasRouter');
-
+const LoginRoutes = require('./routes/loginRouter')
 // Configuración del puerto
 const PORT = process.env.PORT || 3000;
 
@@ -84,9 +81,9 @@ app.use(express.json());
 app.use('/static', express.static('public/static'));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-
 // Configurar las rutas
 app.use(usuarioRoutes);
+app.use(LoginRoutes);
 app.use(rolesRoutes);
 app.use(VentasRoutes);
 app.use(ClientesRouter);

@@ -18,7 +18,7 @@ const Roles = sequelize.define('roles', {
     type: DataTypes.STRING(30),
     validate:{
       len: [3, 30],
-      isAlpha: true,
+     
       notEmpty: true
     }  },
     EstadoRol: {

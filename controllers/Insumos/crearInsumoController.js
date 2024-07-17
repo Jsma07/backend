@@ -1,9 +1,8 @@
 const Insumo = require('../../Models/insumos');
-const Categoria = require('../../models/categorias');
 const path = require('path');
 const fs = require('fs');
 
-const MAX_FILE_SIZE = 1024 * 1024; // 1 MB
+const MAX_FILE_SIZE = 1024 * 1024; 
 
 exports.guardarInsumo = async (req, res) => {
     console.log('Controlador guardar alcanzado');
@@ -21,7 +20,6 @@ exports.guardarInsumo = async (req, res) => {
 
         const existingInsumo = await Insumo.findOne({ where: { NombreInsumos } });
         if (existingInsumo) {
-            // Eliminar archivo de imagen si ya existe el insumo
             if (req.file) {
                 fs.unlinkSync(req.file.path);
             }

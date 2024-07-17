@@ -1,12 +1,13 @@
-const Usuario = require('../../models/usuarios');
+const Usuario = require('../../Models/usuarios');
+const bcrypt = require('bcrypt');
 
 exports.editarUsuario = async(req, res)=>{
     try {
         const {id} = req.params;
-        const {nombre, apellido, correo, telefono, rolId, estado,Documento, } = req.body;
+        const {nombre, apellido, correo, telefono, rolId, estado,Documento,tipoDocumento } = req.body;
 
         const usuarioActualizado = await Usuario.update(
-            {nombre, apellido, correo, telefono, rolId, estado, Documento},
+            {nombre, apellido, correo, telefono, rolId, estado, Documento, tipoDocumento},
             { where : {id} }
 
         );
@@ -20,8 +21,10 @@ exports.actualizarContrasena = async (req, res) => {
         const { id } = req.params;
         const { newPassword } = req.body;
 
+        const contrasenaCifrada = await bcrypt.hash(newPassword, 10);
+
         const usuarioActualizado = await Usuario.update(
-            { contrasena: newPassword },
+            { contrasena: contrasenaCifrada },
             { where: { id } }
         );
 

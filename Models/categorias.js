@@ -16,19 +16,19 @@ const Categoria = sequelize.define('categorias', {
       type: Sequelize.STRING(20),
       allowNull: false,
       validate: {
-        notEmpty: {
-          msg: 'El nombre de la categoria no puede estar vacío.'
-        },
-        is: {
-          args: /^[a-zA-Z\s]*$/,
-          msg: 'El nombre de la categoria solo puede contener letras y espacios.'
-        },
-        len: {
-          args: [1, 30],
-          msg: "El nombre de la categoria debe tener entre 1 y 30 caracteres"
-        }
+          notEmpty: {
+              msg: 'El nombre de la categoria no puede estar vacío.'
+          },
+          is: {
+              args: /^[a-zA-ZñÑ\s]*$/,
+              msg: 'El nombre de la categoria solo puede contener letras y espacios.'
+          },
+          len: {
+              args: [1, 30],
+              msg: 'El nombre de la categoria debe tener entre 1 y 30 caracteres'
+          }
       }
-    },
+  },
     estado_categoria: {
       type: Sequelize.INTEGER,
       allowNull: false,
