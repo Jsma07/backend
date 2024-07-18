@@ -8,7 +8,7 @@ async function ConexionDB() {
             host: process.env.DB_HOST,
             user: process.env.DB_USER,
             password: process.env.DB_PASSWORD,
-            database: process.env.DB_DATABASE, 
+            database: process.env.DB_DATABASE, // Agrega esta línea para especificar la base de datos
             port: process.env.DB_PORT
         });
         console.log("Conexion exitosa a la base de datos");

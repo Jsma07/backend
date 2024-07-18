@@ -1,5 +1,5 @@
 const Ventas = require('../../Models/ventas');
-const Cliente = require('../../Models/clientes');
+const Cliente = require('../../models/clientes');
 const Empleado = require('../../Models/empleados');
 const Servicio = require('../../Models/servicios');
 
