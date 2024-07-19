@@ -13,6 +13,11 @@ const Login = async(req, res)=>{
         if (!usuario) {
             return res.status(404).json({ mensaje: 'Usuario no encontrado' });
           }
+        
+        if (usuario.estado != 1){
+      return res.status(403).json({ mensaje: 'Usuario no está activo' });
+
+        }
 
           const contrasenaValida = await bcrypt.compare(contrasena, usuario.contrasena);
 
@@ -24,8 +29,16 @@ const Login = async(req, res)=>{
             process.env.JWT_SECRET,
             { expiresIn: '1h' }
           );
-          res.status(200).json({ token });
-
+          res.json({
+            token,
+            user: {
+              id: usuario.id,
+              nombre: usuario.nombre,
+              apellido: usuario.apellido,
+              correo: usuario.correo,
+              rolId: usuario.rolId
+            }
+          });
     }catch (error) {
         console.error('Error en el inicio de sesión:', error);
         res.status(500).json({ mensaje: 'Error en el servidor' });

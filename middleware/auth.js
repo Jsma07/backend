@@ -22,11 +22,16 @@ const authorize = (requiredPermissions) => {
       // Verificar el token y obtener los datos decodificados
       const decoded = jwt.verify(tokenWithoutBearer, process.env.JWT_SECRET);
 
-      console.log('Token decodificado:', decoded);
+      // console.log('Token decodificado:', decoded);
 
       req.usuario = decoded;
 
       console.log('Usuario decodificado:', req.usuario);
+
+      // Si no se especifica ningún permiso requerido, permite el acceso
+      if (!requiredPermissions || requiredPermissions.length === 0) {
+        return next();
+      }
 
       // Buscar al usuario en la base de datos junto con sus roles y permisos a través de permisosXrol
       const user = await Usuario.findByPk(req.usuario.id, {
@@ -53,27 +58,33 @@ const authorize = (requiredPermissions) => {
 
       console.log('Usuario encontrado:', user);
 
-     // Verificar si el usuario tiene roles y permisos asignados
-if (!user || !user.role || !user.role.permisos) {
-  console.log('Usuario sin roles asignados o permisos asociados.');
-  console.log('Usuario encontrado:', user); // Agregar este log para verificar la estructura completa del usuario
-  return res.status(403).json({ mensaje: 'El usuario no tiene roles asignados o permisos asociados.' });
-}
+      // Verificar si el usuario tiene roles y permisos asignados
+      if (!user.role || !user.role.permisos) {
+        console.log('Usuario sin roles asignados o permisos asociados.');
+        console.log('Usuario encontrado:', user); // Agregar este log para verificar la estructura completa del usuario
+        return res.status(403).json({ mensaje: 'El usuario no tiene roles asignados o permisos asociados.' });
+      }
 
-// Obtener los permisos del usuario a partir de sus roles y permisosXrol
-const userPermissions = user.role.permisos.map(permiso => permiso.nombre);
+      // Obtener los permisos del usuario a partir de sus roles y permisosXrol
+      const userPermissions = user.role.permisos.map(permiso => permiso.nombre);
 
-console.log('Permisos del usuario:', userPermissions);
+      // Verificar si el usuario tiene todos los permisos requeridos
+      const hasPermission = requiredPermissions.every(permission => userPermissions.includes(permission));
 
-// Verificar si el usuario tiene todos los permisos requeridos
-const hasPermission = requiredPermissions.every(permission => userPermissions.includes(permission));
+      if (!hasPermission) {
+        console.log('Permisos insuficientes para acceder a esta función.');
+        return res.status(403).json({ mensaje: 'Permisos insuficientes para acceder a esta función.' });
+      }
 
-if (!hasPermission) {
-  console.log('Permisos insuficientes para acceder a esta función.');
-  return res.status(403).json({ mensaje: 'Permisos insuficientes para acceder a esta función.' });
-}
+      req.userData = {
+        id: user.id,
+        nombre: user.nombre,
+        apellido: user.apellido,
+        correo: user.correo,
+        rol: user.role.nombre
+      };
 
-next(); // Continuar con la ejecución de la ruta protegida
+      next();
 
     } catch (error) {
       if (error.name === 'TokenExpiredError') {

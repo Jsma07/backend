@@ -12,14 +12,11 @@ exports.crearAgendamiento = async (req, res) => {
     // Extraer los datos del cuerpo de la solicitud
     const { IdCliente, IdServicio, FechaHora, IdEmpleado, EstadoAgenda } = req.body;
 
-    // Depuración: Verificar que el modelo tiene el método `create`
-    console.log("Métodos disponibles en Agendamiento:", Object.keys(Agendamiento));
-
     // Crear el nuevo agendamiento en la base de datos
     const nuevoAgendamiento = await Agendamiento.create({
       IdCliente,
       IdServicio,
-      'Fecha/Hora': FechaHora,
+      'Fecha/Hora': FechaHora, // Si este es el nombre del campo en la DB
       IdEmpleado,
       EstadoAgenda
     });

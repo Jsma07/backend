@@ -1,5 +1,3 @@
-// app.js
-
 const express = require('express');
 const app = express();
 const cors = require('cors');
@@ -7,10 +5,9 @@ const bodyParser = require('body-parser');
 require('dotenv').config();
 const path = require('path');
 const fs = require('fs');
-
-// Configuración de Multer para la subida de imágenes
 const multer = require('multer');
 
+// Configuración de Multer para la subida de imágenes
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, path.join(__dirname, 'uploads'));
@@ -55,6 +52,8 @@ const DetalleventasRouter = require('./routes/DetalleventasRouter');
 const ServiciosRouters = require('./routes/serviciosRouter')(upload); // Usar el middleware de subida para servicios
 const AgendasRouters = require('./routes/AgendasRouter');
 const LoginRoutes = require('./routes/loginRouter')
+const transferAgendamientosToVentas = require('./Models/transferencia');
+
 // Configuración del puerto
 const PORT = process.env.PORT || 3000;
 
@@ -84,7 +83,6 @@ app.use(express.json());
 app.use('/static', express.static('public/static'));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-
 // Configurar las rutas
 app.use(usuarioRoutes);
 app.use(LoginRoutes);
@@ -100,6 +98,19 @@ app.use(CategoriasRouters);
 app.use(ServiciosRouters); // Importar y usar las rutas de servicios con middleware de subida de imágenes
 app.use(AgendasRouters);
 app.use(DetalleventasRouter);
+
+async function executeTransfer() {
+  try {
+    console.log('Ejecutando transferencia de agendamientos a ventas...');
+    await transferAgendamientosToVentas();
+  } catch (error) {
+    console.error('Error durante la ejecución de la transferencia:', error);
+  }
+}
+
+// sirvepara ejercutar la función inicialmente y luego repetirla cada 3 segundos
+setInterval(executeTransfer, 2000); // 2000 milisegundos = 3 segundos
+
 
 // Manejo de errores
 app.use((err, req, res, next) => {

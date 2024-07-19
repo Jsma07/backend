@@ -5,7 +5,7 @@ exports.crearUsuario = async (req, res) => {
     console.log('Controlador crearUsuario alcanzado');
     try {
         // Extrae los datos del cuerpo de la solicitud
-        const { nombre, apellido, correo, telefono, rolId, contrasena,Documento, tipoDocumento } = req.body;
+        const { nombre, apellido, correo, telefono, rolId, contrasena,Documento, tipoDocumento, estado } = req.body;
         console.log('Datos del cuerpo de la solicitud:', req.body);
         const contrasenaCifrada = await bcrypt.hash(contrasena, 10);
 
@@ -16,7 +16,7 @@ exports.crearUsuario = async (req, res) => {
             telefono,
             rolId,
             contrasena :contrasenaCifrada ,
-            estado: 1,
+            estado,
             Documento,
             tipoDocumento
         });
