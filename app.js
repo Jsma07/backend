@@ -53,6 +53,7 @@ const ServiciosRouters = require('./routes/serviciosRouter')(upload); // Usar el
 const AgendasRouters = require('./routes/AgendasRouter');
 const LoginRoutes = require('./routes/loginRouter')
 const transferAgendamientosToVentas = require('./Models/transferencia');
+const adicionesrouter = require('./routes/adicionesrouter')
 
 // Configuración del puerto
 const PORT = process.env.PORT || 3000;
@@ -99,6 +100,9 @@ app.use(ServiciosRouters); // Importar y usar las rutas de servicios con middlew
 app.use(AgendasRouters);
 app.use(DetalleventasRouter);
 
+app.use(adicionesrouter);
+
+
 async function executeTransfer() {
   try {
     console.log('Ejecutando transferencia de agendamientos a ventas...');
@@ -109,7 +113,7 @@ async function executeTransfer() {
 }
 
 // sirvepara ejercutar la función inicialmente y luego repetirla cada 3 segundos
-setInterval(executeTransfer, 2000); // 2000 milisegundos = 3 segundos
+setInterval(executeTransfer, 50000); // 2000 milisegundos = 3 segundos
 
 
 // Manejo de errores
