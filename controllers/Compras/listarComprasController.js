@@ -18,27 +18,27 @@ exports.listarCompras = async (req, res) => {
             return res.status(404).json({ error: 'No se encontraron compras' });
         }
 
-        // Agrupar los resultados
         const comprasAgrupadas = rows.reduce((acc, row) => {
             if (!acc[row.IdCompra]) {
                 acc[row.IdCompra] = {
                     ...row,
                     fecha_compra: new Date(row.fecha_compra).toLocaleDateString(),
+                    subtotal_compra: parseFloat(row.subtotal_compra).toLocaleString('es-CO', { style: 'currency', currency: 'COP' }),
+                    descuento_compra: parseFloat(row.descuento_compra).toLocaleString('es-CO', { style: 'currency', currency: 'COP' }),
+                    iva_compra: parseFloat(row.iva_compra).toLocaleString('es-CO', { style: 'currency', currency: 'COP' }),
                     detalles: []
                 };
             }
-            if (row.IdDetalleCompra) { // Si hay detalles asociados
+            if (row.IdDetalleCompra) { 
                 acc[row.IdCompra].detalles.push({
                     IdDetalleCompra: row.IdDetalleCompra,
                     cantidad_insumo: row.cantidad_insumo,
-                    valorTotalInsumos: row.valorTotalInsumos,
-                    // Añadir otros campos de detallecompra según sea necesario
+                    valorTotalInsumos: parseFloat(row.valorTotalInsumos).toLocaleString('es-CO', { style: 'currency', currency: 'COP' }),
                 });
             }
             return acc;
         }, {});
 
-        // Convertir el objeto de agrupación a una lista
         const resultado = Object.values(comprasAgrupadas);
 
         res.status(200).json(resultado);

@@ -1,10 +1,10 @@
-const Compra = require('../../models/compras');
-const DetalleCompra = require('../../models/detallecompra');
-const Insumo = require('../../models/insumos');
+const Compra = require('../../Models/compras');
+const DetalleCompra = require('../../Models/detallecompra');
+const Insumo = require('../../Models/insumos');
 
 exports.guardarCompra = async (req, res) => {
     try {
-        const { fecha_compra, descuento_compra, iva_compra, estado_compra, detallesCompra, IdProveedor } = req.body;
+        const { fecha_compra, descuento_compra, iva_compra, estado_compra, detallesCompra } = req.body;
 
         let totalValorInsumos = 0;
 
@@ -27,7 +27,6 @@ exports.guardarCompra = async (req, res) => {
                 precio_unitario: detalle.precio_unitario,
                 cantidad_insumo: detalle.cantidad_insumo,
                 totalValorInsumos: valorInsumo, 
-                IdProveedor
             };
         }));
 
@@ -45,7 +44,6 @@ exports.guardarCompra = async (req, res) => {
             const nuevoDetalleCompra = await DetalleCompra.create({
                 IdCompra: nuevaCompra.IdCompra,
                 IdInsumo: detalle.IdInsumo,
-                IdProveedor: detalle.IdProveedor,
                 precio_unitario: detalle.precio_unitario,
                 cantidad_insumo: detalle.cantidad_insumo,
                 totalValorInsumos: detalle.totalValorInsumos 
