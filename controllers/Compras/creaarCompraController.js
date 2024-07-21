@@ -14,6 +14,7 @@ exports.guardarCompra = async (req, res) => {
             if (insumoExistente) {
                 insumoExistente.Cantidad += detalle.cantidad_insumo;
                 insumoExistente.Estado = insumoExistente.Cantidad > 0 ? 'Disponible' : 'Terminada';
+                insumoExistente.PrecioUnitario = detalle.precio_unitario; 
                 await insumoExistente.save();
             } else {
                 return res.status(400).json({ error: `Insumo con ID ${detalle.IdInsumo} no encontrado` });
