@@ -17,8 +17,6 @@ exports.listarCompras = async (req, res) => {
             console.log('No se encontraron compras');
             return res.status(404).json({ error: 'No se encontraron compras' });
         }
-
-        // Agrupar los resultados
         const comprasAgrupadas = rows.reduce((acc, row) => {
             if (!acc[row.IdCompra]) {
                 acc[row.IdCompra] = {
@@ -27,18 +25,16 @@ exports.listarCompras = async (req, res) => {
                     detalles: []
                 };
             }
-            if (row.IdDetalleCompra) { // Si hay detalles asociados
+            if (row.IdDetalleCompra) { 
                 acc[row.IdCompra].detalles.push({
                     IdDetalleCompra: row.IdDetalleCompra,
                     cantidad_insumo: row.cantidad_insumo,
                     valorTotalInsumos: row.valorTotalInsumos,
-                    // Añadir otros campos de detallecompra según sea necesario
                 });
             }
             return acc;
         }, {});
 
-        // Convertir el objeto de agrupación a una lista
         const resultado = Object.values(comprasAgrupadas);
 
         res.status(200).json(resultado);
