@@ -1,6 +1,4 @@
-const Sequelize = require('sequelize');
-
-// Conexión a la base de datos
+const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = new Sequelize(process.env.DB_DATABASE, process.env.DB_USER, process.env.DB_PASSWORD, {
   host: process.env.DB_HOST,
   dialect: 'mysql'
@@ -16,34 +14,12 @@ const DetalleCompra = sequelize.define('detallecompra', {
   IdCompra: {
     type: Sequelize.INTEGER,
     allowNull: false,
-    references: {
-      model: 'compras',
-      key: 'IdCompra'
-    }
+    references: { model: 'compras', key: 'IdCompra' }
   },
-  IdCategoria: {
+  IdInsumo: {
     type: Sequelize.INTEGER,
     allowNull: false,
-    references: {
-      model: 'categorias',
-      key: 'IdCategoria'
-    }
-  },
-  Dimagen_insumo: {
-    type: Sequelize.STRING,
-    allowNull: true
-  },
-  Dnombre_insumo: {
-    type: Sequelize.STRING,
-    allowNull: false
-  },
-  IdProveedor: {
-    type: Sequelize.INTEGER,
-    allowNull: false,
-    references: {
-      model: 'proveedores',
-      key: 'IdProveedor'
-    }
+    references: { model: 'insumos', key: 'IdInsumos' }
   },
   precio_unitario: {
     type: Sequelize.FLOAT,
@@ -62,36 +38,16 @@ const DetalleCompra = sequelize.define('detallecompra', {
   tableName: 'detallecompra',
   timestamps: false,
   indexes: [
-    {
-      name: "PRIMARY",
-      unique: true,
-      using: "BTREE",
-      fields: [
-        { name: "IdDetalle" }
-      ]
-    },
-    {
-      name: "IdCompra",
-      using: "BTREE",
-      fields: [
-        { name: "IdCompra" }
-      ]
-    },
-    {
-      name: "IdProveedor",
-      using: "BTREE",
-      fields: [
-        { name: "IdProveedor" }
-      ]
-    },
-    {
-      name: "IdCategoria",
-      using: "BTREE",
-      fields: [
-        { name: "IdCategoria" }
-      ]
-    }
+    { name: "PRIMARY", unique: true, using: "BTREE", fields: [ "IdDetalle" ] },
+    { name: "IdCompra", using: "BTREE", fields: [ "IdCompra" ] },
+    { name: "IdInsumo", using: "BTREE", fields: [ "IdInsumo" ] }
   ]
 });
+
+const Insumos = require('./insumos');
+const Compras = require('./compras');
+
+DetalleCompra.belongsTo(Insumos, { foreignKey: 'IdInsumo', as: 'insumo', targetKey: 'IdInsumos' });
+DetalleCompra.belongsTo(Compras, { foreignKey: 'IdCompra', as: 'compra', targetKey: 'IdCompra' });
 
 module.exports = DetalleCompra;

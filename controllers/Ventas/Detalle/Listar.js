@@ -47,6 +47,8 @@ async function ListarDetalleVentas(req, res) {
 
 async function BuscarDetalleVentaPorId(req, res) {
     const { id } = req.params;
+    console.log("ID ENCONTRADO:", id); // Asegúrate de que id se loguea correctamente aquí
+
     try {
         const detalleVenta = await DetalleVentas.findAll({
             where: { Idventa: id },

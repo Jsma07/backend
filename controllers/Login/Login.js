@@ -13,6 +13,11 @@ const Login = async(req, res)=>{
         if (!usuario) {
             return res.status(404).json({ mensaje: 'Usuario no encontrado' });
           }
+        
+        if (usuario.estado != 1){
+      return res.status(403).json({ mensaje: 'Usuario no está activo' });
+
+        }
 
           const contrasenaValida = await bcrypt.compare(contrasena, usuario.contrasena);
 
