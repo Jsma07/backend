@@ -1,6 +1,5 @@
 // VentasController.js
-const Cliente = require('../Models/clientes');
-const bcrypt = require('bcrypt');
+const Cliente = require('../models/clientes');
 
 
 async function Listar_Clientes() {
@@ -16,11 +15,6 @@ async function Listar_Clientes() {
 async function Crearclientes(req, res) {
     try {
       const datosCrearClientes = req.body;
-  
-      // Encriptar la contraseña
-      const saltRounds = 10; // Número de rondas para generar el salt
-      datosCrearClientes.Contrasena = await bcrypt.hash(datosCrearClientes.Contrasena, saltRounds);
-  
       const nuevoCliente = await Cliente.create(datosCrearClientes);
       res.status(201).json({ mensaje: 'Cliente creado', cliente: nuevoCliente });
     } catch (error) {
@@ -37,8 +31,6 @@ async function Crearclientes(req, res) {
       }
     }
   }
-
-
 
 async function ActualizarCliente(idCliente, datosActualizar) {
     try {
