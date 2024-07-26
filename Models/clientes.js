@@ -77,10 +77,7 @@ const Cliente = sequelize.define('clientes', {
       }
     }
   },
-  Direccion: {
-    type: Sequelize.STRING(100),
-   
-  },
+ 
   Contrasena: {
     type: Sequelize.STRING(100),
     allowNull: false,

@@ -109,10 +109,7 @@ const Empleado = sequelize.define('empleados', {
       notNull: {
         msg: 'El campo Contrasena es obligatorio'
       },
-      len: {
-        args: [10, 30],
-        msg: 'El campo Contrasena debe tener entre 8 y 100 caracteres'
-      }
+      
     }
   }
 }, {

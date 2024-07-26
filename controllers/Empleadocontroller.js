@@ -1,7 +1,7 @@
 // VentasController.js
-const ConexionDB = require('../Db/Conexion');
 const empleado=require('../Models/empleados')
-const Rol = require('../Models/roles'); // Asegúrate de tener el archivo y ruta correctos aquí
+const Rol = require('../Models/roles'); 
+const bcrypt = require('bcrypt');
 
 async function Listar_Empleados() {
     try {
@@ -13,33 +13,39 @@ async function Listar_Empleados() {
     }
 }
 
+
 async function CrearEmpleados(DatosCrearEmpleados, res) {
     try {
-        // Verifica si el rol especificado existe en la tabla de roles
-        const rolExistente = await Rol.findByPk(DatosCrearEmpleados.IdRol);
-        if (!rolExistente) {
-            return res.status(400).json({ mensaje: 'El rol especificado no existe' });
-        }
-
-        // Crea el empleado solo si el rol existe
-        const empleadoCreado = await empleado.create(DatosCrearEmpleados);
-        res.status(200).json({ mensaje: 'Empleado creado correctamente' });
-        return empleadoCreado.id; 
-        
+      // Verifica si el rol especificado existe en la tabla de roles
+      const rolExistente = await Rol.findByPk(DatosCrearEmpleados.IdRol);
+      if (!rolExistente) {
+        return res.status(400).json({ mensaje: 'El rol especificado no existe' });
+      }
+  
+      // Encriptar la contraseña
+      const saltRounds = 10; 
+      DatosCrearEmpleados.Contrasena = await bcrypt.hash(DatosCrearEmpleados.Contrasena, saltRounds);
+  
+      // Crea el empleado solo si el rol existe
+      const empleadoCreado = await empleado.create(DatosCrearEmpleados);
+      res.status(200).json({ mensaje: 'Empleado creado correctamente' });
+      return empleadoCreado.id;
+  
     } catch (error) {
-        // Manejar el error de validación
-        if (error.name === 'SequelizeValidationError') {
-            const errores = error.errors.map(err => ({
-                campo: err.path,
-                mensaje: err.message
-            }));
-            res.status(400).json({ mensaje: 'Error de validación', errores });
-        } else {
-            console.log("Ocurrió un error al crear el empleado: ", error);
-            res.status(500).json({ mensaje: 'Ocurrió un error al crear el empleado' });
-        }
+      // Manejar el error de validación
+      if (error.name === 'SequelizeValidationError') {
+        const errores = error.errors.map(err => ({
+          campo: err.path,
+          mensaje: err.message
+        }));
+        res.status(400).json({ mensaje: 'Error de validación', errores });
+      } else {
+        console.log("Ocurrió un error al crear el empleado: ", error);
+        res.status(500).json({ mensaje: 'Ocurrió un error al crear el empleado' });
+      }
     }
-}
+  }
+
 async function ActualizarEmpleado(idEmpleado, datosEmpleado) {
     try {
         const empleados = await empleado.findByPk(idEmpleado);
