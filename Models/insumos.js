@@ -20,26 +20,9 @@ const Insumo = sequelize.define('insumos', {
     type: Sequelize.FLOAT,
     allowNull: false
   },
-  usos_unitarios: {
-    type: Sequelize.INTEGER,
-    allowNull: false
-  },
   PrecioUnitario: {
     type: Sequelize.FLOAT,
     allowNull: false
-  },
-  UsosDisponibles: {
-    type: Sequelize.INTEGER,
-    allowNull: false,
-    validate: {
-      isInt: {
-        msg: 'Los usos disponibles deben ser un número entero.'
-      },
-      min: {
-        args: [10],
-        msg: 'Los usos disponibles deben de ser minimo de 10.'
-      }
-    }
   },
   Estado: {
     type: Sequelize.STRING(20),

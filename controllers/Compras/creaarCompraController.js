@@ -8,15 +8,27 @@ exports.guardarCompra = async (req, res) => {
 
         let totalValorInsumos = 0;
 
+        console.log("Detalles de la compra recibidos:", detallesCompra);
+
         const detallesCompraGuardados = await Promise.all(detallesCompra.map(async detalle => {
+            console.log("Procesando detalle:", detalle);
+
             let insumoExistente = await Insumo.findOne({ where: { IdInsumos: detalle.IdInsumo } });
 
             if (insumoExistente) {
+                console.log("Insumo encontrado antes de la actualización:", insumoExistente);
+
+                console.log("Cantidad actual antes de actualizar:", insumoExistente.Cantidad);
                 insumoExistente.Cantidad += detalle.cantidad_insumo;
-                insumoExistente.Estado = insumoExistente.Cantidad > 0 ? 'Disponible' : 'Terminada';
+                console.log("Cantidad actual después de actualizar:", insumoExistente.Cantidad);
+                                insumoExistente.Estado = insumoExistente.Cantidad > 0 ? 'Disponible' : 'Terminado';
                 insumoExistente.PrecioUnitario = detalle.precio_unitario; 
+                
                 await insumoExistente.save();
+
+                console.log("Insumo actualizado:", insumoExistente);
             } else {
+                console.error(`Insumo con ID ${detalle.IdInsumo} no encontrado`);
                 return res.status(400).json({ error: `Insumo con ID ${detalle.IdInsumo} no encontrado` });
             }
 
@@ -62,4 +74,4 @@ exports.guardarCompra = async (req, res) => {
         console.error("Error al guardar la compra", error);
         res.status(500).json({ error: 'Error al guardar la compra' });
     }
-}
+};
