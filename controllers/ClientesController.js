@@ -15,7 +15,9 @@ async function Listar_Clientes() {
 async function Crearclientes(req, res) {
     try {
       const datosCrearClientes = req.body;
+
       const nuevoCliente = await Cliente.create(datosCrearClientes);
+
       res.status(201).json({ mensaje: 'Cliente creado', cliente: nuevoCliente });
     } catch (error) {
       // Manejar el error de validación

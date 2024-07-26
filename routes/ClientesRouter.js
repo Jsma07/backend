@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const authorize = require('../middleware/auth')
 const ClientesController = require("../controllers/ClientesController")
+const {recuperarContrasena } = require('../controllers/contrasena/mailer')
+
+router.post('/api/recuperarContrasena', recuperarContrasena);
 
 
 router.get('/jackenail/Listar_Clientes', authorize(['Clientes']), async (req, res) => {
@@ -42,6 +45,8 @@ router.put('/Jackenail/CambiarEstado/:id', authorize(['Clientes']), async (req, 
         res.status(500).json({ message: 'Error al cambiar el estado del cliente' });
     }
 });
+
+
 
 
 

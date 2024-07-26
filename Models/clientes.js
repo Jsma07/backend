@@ -79,12 +79,7 @@ const Cliente = sequelize.define('clientes', {
   },
   Direccion: {
     type: Sequelize.STRING(100),
-    allowNull: false,
-    validate: {
-      notNull: {
-        msg: 'El campo Dirección es obligatorio'
-      }
-    }
+   
   },
   Contrasena: {
     type: Sequelize.STRING(100),
