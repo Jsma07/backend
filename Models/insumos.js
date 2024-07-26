@@ -12,6 +12,18 @@ const Insumo = sequelize.define('insumos', {
     allowNull: false,
     primaryKey: true
   },
+  Idproveedor: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    validate: {
+      notEmpty: {
+        msg: 'El ID del proveedor no puede estar vacío.'
+      },
+      isInt: {
+        msg: 'El ID del proveedor debe ser un número entero.'
+      }
+    }
+  },
   NombreInsumos: {
     type: Sequelize.STRING(60),
     allowNull: false
@@ -77,8 +89,14 @@ const Insumo = sequelize.define('insumos', {
         { name: "IdCategoria" },
       ]
     },
+    {
+      name: "Idproveedor",
+      using: "BTREE",
+      fields: [
+        { name: "Idproveedor" },
+      ]
+    }
   ]
 });
 
 module.exports = Insumo;
-
