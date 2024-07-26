@@ -1,6 +1,6 @@
 const DetalleVentas = require('../../../Models/detalleventas');
 const Ventas = require('../../../Models/ventas');
-const Insumos = require('../../../Models/insumos');
+const Adiciones = require('../../../Models/adiciones');
 const Cliente = require('../../../Models/clientes');
 const Empleado = require('../../../Models/empleados');
 const Servicio = require('../../../Models/servicios');
@@ -32,9 +32,9 @@ async function ListarDetalleVentas(req, res) {
                     ]
                 },
                 {
-                    model: Insumos,
-                    as: 'insumo',
-                    attributes: ['NombreInsumos', 'Imagen', 'PrecioUnitario']
+                    model: Adiciones,
+                    as: 'adicion',
+                    attributes: ['NombreAdiciones', 'Img', 'Precio']
                 }
             ]
         });
@@ -74,12 +74,11 @@ async function BuscarDetalleVentaPorId(req, res) {
                         }
                     ],
                     attributes: ['Iva', 'Subtotal', 'Fecha', 'Descuento', 'Total', 'Estado']
-
                 },
                 {
-                    model: Insumos,
-                    as: 'insumo',
-                    attributes: ['NombreInsumos', 'Imagen', 'PrecioUnitario']
+                    model: Adiciones,
+                    as: 'adicion',
+                    attributes: ['NombreAdiciones', 'Img', 'Precio']
                 }
             ]
         });
@@ -88,17 +87,17 @@ async function BuscarDetalleVentaPorId(req, res) {
             return res.status(404).json({ error: 'Detalle de venta no encontrado' });
         }
 
-        // Agrupa los insumos por Idventa
+        // Agrupa las adiciones por Idventa
         const ventasAgrupadas = detalleVenta.reduce((acc, curr) => {
             const idVenta = curr.Idventa;
             if (!acc[idVenta]) {
                 acc[idVenta] = {
                     idVenta,
                     venta: curr.venta,
-                    insumos: []
+                    adiciones: []
                 };
             }
-            acc[idVenta].insumos.push(curr.insumo);
+            acc[idVenta].adiciones.push(curr.adicion);
             return acc;
         }, {});
 
@@ -110,7 +109,6 @@ async function BuscarDetalleVentaPorId(req, res) {
         res.status(500).json({ error: 'Hubo un error al procesar la solicitud' });
     }
 }
-
 
 module.exports = {
     ListarDetalleVentas,

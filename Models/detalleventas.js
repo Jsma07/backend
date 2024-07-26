@@ -1,6 +1,10 @@
 const { Sequelize, DataTypes } = require('sequelize');
+
+const Ventas = require('./ventas');
+const Adiciones = require('./adiciones');
+
 const sequelize = new Sequelize(process.env.DB_DATABASE, process.env.DB_USER, process.env.DB_PASSWORD, {
-  host: process.env.DB_HOST, 
+  host: process.env.DB_HOST,
   dialect: 'mysql'
 });
 
@@ -19,21 +23,13 @@ const DetalleVentas = sequelize.define('detalleventas', {
       key: 'idVentas'
     }
   },
-  Idinsumo: {
+  IdAdiciones: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,  // Cambiar a false si es obligatorio
     references: {
-      model: 'insumos',
-      key: 'IdInsumos'
+      model: 'adiciones',
+      key: 'IdAdiciones'
     }
-  },
-  Usos: {
-    type: DataTypes.INTEGER,
-    allowNull: false
-  },
-  Precio_unitario: {
-    type: DataTypes.DOUBLE,
-    allowNull: false
   }
 }, {
   sequelize,
@@ -56,20 +52,16 @@ const DetalleVentas = sequelize.define('detalleventas', {
       ]
     },
     {
-      name: "Idinsumo",
+      name: "IdAdiciones",
       using: "BTREE",
       fields: [
-        { name: "Idinsumo" },
+        { name: "IdAdiciones" },
       ]
     },
   ]
 });
 
-// Relaciones
-const Ventas = require('./ventas');
-const Insumos = require('./insumos');
-
 DetalleVentas.belongsTo(Ventas, { foreignKey: 'Idventa', as: 'venta' });
-DetalleVentas.belongsTo(Insumos, { foreignKey: 'Idinsumo', as: 'insumo' });
+DetalleVentas.belongsTo(Adiciones, { foreignKey: 'IdAdiciones', as: 'adicion' });
 
 module.exports = DetalleVentas;
