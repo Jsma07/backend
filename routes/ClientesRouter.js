@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const authorize = require('../middleware/auth')
-const ClientesController = require("../controllers/ClientesController")
+const ClientesController = require("../controllers/Clientes/ClientesController")
+const cambiarContrasenan =require('../controllers/Clientes/Contraseña')
 
-
-router.get('/jackenail/Listar_Clientes', authorize(['Clientes']), async (req, res) => {
+router.get('/jackenail/Listar_Clientes',  async (req, res) => {
     try {
         const ventas = await ClientesController.Listar_Clientes();
         res.json(ventas);
@@ -15,7 +15,7 @@ router.get('/jackenail/Listar_Clientes', authorize(['Clientes']), async (req, re
 });
 
 
-router.post('/Jackenail/RegistrarClientes',authorize(['Clientes']), ClientesController.Crearclientes)
+router.post('/Jackenail/RegistrarClientes', ClientesController.Crearclientes)
 
 
 router.put('/Jackenail/Actualizar/:id',authorize(['Clientes']), async (req, res) => { 
@@ -30,7 +30,7 @@ router.put('/Jackenail/Actualizar/:id',authorize(['Clientes']), async (req, res)
     }
 });
 
-router.put('/Jackenail/CambiarEstado/:id', authorize(['Clientes']), async (req, res) => { 
+router.put('/Jackenail/CambiarEstadocliente/:id',async (req, res) => { 
     const idCliente = req.params.id;
     const nuevoEstado = req.body.Estado; 
 
@@ -43,8 +43,7 @@ router.put('/Jackenail/CambiarEstado/:id', authorize(['Clientes']), async (req, 
     }
 });
 
-
-
+router.put('/Jackenail/CambiarContrasena/:idCliente', cambiarContrasenan.cambiarContrasena);
 
 
 module.exports = router
