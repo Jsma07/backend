@@ -1,6 +1,6 @@
 // VentasController.js
-const empleado=require('../Models/empleados')
-const Rol = require('../Models/roles'); 
+const empleado=require('../../Models/empleados')
+const Rol = require('../../Models/roles'); 
 const bcrypt = require('bcrypt');
 
 async function Listar_Empleados() {
