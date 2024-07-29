@@ -1,5 +1,5 @@
 // VentasController.js
-const Cliente = require('../models/clientes');
+const Cliente = require('../Models/clientes');
 
 
 async function Listar_Clientes() {
