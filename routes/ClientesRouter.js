@@ -4,6 +4,10 @@ const authorize = require('../middleware/auth')
 const ClientesController = require("../controllers/Clientes/ClientesController")
 const cambiarContrasenan =require('../controllers/Clientes/Contraseña')
 
+const { recuperarContrasena } = require('../controllers/contrasena/mailer');
+
+router.post('/api/recuperarContrasena', recuperarContrasena);
+
 router.get('/jackenail/Listar_Clientes',  async (req, res) => {
     try {
         const ventas = await ClientesController.Listar_Clientes();
