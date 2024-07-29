@@ -52,6 +52,9 @@ const DetalleventasRouter = require('./routes/DetalleventasRouter');
 const ServiciosRouters = require('./routes/serviciosRouter')(upload); // Usar el middleware de subida para servicios
 const AgendasRouters = require('./routes/AgendasRouter');
 const LoginRoutes = require('./routes/loginRouter')
+const transferAgendamientosToVentas = require('./Models/transferencia');
+const adicionesrouter = require('./routes/adicionesrouter')
+
 // Configuración del puerto
 const PORT = process.env.PORT || 3000;
 
@@ -96,6 +99,22 @@ app.use(CategoriasRouters);
 app.use(ServiciosRouters); // Importar y usar las rutas de servicios con middleware de subida de imágenes
 app.use(AgendasRouters);
 app.use(DetalleventasRouter);
+
+app.use(adicionesrouter);
+
+
+async function executeTransfer() {
+  try {
+    console.log('Ejecutando transferencia de agendamientos a ventas...');
+    await transferAgendamientosToVentas();
+  } catch (error) {
+    console.error('Error durante la ejecución de la transferencia:', error);
+  }
+}
+
+// sirvepara ejercutar la función inicialmente y luego repetirla cada 3 segundos
+setInterval(executeTransfer, 50000); // 2000 milisegundos = 3 segundos
+
 
 // Manejo de errores
 app.use((err, req, res, next) => {

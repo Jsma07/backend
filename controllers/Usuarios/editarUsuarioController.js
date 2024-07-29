@@ -21,6 +21,9 @@ exports.actualizarContrasena = async (req, res) => {
         const { id } = req.params;
         const { newPassword } = req.body;
 
+        if (!newPassword || newPassword.length < 8) {
+            return res.status(400).json({ error: 'La contraseña debe tener al menos 8 caracteres.' });
+        }
         const contrasenaCifrada = await bcrypt.hash(newPassword, 10);
 
         const usuarioActualizado = await Usuario.update(

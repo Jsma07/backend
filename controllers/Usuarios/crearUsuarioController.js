@@ -1,5 +1,8 @@
 const Usuario = require('../../Models/usuarios'); //Importa el modelo de usuario
 const bcrypt = require('bcrypt');
+const Empleados = require('../../Models/empleados')
+const Clientes = require('../../Models/clientes')
+
 
 exports.crearUsuario = async (req, res) => {
     console.log('Controlador crearUsuario alcanzado');
@@ -30,13 +33,38 @@ exports.crearUsuario = async (req, res) => {
     }
 };
 exports.verificarCorreo = async (req, res) => {
+    const { correo } = req.params;
+
     try {
-      console.log('Correo a verificar:', req.params.correo);
-      const correoExiste = await Usuario.findOne({ where: { correo: req.params.correo } });
-      console.log('Resultado de la consulta:', correoExiste);
-      res.status(200).json({ existe: correoExiste !== null });
-    } catch (error) {
-      console.error('Error al verificar correo:', error);
-      res.status(500).json({ error: 'Hubo un error al verificar el correo. Por favor, inténtalo de nuevo más tarde.' });
-    }
+        const admin = await Usuario.findOne({ where: { correo } });
+        const empleado = await Empleados.findOne({ where: { correo } });
+        const cliente = await Clientes.findOne({ where: { correo } });
+    
+        if (admin || empleado || cliente) {
+          return res.status(400).json({ mensaje: 'El correo ya está registrado en el sistema.' });
+        }
+    
+        res.status(200).json({ mensaje: 'El correo está disponible.' });
+      } catch (error) {
+        console.error('Error al verificar el correo:', error);
+        res.status(500).json({ mensaje: 'Error interno del servidor.' });
+      }
+};
+exports.verificarDocumento = async (req, res) => {
+    const { documento } = req.params;
+
+    try {
+        const admin = await Usuario.findOne({ where: { documento } });
+        const empleado = await Empleados.findOne({ where: { documento } });
+        const cliente = await Clientes.findOne({ where: { documento } });
+    
+        if (admin || empleado || cliente) {
+          return res.status(400).json({ mensaje: 'El documento ya está registrado en el sistema.' });
+        }
+    
+        res.status(200).json({ mensaje: 'El documento está disponible.' });
+      } catch (error) {
+        console.error('Error al verificar el documento:', error);
+        res.status(500).json({ mensaje: 'Error interno del servidor.' });
+      }
 };

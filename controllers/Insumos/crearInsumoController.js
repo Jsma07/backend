@@ -1,8 +1,9 @@
 const Insumo = require('../../Models/insumos');
+const Insumo = require('../../Models/insumos');
 const path = require('path');
 const fs = require('fs');
 
-const MAX_FILE_SIZE = 1024 * 1024; 
+const MAX_FILE_SIZE = 1024 * 1024; // 1 MB
 
 exports.guardarInsumo = async (req, res) => {
     console.log('Controlador guardar alcanzado');
@@ -10,7 +11,11 @@ exports.guardarInsumo = async (req, res) => {
         console.log("Body:", req.body);
         console.log("File:", req.file);
 
-        let { NombreInsumos, Cantidad, usos_unitarios, PrecioUnitario, Estado, IdCategoria } = req.body;
+        let { NombreInsumos, Estado, IdCategoria, Idproveedor} = req.body;
+
+        if (!NombreInsumos || !IdCategoria || !Idproveedor) {
+            return res.status(400).json({ error: 'Todos los campos son requeridos' });
+        }
 
         const formatNombreInsumo = (nombre) => {
             return nombre.charAt(0).toUpperCase() + nombre.slice(1).toLowerCase();
@@ -28,9 +33,7 @@ exports.guardarInsumo = async (req, res) => {
 
         let imgPath = null;
         if (req.file) {
-            // Verificar tamaño del archivo
             if (req.file.size > MAX_FILE_SIZE) {
-                // Eliminar archivo subido
                 fs.unlinkSync(req.file.path);
                 return res.status(400).json({ error: 'El tamaño del archivo excede el límite permitido (1 MB).' });
             }
@@ -39,24 +42,18 @@ exports.guardarInsumo = async (req, res) => {
             return res.status(400).json({ error: 'Es necesario subir una imagen del insumo.' });
         }
 
-        let UsosDisponibles = Cantidad * usos_unitarios;
-
-        if (Cantidad > 0) {
-            Estado = 'Disponible';
-        } else {
-            Estado = 'Terminado';
-        }
+        const Cantidad = 0;
+        const PrecioUnitario = 0;
+        Estado = Cantidad > 0 ? 'Disponible' : 'Terminado';
 
         const nuevoInsumo = await Insumo.create({
             Imagen: imgPath,
             NombreInsumos,
             Cantidad,
-            usos_unitarios,
             PrecioUnitario,
-            UsosDisponibles,
             Estado,
             IdCategoria,
-            
+            Idproveedor
         });
 
         console.log('Insumo guardado:', nuevoInsumo);
@@ -73,3 +70,4 @@ exports.guardarInsumo = async (req, res) => {
         }
     }
 };
+

@@ -1,12 +1,74 @@
-const ConexionDB = require('../../../Db/Conexion');
+const DetalleCompra = require('../../../Models/detallecompra');
+const Compras = require('../../../Models/compras');
+const Insumos = require('../../../Models/insumos');
 
-exports.listarDetalleCompras = async (req, res) => { 
+async function listarDetalleCompras(req, res) {
     try {
-        const connection = await ConexionDB(); 
-        const [rows, fields] = await connection.query('SELECT * FROM detalleCompra');
-        res.status(200).json(rows);
+        const listaDetalleCompras = await DetalleCompra.findAll({
+            include: [
+                { model: Compras, as: 'compra' },
+                { model: Insumos, as: 'insumo', attributes: ['NombreInsumos', 'imagen', 'PrecioUnitario'] }
+            ]
+        });
+        res.json(listaDetalleCompras);
     } catch (error) {
-        console.error("Error al buscar detalle", error);
-        res.status(500).json({ error: 'Error al buscar detallr' });
+        console.error("Error al buscar detalles de compra:", error);
+        res.status(500).json({ error: 'Error al buscar detalles de compra' });
     }
 }
+
+async function BuscarDetalleCompraPorId(req, res) {
+    const { id } = req.params;
+    console.log("ID ENCONTRADO:", id);
+
+    try {
+        const detalleCompra = await DetalleCompra.findAll({
+            where: { IdCompra: id },
+            include: [
+                {
+                    model: Compras,
+                    as: 'compra',
+                    attributes: ['fecha_compra', 'descuento_compra', 'iva_compra', 'subtotal_compra', 'estado_compra']
+                },
+                {
+                    model: Insumos,
+                    as: 'insumo',
+                    attributes: ['NombreInsumos', 'imagen', 'PrecioUnitario']
+                }
+            ]
+        });
+
+        if (!detalleCompra || detalleCompra.length === 0) {
+            return res.status(404).json({ error: 'Detalle de compra no encontrado' });
+        }
+
+        const comprasAgrupadas = detalleCompra.reduce((acc, curr) => {
+            const idCompra = curr.IdCompra;
+            if (!acc[idCompra]) {
+                acc[idCompra] = {
+                    idCompra,
+                    compra: curr.compra,
+                    insumos: []
+                };
+            }
+            acc[idCompra].insumos.push({
+                NombreInsumos: curr.insumo.NombreInsumos,
+                imagen: curr.insumo.imagen,
+                PrecioUnitario: curr.insumo.PrecioUnitario,
+                cantidad_insumo: curr.cantidad_insumo,
+                totalValorInsumos: curr.totalValorInsumos
+            });
+            return acc;
+        }, {});
+
+        const resultado = Object.values(comprasAgrupadas);
+
+        res.json(resultado);
+    } catch (error) {
+        console.error("Ocurrió un error al buscar el detalle de compra:", error);
+        res.status(500).json({ error: 'Hubo un error al procesar la solicitud' });
+    }
+}
+
+
+module.exports = { listarDetalleCompras, BuscarDetalleCompraPorId };
