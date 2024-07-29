@@ -1,5 +1,4 @@
 const Insumo = require('../../Models/insumos');
-const Insumo = require('../../Models/insumos');
 const path = require('path');
 const fs = require('fs');
 
