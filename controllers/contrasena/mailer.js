@@ -1,22 +1,45 @@
 const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
-const Cliente = require('../../models/clientes');
+const Usuario = require('../../Models/usuarios'); // Asegúrate de que la ruta sea correcta
 
 // Función para generar una contraseña aleatoria
 const generarContrasenaAleatoria = (longitud = 12) => {
   const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+[]{}|;:,.<>?';
+  const mayusculas = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const numeros = '0123456789';
+  const especiales = '!@#$%^&*()_+[]{}|;:,.<>?';
+  const minusculas = 'abcdefghijklmnopqrstuvwxyz';
+
   let contrasena = '';
-  for (let i = 0; i < longitud; i++) {
+
+  // Asegurar al menos una mayúscula, un número y un carácter especial
+  contrasena += mayusculas[Math.floor(Math.random() * mayusculas.length)];
+  contrasena += numeros[Math.floor(Math.random() * numeros.length)];
+  contrasena += especiales[Math.floor(Math.random() * especiales.length)];
+  contrasena += minusculas[Math.floor(Math.random() * minusculas.length)];
+
+  // Rellenar el resto de la contraseña
+  for (let i = contrasena.length; i < longitud; i++) {
     const indice = Math.floor(Math.random() * caracteres.length);
     contrasena += caracteres[indice];
   }
+
+  // Mezclar la contraseña para evitar patrones predecibles
+  contrasena = contrasena.split('').sort(() => 0.5 - Math.random()).join('');
+
   return contrasena;
 };
 
 // Función para cifrar y actualizar la contraseña
 const actualizarContrasena = async (id, nuevaContrasena) => {
-  const contrasenaCifrada = await bcrypt.hash(nuevaContrasena, 10);
-  await Cliente.update({ contrasena: contrasenaCifrada }, { where: { IdCliente: id } }); // Asegúrate de usar el nombre correcto del campo IdCliente
+  try {
+    const contrasenaCifrada = await bcrypt.hash(nuevaContrasena, 10);
+    await Usuario.update({ contrasena: contrasenaCifrada }, { where: { id: id } });
+    console.log('Contraseña cifrada y actualizada en la base de datos:', contrasenaCifrada);
+  } catch (error) {
+    console.error('Error al actualizar la contraseña:', error);
+    throw new Error('Error al actualizar la contraseña');
+  }
 };
 
 // Función para enviar un correo con la nueva contraseña
@@ -24,20 +47,21 @@ const enviarCorreo = async (correo, nuevaContrasena) => {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: 'p42583532@gmail.com', // Reemplaza con tu email
-      pass: 'Perez.M123' // Reemplaza con la contraseña de tu email
+      user: 'eduardomosquera12346@gmail.com', // Reemplaza con tu email
+      pass: 'exnl cumb oeme cudy' // Reemplaza con la contraseña de tu email
     }
   });
 
   const mailOptions = {
-    from: 'p42583532@gmail.com',
+    from: 'eduardomosquera12346@gmail.com', // Cambia esto por tu correo
     to: correo,
-    subject: 'Recuperación de Contraseña',
-    text: `Tu nueva contraseña es: ${nuevaContrasena}`
+    subject: 'Recuperación de Contraseña Jake Nails',
+    text: `Hola querid@ usuario de nuestro aplicativo Jake Nails, esta es tu nueva contraseña es: ${nuevaContrasena}`
   };
 
   try {
     await transporter.sendMail(mailOptions);
+    console.log('Correo enviado a:', correo);
   } catch (error) {
     console.error('Error al enviar el correo:', error);
     throw new Error('Error al enviar el correo');
@@ -51,21 +75,21 @@ const recuperarContrasena = async (req, res) => {
   console.log('Correo recibido:', correo);
 
   try {
-    // Busca al cliente por correo
-    const cliente = await Cliente.findOne({ where: { Correo: correo } }); // Asegúrate de usar el nombre correcto del campo Correo
-    if (!cliente) {
-      console.log('Cliente no encontrado');
-      return res.status(404).json({ mensaje: 'Cliente no encontrado' });
+    // Busca al usuario por correo
+    const usuario = await Usuario.findOne({ where: { correo: correo } });
+    if (!usuario) {
+      console.log('Usuario no encontrado');
+      return res.status(404).json({ mensaje: 'Usuario no encontrado' });
     }
 
-    console.log('Cliente encontrado:', cliente);
+    console.log('Usuario encontrado:', usuario);
 
     // Genera una nueva contraseña
     const nuevaContrasena = generarContrasenaAleatoria();
     console.log('Nueva contraseña generada:', nuevaContrasena);
 
     // Actualiza la contraseña en la base de datos
-    await actualizarContrasena(cliente.IdCliente, nuevaContrasena);
+    await actualizarContrasena(usuario.id, nuevaContrasena);
     console.log('Contraseña actualizada en la base de datos');
 
     // Envía la nueva contraseña por correo

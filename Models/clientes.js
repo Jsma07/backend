@@ -12,6 +12,15 @@ const Cliente = sequelize.define('clientes', {
     allowNull: false,
     primaryKey: true
   },
+  tipoDocumento: {
+    type: Sequelize.STRING(10),
+    allowNull: false,
+    validate: {
+      notNull: {
+        msg: 'El campo tipo de documento es obligatorio'
+      },
+    }
+  },
   Nombre: {
     type: Sequelize.STRING(50),
     allowNull: false,
