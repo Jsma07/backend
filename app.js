@@ -54,6 +54,7 @@ const AgendasRouters = require('./routes/AgendasRouter');
 const LoginRoutes = require('./routes/loginRouter')
 const transferAgendamientosToVentas = require('./Models/transferencia');
 const adicionesrouter = require('./routes/adicionesrouter')
+const Salida = require('./routes/Salida')
 
 // Configuración del puerto
 const PORT = process.env.PORT || 3000;
@@ -99,6 +100,8 @@ app.use(CategoriasRouters);
 app.use(ServiciosRouters); // Importar y usar las rutas de servicios con middleware de subida de imágenes
 app.use(AgendasRouters);
 app.use(DetalleventasRouter);
+app.use(Salida);
+
 
 app.use(adicionesrouter);
 
