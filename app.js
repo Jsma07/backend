@@ -103,17 +103,17 @@ app.use(DetalleventasRouter);
 app.use(adicionesrouter);
 
 
-async function executeTransfer() {
-  try {
-    console.log('Ejecutando transferencia de agendamientos a ventas...');
-    await transferAgendamientosToVentas();
-  } catch (error) {
-    console.error('Error durante la ejecución de la transferencia:', error);
-  }
-}
+// async function executeTransfer() {
+//   try {
+//     console.log('Ejecutando transferencia de agendamientos a ventas...');
+//     await transferAgendamientosToVentas();
+//   } catch (error) {
+//     console.error('Error durante la ejecución de la transferencia:', error);
+//   }
+// }
 
-// sirvepara ejercutar la función inicialmente y luego repetirla cada 3 segundos
-setInterval(executeTransfer, 50000); // 2000 milisegundos = 3 segundos
+// // sirvepara ejercutar la función inicialmente y luego repetirla cada 3 segundos
+// setInterval(executeTransfer, 50000); // 2000 milisegundos = 3 segundos
 
 
 // Manejo de errores
