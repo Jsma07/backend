@@ -31,6 +31,15 @@ const Salida = sequelize.define('salidas', {
       }
     }
   },
+  Descripcion: {
+    type: Sequelize.TEXT,
+    allowNull: false,
+    validate: {
+      notEmpty: {
+        msg: 'La descripcion no puede estar vacía.'
+      }
+    }
+  },
   Cantidad: {
     type: Sequelize.INTEGER,
     allowNull: false,
