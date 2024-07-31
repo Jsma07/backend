@@ -69,6 +69,10 @@ const Insumo = sequelize.define('insumos', {
         msg: 'La imagen no puede estar vacía.'
       }
     }
+  },
+  isDeleted: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: false
   }
 }, {
   tableName: 'insumos',

@@ -1,19 +1,26 @@
-
 const Insumo = require('../../Models/insumos');
 const { Op } = require('sequelize');
 const fs = require('fs');
 const path = require('path');
 
-// Controlador para editar un insumo
+const formatNombreCategoria = (nombre) => {
+    const nombreSinEspacios = nombre.trim();
+    const nombreMinusculas = nombreSinEspacios.toLowerCase();
+    const nombreFormateado = nombreMinusculas.charAt(0).toUpperCase() + nombreMinusculas.slice(1);
+
+    return nombreFormateado;
+};
+
 exports.editarInsumo = async (req, res) => {
     try {
         const { IdInsumos } = req.params;
-        const { NombreInsumos, Cantidad, PrecioUnitario, Estado, IdCategoria } = req.body;
+        const { NombreInsumos, Cantidad, PrecioUnitario, Estado, IdCategoria, Idproveedor } = req.body;
 
-        // Verificar si el nombre del insumo ya está registrado para otro insumo
+        const formattedNombre = formatNombreCategoria(NombreInsumos);
+
         const existingInsumo = await Insumo.findOne({
             where: {
-                NombreInsumos,
+                NombreInsumos: formattedNombre,
                 IdInsumos: {
                     [Op.ne]: IdInsumos
                 }
@@ -30,21 +37,12 @@ exports.editarInsumo = async (req, res) => {
             return res.status(404).json({ error: 'Insumo no encontrado' });
         }
 
-        // Construir objeto con los campos actualizados
-        let updatedFields = {
-            NombreInsumos,
-            Cantidad,
-            PrecioUnitario,
-            Estado,
-            IdCategoria
-        };
+        let updatedFields = { NombreInsumos: formattedNombre, Cantidad, PrecioUnitario, Estado, IdCategoria, Idproveedor};
 
-        // Verificar si se subió una nueva imagen
         if (req.file) {
             const newImagePath = `/uploads/insumos/${req.file.filename}`;
             updatedFields.Imagen = newImagePath;
 
-            // Eliminar la imagen anterior si existe
             if (updateInsumo.Imagen) {
                 const oldImagePath = path.join(__dirname, '../../', updateInsumo.Imagen);
                 if (fs.existsSync(oldImagePath)) {
@@ -53,42 +51,11 @@ exports.editarInsumo = async (req, res) => {
             }
         }
 
-        // Actualizar el insumo con los campos actualizados
         await updateInsumo.update(updatedFields);
 
         res.status(200).json({ mensaje: 'Insumo actualizado correctamente', insumo: updateInsumo });
     } catch (error) {
         if (error.name === 'SequelizeValidationError') {
-            // Manejo de errores de validación de Sequelize
-            const errores = error.errors.map(err => err.message);
-            return res.status(400).json({ errores });
-        } else {
-            console.error("Error al editar el insumo", error);
-            res.status(500).json({ error: 'Error al editar el insumo' });
-        }
-    }
-};
-
-// Controlador para actualizar las existencias de un insumo
-exports.existenciaseditar = async (req, res) => {
-    try {
-        const { IdInsumos } = req.params;
-        const { Cantidad, UsosDisponibles } = req.body;
-
-        const updateInsumo = await Insumo.findByPk(IdInsumos);
-        if (!updateInsumo) {
-            return res.status(404).json({ error: 'Insumo no encontrado' });
-        }
-
-        await updateInsumo.update({
-            Cantidad,
-            UsosDisponibles
-        });
-
-        res.status(200).json({ mensaje: 'Insumo actualizado correctamente', insumo: updateInsumo });
-    } catch (error) {
-        if (error.name === 'SequelizeValidationError') {
-            // Manejo de errores de validación de Sequelize
             const errores = error.errors.map(err => err.message);
             return res.status(400).json({ errores });
         } else {
