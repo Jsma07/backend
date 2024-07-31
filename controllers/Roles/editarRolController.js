@@ -1,19 +1,23 @@
 const Roles = require('../../Models/roles');
 const Permisos = require('../../Models/permisos');
+const { DatosFormateados } = require('../Usuarios/formateoValidaciones');
+
 
 const editarRol = async (req, res) => {
     const { id } = req.params;
-    const { nombre, permisos, EstadoRol } = req.body;
+    let { nombre, permisos, EstadoRol } = req.body;
 
     try {
+        nombre = DatosFormateados(nombre);
+
         // Validar el nombre
         if (!nombre || nombre.trim() === '') {
             return res.status(400).json({ error: "Nombre del rol requerido" });
         }
 
         // Validar los permisos
-        if (!Array.isArray(permisos) || permisos.some(id => typeof id !== 'number' || id <= 0)) {
-            return res.status(400).json({ error: 'Los permisos deben ser un arreglo de números enteros positivos' });
+        if (!Array.isArray(permisos) || permisos.length === 0 || permisos.some(id => typeof id !== 'number' || id <= 0)) {
+            return res.status(400).json({ error: 'Los permisos deben ser un arreglo de números enteros positivos y debe contener al menos un permiso' });
         }
 
         // Validar EstadoRol

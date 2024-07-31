@@ -1,10 +1,13 @@
 const Roles = require('../../Models/roles');
 const Permisos = require('../../Models/permisos');
 const PermisosXRol = require('../../Models/permisos_roles');
+const { DatosFormateados } = require('../Usuarios/formateoValidaciones');
+
 
 const crearRol = async (req, res) => {
     const { nombre, permisos } = req.body;
-  
+    nombre = DatosFormateados(nombre)
+
     try {
       if (!nombre || nombre.trim() === '') {
         return res.status(400).json({ error: 'Nombre del rol es requerido' });
