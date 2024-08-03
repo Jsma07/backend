@@ -1,6 +1,6 @@
-const Compra = require('../../models/compras');
-const DetalleCompra = require('../../models/detallecompra');
-const Insumo = require('../../models/insumos');
+const Compra = require('../../Models/compras');
+const DetalleCompra = require('../../Models/detallecompra');
+const Insumo = require('../../Models/insumos');
 
 exports.anularCompra = async (req, res) => {
     const { id } = req.params; 
@@ -23,7 +23,12 @@ exports.anularCompra = async (req, res) => {
                 const insumo = await Insumo.findByPk(detalle.IdInsumo);
                 if (insumo) {
                     insumo.Cantidad -= detalle.cantidad_insumo;
-                    insumo.Estado = insumo.Cantidad > 0 ? 'Disponible' : 'Terminada';
+                    
+                    if (insumo.Cantidad <= 0) {
+                        insumo.Cantidad = 0;
+                    }
+
+                    insumo.Estado = insumo.Cantidad > 0 ? 'Disponible' : 'Terminado';
                     await insumo.save();
                 }
             }));

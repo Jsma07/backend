@@ -7,7 +7,11 @@ async function listarDetalleCompras(req, res) {
         const listaDetalleCompras = await DetalleCompra.findAll({
             include: [
                 { model: Compras, as: 'compra' },
-                { model: Insumos, as: 'insumo', attributes: ['NombreInsumos', 'imagen', 'PrecioUnitario'] }
+                {
+                    model: Insumos.scope('notDeleted'),
+                    as: 'insumo',
+                    attributes: ['NombreInsumos', 'Imagen', 'PrecioUnitario']
+                  }
             ]
         });
         res.json(listaDetalleCompras);
@@ -33,7 +37,8 @@ async function BuscarDetalleCompraPorId(req, res) {
                 {
                     model: Insumos,
                     as: 'insumo',
-                    attributes: ['NombreInsumos', 'imagen', 'PrecioUnitario']
+                    attributes: ['NombreInsumos', 'Imagen', 'PrecioUnitario'],
+                    required: false // Permite que se incluyan detalles incluso si el insumo no existe
                 }
             ]
         });
@@ -51,10 +56,11 @@ async function BuscarDetalleCompraPorId(req, res) {
                     insumos: []
                 };
             }
+
             acc[idCompra].insumos.push({
-                NombreInsumos: curr.insumo.NombreInsumos,
-                imagen: curr.insumo.imagen,
-                PrecioUnitario: curr.insumo.PrecioUnitario,
+                NombreInsumos: curr.insumo ? curr.insumo.NombreInsumos : 'Insumo eliminado',
+                imagen: curr.insumo ? curr.insumo.Imagen : null,
+                PrecioUnitario: curr.insumo ? curr.insumo.PrecioUnitario : null,
                 cantidad_insumo: curr.cantidad_insumo,
                 totalValorInsumos: curr.totalValorInsumos
             });
@@ -69,6 +75,7 @@ async function BuscarDetalleCompraPorId(req, res) {
         res.status(500).json({ error: 'Hubo un error al procesar la solicitud' });
     }
 }
+
 
 
 module.exports = { listarDetalleCompras, BuscarDetalleCompraPorId };

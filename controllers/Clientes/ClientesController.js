@@ -14,6 +14,101 @@ async function Listar_Clientes() {
     throw error;
   }
 }
+async function Crearclientes(req, res) {
+  try {
+    const datosCrearClientes = req.body;
+
+    const usuario = await usuarios.findOne({
+      where: {
+        [Op.or]: [
+          { Documento: datosCrearClientes.Documento },
+          { correo: datosCrearClientes.Correo },
+          { telefono: datosCrearClientes.Telefono },
+        ],
+      },
+    });
+
+    const empleado = await empleados.findOne({
+      where: {
+        [Op.or]: [
+          { Documento: datosCrearClientes.Documento },
+          { Correo: datosCrearClientes.Correo },
+          { Telefono: datosCrearClientes.Telefono },
+        ],
+      },
+    });
+
+    if (usuario || empleado) {
+      let mensaje = "";
+      let campo = "";
+      let tabla = "";
+      let valorConflicto = "";
+
+      if (usuario) {
+        mensaje = "Ya existe";
+        tabla = "usuarios";
+
+        if (usuario.Documento === datosCrearClientes.Documento) {
+          campo = "Documento";
+          valorConflicto = datosCrearClientes.Documento;
+        } else if (usuario.correo === datosCrearClientes.Correo) {
+          campo = "correo";
+          valorConflicto = datosCrearClientes.Correo;
+        } else if (usuario.telefono === datosCrearClientes.Telefono) {
+          campo = "telefono";
+          valorConflicto = datosCrearClientes.Telefono;
+        }
+      } else if (empleado) {
+        mensaje = "Ya existe  ";
+        tabla = "empleados";
+
+        if (empleado.Documento === datosCrearClientes.Documento) {
+          campo = "Documento";
+          valorConflicto = datosCrearClientes.Documento;
+        } else if (empleado.Correo === datosCrearClientes.Correo) {
+          campo = "Correo";
+          valorConflicto = datosCrearClientes.Correo;
+        } else if (empleado.Telefono === datosCrearClientes.Telefono) {
+          campo = "Telefono";
+          valorConflicto = datosCrearClientes.Telefono;
+        }
+      }
+
+      if (campo && valorConflicto) {
+        res.status(400).json({
+          mensaje: `${mensaje} en la tabla ${tabla}, campo ${campo}: ${valorConflicto}`,
+        });
+      } else {
+        res.status(400).json({
+          mensaje: "Conflicto de datos en la creación del cliente",
+        });
+      }
+      return;
+    }
+
+    // Encriptar la contraseña
+    const saltRounds = 10; // Número de rondas para generar el salt
+    datosCrearClientes.Contrasena = await bcrypt.hash(
+      datosCrearClientes.Contrasena,
+      saltRounds
+    );
+
+    const nuevoCliente = await Cliente.create(datosCrearClientes);
+    res.status(201).json({ mensaje: "Cliente creado", cliente: nuevoCliente });
+  } catch (error) {
+    // Manejar el error de validación
+    if (error.name === "SequelizeValidationError") {
+      const errores = error.errors.map((err) => ({
+        campo: err.path,
+        mensaje: err.message,
+      }));
+      res.status(400).json({ mensaje: "Error de validación", errores });
+    } else {
+      console.log("OCURRIO UN ERROR AL CREAR EL CLIENTE: ", error);
+      res.status(500).json({ mensaje: "Ocurrió un error al crear el cliente" });
+    }
+  }
+}
 
 async function Crearclientes(req, res) {
   try {
