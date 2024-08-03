@@ -3,6 +3,7 @@ const Agendamiento = require('../../Models/Agendamiento');
 const Cliente = require('../../Models/clientes');
 const Empleado = require('../../Models/empleados');
 const Servicio = require('../../Models/servicios');
+const Horario = require('../../Models/horario');
 const dayjs = require('dayjs');
 
 exports.crearAgendamiento = async (req, res) => {
@@ -26,6 +27,19 @@ exports.crearAgendamiento = async (req, res) => {
     }
     if (!servicio) {
       return res.status(404).json({ error: 'Servicio no encontrado' });
+    }
+
+    // Verificar si la fecha está inactiva
+    const horario = await Horario.findOne({
+      where: {
+        fecha: dayjs(Fecha).format('YYYY-MM-DD')
+      }
+    });
+    
+    console.log('Horario encontrado:', horario); // Añade este log para depurar
+
+    if (horario && horario.estado === 'inactivo') {
+      return res.status(400).json({ error: 'Esta Fecha esat inactiva, No se pueden crear citas' });
     }
 
     // Verifica si ya existe una cita en el mismo día y hora

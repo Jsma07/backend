@@ -32,6 +32,7 @@ exports.obtenerHorasDisponibles = async (req, res) => {
   }
 };
 
+
 exports.obtenerHorasOcupadas = async (req, res) => {
   try {
     const { fecha } = req.query;

@@ -4,6 +4,8 @@ const sequelize = new Sequelize(process.env.DB_DATABASE, process.env.DB_USER, pr
   dialect: 'mysql'
 });
 
+const Horario = require('./horario');
+
 const Agendamiento = sequelize.define('Agendamiento', {
   IdAgenda: {
     autoIncrement: true,
@@ -57,5 +59,7 @@ const Agendamiento = sequelize.define('Agendamiento', {
 Agendamiento.belongsTo(require('./clientes'), { foreignKey: 'IdCliente', as: 'cliente' });
 Agendamiento.belongsTo(require('./empleados'), { foreignKey: 'IdEmpleado', as: 'empleado' });
 Agendamiento.belongsTo(require('./servicios'), { foreignKey: 'IdServicio', as: 'servicio' });
+Agendamiento.belongsTo(Horario, { foreignKey: 'Fecha', targetKey: 'fecha' });
+
 
 module.exports = Agendamiento;
