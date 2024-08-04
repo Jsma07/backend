@@ -4,7 +4,7 @@ const Insumo = require('../../Models/insumos');
 
 exports.guardarCompra = async (req, res) => {
     try {
-        const { fecha_compra, descuento_compra, iva_compra, estado_compra, detallesCompra } = req.body;
+        const { fecha_compra, descuento_compra, estado_compra, detallesCompra } = req.body;
         console.log("Datos recibidos:", req.body);
 
         let totalValorInsumos = 0;
@@ -21,7 +21,7 @@ exports.guardarCompra = async (req, res) => {
 
             if (insumoExistente) {
                 insumoExistente.Cantidad += detalle.cantidad_insumo;
-                insumoExistente.Estado = insumoExistente.Cantidad > 0 ? 'Disponible' : 'Terminado';
+                insumoExistente.Estado = insumoExistente.Cantidad > 0 ? 'Disponible' : 'Agotado';
                 insumoExistente.PrecioUnitario = detalle.precio_unitario;
                 await insumoExistente.save();
 
@@ -39,8 +39,9 @@ exports.guardarCompra = async (req, res) => {
             }
         }));
 
-        // Calcular subtotal
-        const subtotal_compra = totalValorInsumos - descuento_compra + iva_compra;
+        const iva_compra = 0.19 * totalValorInsumos;
+        const total_compra = totalValorInsumos - descuento_compra;
+        const subtotal_compra = totalValorInsumos;
 
         // Crear nueva compra
         const nuevaCompra = await Compra.create({
@@ -48,6 +49,7 @@ exports.guardarCompra = async (req, res) => {
             descuento_compra,
             iva_compra,
             subtotal_compra,
+            total_compra,
             estado_compra
         });
 

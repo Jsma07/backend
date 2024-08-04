@@ -14,7 +14,7 @@ const formatNombreCategoria = (nombre) => {
 exports.editarInsumo = async (req, res) => {
     try {
         const { IdInsumos } = req.params;
-        const { NombreInsumos, Cantidad, PrecioUnitario, Estado, IdCategoria, Idproveedor } = req.body;
+        const { NombreInsumos, Cantidad, Estado, Idcategoria, Idproveedor } = req.body;
 
         const formattedNombre = formatNombreCategoria(NombreInsumos);
 
@@ -37,7 +37,7 @@ exports.editarInsumo = async (req, res) => {
             return res.status(404).json({ error: 'Insumo no encontrado' });
         }
 
-        let updatedFields = { NombreInsumos: formattedNombre, Cantidad, PrecioUnitario, Estado, IdCategoria, Idproveedor};
+        let updatedFields = { NombreInsumos: formattedNombre, Cantidad, Estado, Idcategoria, Idproveedor};
 
         if (req.file) {
             const newImagePath = `/uploads/insumos/${req.file.filename}`;

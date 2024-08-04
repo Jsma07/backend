@@ -29,6 +29,10 @@ const Compras =  sequelize.define('compras', {
       type: Sequelize.FLOAT,
       allowNull: false
     },
+    total_compra: {
+      type: Sequelize.FLOAT,
+      allowNull: false
+    },
     estado_compra: {
       type: Sequelize.STRING(20),
       allowNull: false

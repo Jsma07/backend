@@ -4,6 +4,14 @@ const fs = require('fs');
 
 const MAX_FILE_SIZE = 1024 * 1024; // 1 MB
 
+const formatNombreInsumo = (nombre) => {
+    const nombreSinEspacios = nombre.trim();
+    const nombreMinusculas = nombreSinEspacios.toLowerCase();
+    const nombreFormateado = nombreMinusculas.charAt(0).toUpperCase() + nombreMinusculas.slice(1);
+
+    return nombreFormateado;
+};
+
 exports.guardarInsumo = async (req, res) => {
     console.log('Controlador guardar alcanzado');
     try {
@@ -15,10 +23,6 @@ exports.guardarInsumo = async (req, res) => {
         if (!NombreInsumos || !IdCategoria || !Idproveedor) {
             return res.status(400).json({ error: 'Todos los campos son requeridos' });
         }
-
-        const formatNombreInsumo = (nombre) => {
-            return nombre.charAt(0).toUpperCase() + nombre.slice(1).toLowerCase();
-        };
 
         NombreInsumos = formatNombreInsumo(NombreInsumos);
 
@@ -43,7 +47,7 @@ exports.guardarInsumo = async (req, res) => {
 
         const Cantidad = 0;
         const PrecioUnitario = 0;
-        Estado = Cantidad > 0 ? 'Disponible' : 'Terminado';
+        Estado = Cantidad > 0 ? 'Disponible' : 'Agotado';
 
         const nuevoInsumo = await Insumo.create({
             Imagen: imgPath,

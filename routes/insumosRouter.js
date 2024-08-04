@@ -5,7 +5,6 @@ const authorize = require('../middleware/auth')
 const listarInsumos = require('../controllers/Insumos/listarInsumoController');
 const crearInsumo = require('../controllers/Insumos/crearInsumoController');
 const editarInsumo = require('../controllers/Insumos/editarInsumoController').editarInsumo;
-const existenciasEditar = require('../controllers/Insumos/editarInsumoController').existenciaseditar;
 
 // Se espera que multer se haya pasado al importar este módulo en app.js
 module.exports = (uploadInsumos) => {
