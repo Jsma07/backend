@@ -51,6 +51,7 @@ const CategoriasRouters = require('./routes/categoriasRouter');
 const DetalleventasRouter = require('./routes/DetalleventasRouter');
 const ServiciosRouters = require('./routes/serviciosRouter')(upload); // Usar el middleware de subida para servicios
 const AgendasRouters = require('./routes/AgendasRouter');
+const horarioRouter = require('./routes/horarioRouter');
 const LoginRoutes = require('./routes/loginRouter')
 const transferAgendamientosToVentas = require('./Models/transferencia');
 const adicionesrouter = require('./routes/adicionesrouter')
@@ -99,7 +100,7 @@ app.use(CategoriasRouters);
 app.use(ServiciosRouters); // Importar y usar las rutas de servicios con middleware de subida de imágenes
 app.use(AgendasRouters);
 app.use(DetalleventasRouter);
-
+app.use(horarioRouter)
 app.use(adicionesrouter);
 
 
