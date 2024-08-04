@@ -2,8 +2,8 @@
 const express = require('express');
 const router = express.Router();
 const authorize = require('../middleware/auth')
-const Empleadocontroller = require("../controllers/Empleadocontroller")
-
+const Empleadocontroller = require("../controllers/Empleados/Empleadocontroller")
+const cambiarContrasena=require("../controllers/Empleados/ContraseñaEmpleado")
 
 router.get('/jackenail/Listar_Empleados', authorize(['Empleados']), async (req, res) => {
     try {
@@ -19,6 +19,9 @@ router.post('/Jackenail/RegistrarEmpleados',authorize(['Empleados']), (req, res)
     const datosCrearEmpleados = req.body;
     Empleadocontroller.CrearEmpleados(datosCrearEmpleados, res);
 });
+
+
+router.put("/Jackenail/Empleado/:id", cambiarContrasena);
 
 
 

@@ -12,6 +12,18 @@ const Insumo = sequelize.define('insumos', {
     allowNull: false,
     primaryKey: true
   },
+  Idproveedor: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    validate: {
+      notEmpty: {
+        msg: 'El ID del proveedor no puede estar vacío.'
+      },
+      isInt: {
+        msg: 'El ID del proveedor debe ser un número entero.'
+      }
+    }
+  },
   NombreInsumos: {
     type: Sequelize.STRING(60),
     allowNull: false
@@ -32,8 +44,8 @@ const Insumo = sequelize.define('insumos', {
         msg: 'El estado no puede estar vacío.'
       },
       isIn: {
-        args: [['Disponible', 'Terminado']],
-        msg: 'El estado debe ser "Disponible" o "Terminado".'
+        args: [['Disponible', 'Agotado']],
+        msg: 'El estado debe ser "Disponible" o "Agotado".'
       }
     }
   },
@@ -57,6 +69,10 @@ const Insumo = sequelize.define('insumos', {
         msg: 'La imagen no puede estar vacía.'
       }
     }
+  },
+  isDeleted: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: false
   }
 }, {
   tableName: 'insumos',
@@ -77,8 +93,14 @@ const Insumo = sequelize.define('insumos', {
         { name: "IdCategoria" },
       ]
     },
+    {
+      name: "Idproveedor",
+      using: "BTREE",
+      fields: [
+        { name: "Idproveedor" },
+      ]
+    }
   ]
 });
 
 module.exports = Insumo;
-
