@@ -7,7 +7,7 @@ const {NumerosFormateados} = require('./formateoValidaciones')
 exports.editarUsuario = async(req, res)=>{
     try {
         const {id} = req.params;
-        const {nombre, apellido, correo, telefono, rolId, estado,Documento,tipoDocumento } = req.body;
+        let {nombre, apellido, correo, telefono, rolId, estado,Documento,tipoDocumento } = req.body;
 
         nombre = DatosFormateados(nombre)
         apellido = DatosFormateados(apellido)

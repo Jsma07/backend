@@ -1,30 +1,30 @@
-const Sequelize = require('sequelize');
-
+const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = new Sequelize(process.env.DB_DATABASE, process.env.DB_USER, process.env.DB_PASSWORD, {
   host: process.env.DB_HOST,
   dialect: 'mysql'
 });
 
+const Roles = require('./roles'); // Asegúrate de que la ruta sea correcta
+
 const Empleado = sequelize.define('empleados', {
   IdEmpleado: {
     autoIncrement: true,
-    type: Sequelize.INTEGER,
+    type: DataTypes.INTEGER,
     allowNull: false,
     primaryKey: true
   },
   Nombre: {
-    type: Sequelize.STRING(50),
+    type: DataTypes.STRING(50),
     allowNull: false,
     validate: {
       notNull: {
         msg: 'El campo nombre es obligatorio'
       },
-
-      is: /^[a-zA-Z\s]*$/, 
+      is: /^[a-zA-Z\s]*$/,
     }
   },
   Apellido: {
-    type: Sequelize.STRING(50),
+    type: DataTypes.STRING(50),
     allowNull: false,
     validate: {
       notNull: {
@@ -33,7 +33,7 @@ const Empleado = sequelize.define('empleados', {
     }
   },
   Correo: {
-    type: Sequelize.STRING(60),
+    type: DataTypes.STRING(60),
     allowNull: false,
     validate: {
       notNull: {
@@ -45,7 +45,7 @@ const Empleado = sequelize.define('empleados', {
     }
   },
   Telefono: {
-    type: Sequelize.STRING(15), // Cambiado de INTEGER a STRING
+    type: DataTypes.STRING(15),
     allowNull: false,
     validate: {
       notNull: {
@@ -57,7 +57,7 @@ const Empleado = sequelize.define('empleados', {
     }
   },
   Estado: {
-    type: Sequelize.INTEGER,
+    type: DataTypes.INTEGER,
     allowNull: false,
     validate: {
       notNull: {
@@ -69,7 +69,7 @@ const Empleado = sequelize.define('empleados', {
     }
   },
   IdRol: {
-    type: Sequelize.INTEGER,
+    type: DataTypes.INTEGER,
     allowNull: false,
     validate: {
       notNull: {
@@ -81,7 +81,7 @@ const Empleado = sequelize.define('empleados', {
     }
   },
   Documento: {
-    type: Sequelize.STRING(20),
+    type: DataTypes.STRING(20),
     allowNull: false,
     validate: {
       notNull: {
@@ -89,12 +89,12 @@ const Empleado = sequelize.define('empleados', {
       },
       len: {
         args: [10, 15],
-        msg: 'El campo Documento debe tener entre 8 y 20 caracteres'
+        msg: 'El campo Documento debe tener entre 10 y 15 caracteres'
       }
     }
   },
   Direccion: {
-    type: Sequelize.STRING(100),
+    type: DataTypes.STRING(100),
     allowNull: false,
     validate: {
       notNull: {
@@ -103,18 +103,19 @@ const Empleado = sequelize.define('empleados', {
     }
   },
   Contrasena: {
-    type: Sequelize.STRING(100),
+    type: DataTypes.STRING(100),
     allowNull: false,
     validate: {
       notNull: {
         msg: 'El campo Contrasena es obligatorio'
       },
-      
     }
   }
 }, {
   tableName: 'empleados',
   timestamps: false
 });
+Empleado.belongsTo(Roles, { foreignKey: 'IdRol' });
+// Definir la asociación
 
 module.exports = Empleado;

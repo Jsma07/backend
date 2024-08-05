@@ -3,6 +3,8 @@ const Usuario = require('../Models/usuarios');
 const Roles = require('../Models/roles');
 const PermisosXRol = require('../Models/permisos_roles');
 const Permiso = require('../Models/permisos');
+const Empleado = require('../Models/empleados')
+const Cliente = require('../Models/clientes')
 
 const authorize = (requiredPermissions) => {
   return async (req, res, next) => {
@@ -16,7 +18,7 @@ const authorize = (requiredPermissions) => {
     }
 
     try {
-      // Remover el prefijo 'Bearer ' del token
+      // Remover el prefijo 'Bearer 'el token
       const tokenWithoutBearer = token.replace('Bearer ', '');
 
       // Verificar el token y obtener los datos decodificados
@@ -34,32 +36,73 @@ const authorize = (requiredPermissions) => {
       }
 
       // Buscar al usuario en la base de datos junto con sus roles y permisos a través de permisosXrol
-      const user = await Usuario.findByPk(req.usuario.id, {
-        include: [
-          {
-            model: Roles,
+      let user;
+      try {
+        user = await Usuario.findByPk(req.usuario.id, {
+          include: [
+            {
+              model: Roles,
+              include: [
+                {
+                  model: Permiso,
+                  through: {
+                    model: PermisosXRol,
+                    attributes: [], // No queremos traer todos los atributos de la tabla intermedia
+                  }
+                }
+              ]
+            }
+          ]
+        });
+      } catch (error) {
+        // Si no se encuentra el usuario en la tabla de usuarios, buscar en la tabla de empleados
+        try {
+          user = await Empleado.findByPk(req.usuario.IdEmpleado, {
             include: [
               {
-                model: Permiso,
-                through: {
-                  model: PermisosXRol,
-                  attributes: [], // No queremos traer todos los atributos de la tabla intermedia
-                }
+                model: Roles,
+                include: [
+                  {
+                    model: Permiso,
+                    through: {
+                      model: PermisosXRol,
+                      attributes: [], // No queremos traer todos los atributos de la tabla intermedia
+                    }
+                  }
+                ]
               }
             ]
+          });
+        } catch (error) {
+          // Si no se encuentra el usuario en la tabla de empleados, buscar en la tabla de clientes
+          try {
+            user = await Cliente.findByPk(req.usuario.id, {
+              include: [
+                {
+                  model: Roles,
+                  include: [
+                    {
+                      model: Permiso,
+                      through: {
+                        model: PermisosXRol,
+                        attributes: [], // No queremos traer todos los atributos de la tabla intermedia
+                      }
+                    }
+                  ]
+                }
+              ]
+            });
+          } catch (error) {
+            console.log('Usuario no encontrado.');
+            return res.status(404).json({ mensaje: 'Usuario no encontrado' });
           }
-        ]
-      });
-
-      if (!user) {
-        console.log('Usuario no encontrado.');
-        return res.status(404).json({ mensaje: 'Usuario no encontrado' });
+        }
       }
 
       console.log('Usuario encontrado:', user);
 
       // Verificar si el usuario tiene roles y permisos asignados
-      if (!user.role || !user.role.permisos) {
+      if (!user.role ||!user.role.permisos) {
         console.log('Usuario sin roles asignados o permisos asociados.');
         console.log('Usuario encontrado:', user); // Agregar este log para verificar la estructura completa del usuario
         return res.status(403).json({ mensaje: 'El usuario no tiene roles asignados o permisos asociados.' });
@@ -95,7 +138,6 @@ const authorize = (requiredPermissions) => {
         return res.status(401).json({ mensaje: 'Token inválido o expirado.' });
       }
     }
-  };
-};
+  }}
 
 module.exports = authorize;

@@ -15,10 +15,7 @@ router.get('/jackenail/Listar_Empleados', authorize(['Empleados']), async (req, 
 });
 
 
-router.post('/Jackenail/RegistrarEmpleados',authorize(['Empleados']), (req, res) => {
-    const datosCrearEmpleados = req.body;
-    Empleadocontroller.CrearEmpleados(datosCrearEmpleados, res);
-});
+router.post('/Jackenail/RegistrarEmpleados', authorize(['Empleados']), Empleadocontroller.crearEmpleado);
 
 
 router.put("/Jackenail/Empleado/:id", cambiarContrasena);
