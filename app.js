@@ -114,7 +114,7 @@ app.use(adicionesrouter);
 // }
 
 // sirvepara ejercutar la función inicialmente y luego repetirla cada 3 segundos
-setInterval(executeTransfer, 50000); // 2000 milisegundos = 3 segundos
+// setInterval(executeTransfer, 50000); // 2000 milisegundos = 3 segundos
 
 
 // Manejo de errores
