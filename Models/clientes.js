@@ -4,7 +4,7 @@ const sequelize = new Sequelize(process.env.DB_DATABASE, process.env.DB_USER, pr
   host: process.env.DB_HOST, 
   dialect: 'mysql'
 });
-
+const Roles = require('./roles')
 const Cliente = sequelize.define('clientes', {
   IdCliente: {
     autoIncrement: true,
@@ -122,5 +122,7 @@ const Cliente = sequelize.define('clientes', {
     },
   ]
 });
+Cliente.belongsTo(Roles, { foreignKey: 'IdRol' });
+
 
 module.exports = Cliente;

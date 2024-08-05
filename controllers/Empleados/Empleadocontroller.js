@@ -14,37 +14,61 @@ async function Listar_Empleados() {
 }
 
 
-async function CrearEmpleados(DatosCrearEmpleados, res) {
+
+
+
+async function crearEmpleado(req, res) {
+    console.log('Controlador crearEmpleado alcanzado');
     try {
-      // Verifica si el rol especificado existe en la tabla de roles
-      const rolExistente = await Rol.findByPk(DatosCrearEmpleados.IdRol);
-      if (!rolExistente) {
-        return res.status(400).json({ mensaje: 'El rol especificado no existe' });
-      }
-  
-      // Encriptar la contraseña
-      const saltRounds = 10; 
-      DatosCrearEmpleados.Contrasena = await bcrypt.hash(DatosCrearEmpleados.Contrasena, saltRounds);
-  
-      // Crea el empleado solo si el rol existe
-      const empleadoCreado = await empleado.create(DatosCrearEmpleados);
-      res.status(200).json({ mensaje: 'Empleado creado correctamente' });
-      return empleadoCreado.id;
-  
+        // Extrae los datos del cuerpo de la solicitud
+        let { Nombre, Apellido, Correo, Telefono, IdRol, Contrasena, Documento, Direccion, Estado } = req.body;
+
+        // Formatea los datos
+        Nombre = Nombre.trim().toLowerCase().charAt(0).toUpperCase() + Nombre.trim().toLowerCase().slice(1);
+        Apellido = Apellido.trim().toLowerCase().charAt(0).toUpperCase() + Apellido.trim().toLowerCase().slice(1);
+        Correo = Correo.trim().toLowerCase();
+        Telefono = Telefono.trim();
+        Documento = Documento.trim();
+        Direccion = Direccion.trim();
+
+        // Debug: Imprime los datos formateados
+        console.log('Datos formateados:', { Nombre, Apellido, Correo, Telefono, IdRol, Documento, Direccion, Estado });
+
+        // Debug: Imprime la contraseña antes de cifrarla
+        console.log('Contraseña original:', Contrasena);
+
+        // Cifra la contraseña
+        const contrasenaCifrada = await bcrypt.hash(Contrasena, 10);
+
+        // Debug: Imprime la contraseña cifrada
+        console.log('Contraseña cifrada:', contrasenaCifrada);
+
+        // Crea el nuevo empleado
+        const nuevoEmpleado = await empleado.create({
+            Nombre,
+            Apellido,
+            Correo,
+            Telefono,
+            IdRol,
+            Contrasena: contrasenaCifrada,
+            Estado,
+            Documento,
+            Direccion
+        });
+
+        // Debug: Imprime el empleado creado
+        console.log('Nuevo empleado creado:', nuevoEmpleado);
+
+        // Responde con el nuevo empleado creado
+        res.status(201).json({ mensaje: 'Empleado creado correctamente', empleado: nuevoEmpleado });
     } catch (error) {
-      // Manejar el error de validación
-      if (error.name === 'SequelizeValidationError') {
-        const errores = error.errors.map(err => ({
-          campo: err.path,
-          mensaje: err.message
-        }));
-        res.status(400).json({ mensaje: 'Error de validación', errores });
-      } else {
-        console.log("Ocurrió un error al crear el empleado: ", error);
-        res.status(500).json({ mensaje: 'Ocurrió un error al crear el empleado' });
-      }
+        // Debug: Imprime el error
+        console.log('Error al crear empleado', error);
+        res.status(500).json({ error: 'Hubo un error al crear el empleado. Por favor, inténtalo de nuevo más tarde.' });
     }
-  }
+};
+
+
 
 async function ActualizarEmpleado(idEmpleado, datosEmpleado) {
     try {
@@ -83,9 +107,9 @@ async function cambiarEstadoEmpleado(idEmpleado, nuevoEstado) {
 
 module.exports = {
     Listar_Empleados,
-    CrearEmpleados,
     ActualizarEmpleado,
-    cambiarEstadoEmpleado
+    cambiarEstadoEmpleado,
+    crearEmpleado
     
    
 };
