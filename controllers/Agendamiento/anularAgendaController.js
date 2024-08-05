@@ -10,7 +10,7 @@ const anularAgendamiento = async (req, res) => {
       return res.status(404).json({ message: 'Agendamiento no encontrado' });
     }
 
-    await agendamiento.update({ EstadoAgenda: 3 });
+    await agendamiento.update({ EstadoAgenda: 2 });
 
     res.status(200).json({ message: 'Agendamiento anulado con éxito' });
   } catch (error) {

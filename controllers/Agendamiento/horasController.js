@@ -1,5 +1,5 @@
 // controllers/Agendamiento/horasController.js
-const Agendamiento = require('../../Models/Agendamiento');
+const Agendamiento = require('../../Models/agendamiento');
 const dayjs = require('dayjs');
 
 exports.obtenerHorasDisponibles = async (req, res) => {
