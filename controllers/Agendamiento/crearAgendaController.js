@@ -36,24 +36,35 @@ exports.crearAgendamiento = async (req, res) => {
       }
     });
     
-    console.log('Horario encontrado:', horario); // Añade este log para depurar
-
     if (horario && horario.estado === 'inactivo') {
-      return res.status(400).json({ error: 'Esta Fecha esat inactiva, No se pueden crear citas' });
+      return res.status(400).json({ error: 'Esta Fecha está inactiva, No se pueden crear citas' });
     }
 
-    // Verifica si ya existe una cita en el mismo día y hora
-    const citaExistente = await Agendamiento.findOne({
+    // Calcular las horas que ocupará el servicio
+    const duracion = servicio.Tiempo_Servicio; // Duración en minutos
+    const horasOcupadas = [];
+    const horaInicio = dayjs(`${Fecha} ${Hora}`);
+
+    for (let i = 0; i <= Math.floor(duracion / 60); i++) {
+      horasOcupadas.push(horaInicio.add(i, 'hour').format('HH:mm'));
+    }
+
+    // Mostrar las horas ocupadas calculadas en la consola
+    console.log('Horas ocupadas calculadas:', horasOcupadas);
+
+    // Verificar si alguna de las horas ya está ocupada
+    const citasExistentes = await Agendamiento.findAll({
       where: {
         Fecha,
-        Hora,
-      },
+        Hora: horasOcupadas
+      }
     });
 
-    if (citaExistente) {
-      return res.status(400).json({ error: 'Ya existe una cita en la misma fecha y hora' });
+    if (citasExistentes.length > 0) {
+      return res.status(400).json({ error: 'Ya existe una cita en una de las horas seleccionadas' });
     }
 
+    // Crear el nuevo agendamiento
     const nuevoAgendamiento = await Agendamiento.create({
       IdCliente,
       IdServicio,
