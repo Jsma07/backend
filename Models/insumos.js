@@ -44,8 +44,8 @@ const Insumo = sequelize.define('insumos', {
         msg: 'El estado no puede estar vacío.'
       },
       isIn: {
-        args: [['Disponible', 'Terminado']],
-        msg: 'El estado debe ser "Disponible" o "Terminado".'
+        args: [['Disponible', 'Agotado']],
+        msg: 'El estado debe ser "Disponible" o "Agotado".'
       }
     }
   },

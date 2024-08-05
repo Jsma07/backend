@@ -2,6 +2,10 @@ const DetalleCompra = require('../../../Models/detallecompra');
 const Compras = require('../../../Models/compras');
 const Insumos = require('../../../Models/insumos');
 
+const formatCurrency = (value) => {
+    return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(value);
+};
+
 async function listarDetalleCompras(req, res) {
     try {
         const listaDetalleCompras = await DetalleCompra.findAll({
@@ -11,10 +15,20 @@ async function listarDetalleCompras(req, res) {
                     model: Insumos.scope('notDeleted'),
                     as: 'insumo',
                     attributes: ['NombreInsumos', 'Imagen', 'PrecioUnitario']
-                  }
+                }
             ]
         });
-        res.json(listaDetalleCompras);
+
+        const listaDetalleComprasFormatted = listaDetalleCompras.map(detalle => ({
+            ...detalle.toJSON(),
+            insumo: {
+                ...detalle.insumo,
+                PrecioUnitario: detalle.insumo ? formatCurrency(detalle.insumo.PrecioUnitario) : null
+            },
+            totalValorInsumos: formatCurrency(detalle.totalValorInsumos)
+        }));
+
+        res.json(listaDetalleComprasFormatted);
     } catch (error) {
         console.error("Error al buscar detalles de compra:", error);
         res.status(500).json({ error: 'Error al buscar detalles de compra' });
@@ -32,13 +46,13 @@ async function BuscarDetalleCompraPorId(req, res) {
                 {
                     model: Compras,
                     as: 'compra',
-                    attributes: ['fecha_compra', 'descuento_compra', 'iva_compra', 'subtotal_compra', 'estado_compra']
+                    attributes: ['fecha_compra', 'descuento_compra', 'iva_compra', 'subtotal_compra', 'total_compra', 'estado_compra']
                 },
                 {
                     model: Insumos,
                     as: 'insumo',
                     attributes: ['NombreInsumos', 'Imagen', 'PrecioUnitario'],
-                    required: false // Permite que se incluyan detalles incluso si el insumo no existe
+                    required: false
                 }
             ]
         });
@@ -52,7 +66,13 @@ async function BuscarDetalleCompraPorId(req, res) {
             if (!acc[idCompra]) {
                 acc[idCompra] = {
                     idCompra,
-                    compra: curr.compra,
+                    compra: {
+                        ...curr.compra.toJSON(),
+                        descuento_compra: formatCurrency(curr.compra.descuento_compra),
+                        iva_compra: formatCurrency(curr.compra.iva_compra),
+                        subtotal_compra: formatCurrency(curr.compra.subtotal_compra),
+                        total_compra: formatCurrency(curr.compra.total_compra)
+                    },
                     insumos: []
                 };
             }
@@ -60,9 +80,9 @@ async function BuscarDetalleCompraPorId(req, res) {
             acc[idCompra].insumos.push({
                 NombreInsumos: curr.insumo ? curr.insumo.NombreInsumos : 'Insumo eliminado',
                 imagen: curr.insumo ? curr.insumo.Imagen : null,
-                PrecioUnitario: curr.insumo ? curr.insumo.PrecioUnitario : null,
+                PrecioUnitario: curr.insumo ? formatCurrency(curr.insumo.PrecioUnitario) : null,
                 cantidad_insumo: curr.cantidad_insumo,
-                totalValorInsumos: curr.totalValorInsumos
+                totalValorInsumos: formatCurrency(curr.totalValorInsumos)
             });
             return acc;
         }, {});
@@ -75,7 +95,5 @@ async function BuscarDetalleCompraPorId(req, res) {
         res.status(500).json({ error: 'Hubo un error al procesar la solicitud' });
     }
 }
-
-
 
 module.exports = { listarDetalleCompras, BuscarDetalleCompraPorId };
