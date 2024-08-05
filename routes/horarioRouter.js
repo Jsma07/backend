@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const { crearHorario, obtenerHorarios, actualizarHorario } = require('../controllers/Agendamiento/Horarios/horariosControllers');
+const { crearHorario, obtenerHorarios, actualizarHorario, eliminarHorario } = require('../controllers/Agendamiento/Horarios/horariosControllers');
 
 router.get('/api/horarios', obtenerHorarios);
 router.post('/api/horarios/crear', crearHorario);
-router.put('/api/horarios/:id', actualizarHorario); // Corrige el nombre del parámetro en la ruta
+router.put('/api/horarios/:id', actualizarHorario);
+router.delete('/api/eliminarHorarios/:id', eliminarHorario); // Ruta para eliminar un horario
 
 module.exports = router;
