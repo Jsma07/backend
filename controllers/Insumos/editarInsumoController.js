@@ -3,7 +3,15 @@ const { Op } = require("sequelize");
 const fs = require("fs");
 const path = require("path");
 
-// Controlador para editar un insumo
+const formatNombreCategoria = (nombre) => {
+  const nombreSinEspacios = nombre.trim();
+  const nombreMinusculas = nombreSinEspacios.toLowerCase();
+  const nombreFormateado =
+    nombreMinusculas.charAt(0).toUpperCase() + nombreMinusculas.slice(1);
+
+  return nombreFormateado;
+};
+
 exports.editarInsumo = async (req, res) => {
   try {
     const { IdInsumos } = req.params;
@@ -21,11 +29,9 @@ exports.editarInsumo = async (req, res) => {
     });
 
     if (existingInsumo) {
-      return res
-        .status(400)
-        .json({
-          error: "El nombre del insumo ya está registrado para otro insumo.",
-        });
+      return res.status(400).json({
+        error: "El nombre del insumo ya está registrado para otro insumo.",
+      });
     }
 
     const updateInsumo = await Insumo.findByPk(IdInsumos);
@@ -64,12 +70,10 @@ exports.editarInsumo = async (req, res) => {
     // Actualizar el insumo con los campos actualizados
     await updateInsumo.update(updatedFields);
 
-    res
-      .status(200)
-      .json({
-        mensaje: "Insumo actualizado correctamente",
-        insumo: updateInsumo,
-      });
+    res.status(200).json({
+      mensaje: "Insumo actualizado correctamente",
+      insumo: updateInsumo,
+    });
   } catch (error) {
     if (error.name === "SequelizeValidationError") {
       // Manejo de errores de validación de Sequelize
@@ -102,12 +106,10 @@ exports.existenciaseditar = async (req, res) => {
       Cantidad: parseFloat(Cantidad), // Asegúrate de que Cantidad sea un número flotante
     });
 
-    res
-      .status(200)
-      .json({
-        mensaje: "Insumo actualizado correctamente",
-        insumo: updateInsumo,
-      });
+    res.status(200).json({
+      mensaje: "Insumo actualizado correctamente",
+      insumo: updateInsumo,
+    });
   } catch (error) {
     if (error.name === "SequelizeValidationError") {
       // Manejo de errores de validación de Sequelize

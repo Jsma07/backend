@@ -51,8 +51,8 @@ const Insumo = sequelize.define(
           msg: "El estado no puede estar vacío.",
         },
         isIn: {
-          args: [["Disponible", "Terminado"]],
-          msg: 'El estado debe ser "Disponible" o "Terminado".',
+          args: [["Disponible", "Agotado"]],
+          msg: 'El estado debe ser "Disponible" o "Agotado".',
         },
       },
     },
@@ -76,6 +76,10 @@ const Insumo = sequelize.define(
           msg: "La imagen no puede estar vacía.",
         },
       },
+    },
+    isDeleted: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false,
     },
   },
   {
@@ -102,7 +106,6 @@ const Insumo = sequelize.define(
   }
 );
 
-// Definir la relación con el modelo `Categoria`
 Insumo.belongsTo(Categorias, {
   foreignKey: "IdCategoria",
   as: "categoria",

@@ -14,7 +14,7 @@ const Compras =  sequelize.define('compras', {
       primaryKey: true
     },
     fecha_compra: {
-      type: Sequelize.DATEONLY,
+      type: Sequelize.DATE,
       allowNull: false
     },
     descuento_compra: {
@@ -26,6 +26,10 @@ const Compras =  sequelize.define('compras', {
       allowNull: false
     },
     subtotal_compra: {
+      type: Sequelize.FLOAT,
+      allowNull: false
+    },
+    total_compra: {
       type: Sequelize.FLOAT,
       allowNull: false
     },

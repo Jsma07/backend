@@ -1,8 +1,9 @@
 const { validationResult } = require('express-validator');
-const Agendamiento = require('../../Models/Agendamiento');
+const Agendamiento = require('../../Models/agendamiento');
 const Cliente = require('../../Models/clientes');
 const Empleado = require('../../Models/empleados');
 const Servicio = require('../../Models/servicios');
+const Horario = require('../../Models/horario');
 const dayjs = require('dayjs');
 
 exports.crearAgendamiento = async (req, res) => {
@@ -28,18 +29,42 @@ exports.crearAgendamiento = async (req, res) => {
       return res.status(404).json({ error: 'Servicio no encontrado' });
     }
 
-    // Verifica si ya existe una cita en el mismo día y hora
-    const citaExistente = await Agendamiento.findOne({
+    // Verificar si la fecha está inactiva
+    const horario = await Horario.findOne({
       where: {
-        Fecha,
-        Hora,
-      },
+        fecha: dayjs(Fecha).format('YYYY-MM-DD')
+      }
     });
-
-    if (citaExistente) {
-      return res.status(400).json({ error: 'Ya existe una cita en la misma fecha y hora' });
+    
+    if (horario && horario.estado === 'inactivo') {
+      return res.status(400).json({ error: 'Esta Fecha está inactiva, No se pueden crear citas' });
     }
 
+    // Calcular las horas que ocupará el servicio
+    const duracion = servicio.Tiempo_Servicio; // Duración en minutos
+    const horasOcupadas = [];
+    const horaInicio = dayjs(`${Fecha} ${Hora}`);
+
+    for (let i = 0; i <= Math.floor(duracion / 60); i++) {
+      horasOcupadas.push(horaInicio.add(i, 'hour').format('HH:mm'));
+    }
+
+    // Mostrar las horas ocupadas calculadas en la consola
+    console.log('Horas ocupadas calculadas:', horasOcupadas);
+
+    // Verificar si alguna de las horas ya está ocupada
+    const citasExistentes = await Agendamiento.findAll({
+      where: {
+        Fecha,
+        Hora: horasOcupadas
+      }
+    });
+
+    if (citasExistentes.length > 0) {
+      return res.status(400).json({ error: 'Ya existe una cita en una de las horas seleccionadas' });
+    }
+
+    // Crear el nuevo agendamiento
     const nuevoAgendamiento = await Agendamiento.create({
       IdCliente,
       IdServicio,

@@ -8,11 +8,14 @@ const editarInsumo =
   require("../controllers/Insumos/editarInsumoController").editarInsumo;
 const existenciasEditar =
   require("../controllers/Insumos/editarInsumoController").existenciaseditar;
-
 // Se espera que multer se haya pasado al importar este módulo en app.js
 module.exports = (uploadInsumos) => {
   // Rutas para insumos
-  router.get("/api/insumos", listarInsumos.listarInsumos);
+  router.get(
+    "/api/insumos",
+    authorize(["Insumos"]),
+    listarInsumos.listarInsumos
+  );
   router.post(
     "/api/insumos/guardarInsumo",
     authorize(["Insumos"]),
@@ -29,7 +32,6 @@ module.exports = (uploadInsumos) => {
     "/api/existenciainsumos/editar/:IdInsumos",
     authorize(["Insumos"]),
     existenciasEditar
-  ); // No necesita subir imágenes
-
+  );
   return router;
 };

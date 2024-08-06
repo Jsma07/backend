@@ -12,13 +12,9 @@ exports.guardarCategoria = async (req, res) => {
     console.log('Controlador guardarCategoria alcanzado');
     try {
         let { nombre_categoria, estado_categoria } = req.body;
-
-        // Log para verificar los valores de entrada
         console.log('Datos recibidos:', { nombre_categoria, estado_categoria });
 
         nombre_categoria = formatNombreCategoria(nombre_categoria);
-
-        // Log para verificar el formato del nombre
         console.log('Nombre formateado:', nombre_categoria);
 
         const existingCategoria = await Categoria.findOne({ where: { nombre_categoria } });

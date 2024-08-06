@@ -1,5 +1,5 @@
-// controllers/Agendamiento/horasController.js
-const Agendamiento = require('../../Models/Agendamiento');
+const Agendamiento = require('../../Models/agendamiento');
+const Servicio = require('../../Models/servicios');
 const dayjs = require('dayjs');
 
 exports.obtenerHorasDisponibles = async (req, res) => {
@@ -35,27 +35,40 @@ exports.obtenerHorasDisponibles = async (req, res) => {
 exports.obtenerHorasOcupadas = async (req, res) => {
   try {
     const { fecha } = req.query;
-    console.log("Fecha recibida:", fecha);
 
     const formattedFecha = dayjs(fecha).format('YYYY-MM-DD');
-    console.log("Fecha formateada:", formattedFecha);
 
     const agendamientos = await Agendamiento.findAll({
       where: {
         Fecha: formattedFecha,
       },
+      include: {
+        model: Servicio,
+        as: 'servicio', // Usa el alias 'servicio' aquí
+        attributes: ['Tiempo_Servicio'],
+      },
       attributes: ['Hora'],
       raw: true
     });
 
-    console.log("Agendamientos encontrados:", agendamientos);
+    let horasOcupadas = [];
 
-    const horasOcupadas = agendamientos.map(ag => ag.Hora);
-    console.log("Horas ocupadas:", horasOcupadas);
+    agendamientos.forEach(ag => {
+      const horaInicio = dayjs(`${formattedFecha} ${ag.Hora}`);
+      const duracion = ag['servicio.Tiempo_Servicio']; // Duración en minutos
+      const horas = Math.ceil(duracion / 60); // Número de horas a ocupar
+
+      for (let i = 0; i < horas; i++) {
+        horasOcupadas.push(horaInicio.add(i, 'hour').format('HH:mm'));
+      }
+    });
+
+    // Mostrar las horas ocupadas obtenidas en la consola
+    console.log('Horas ocupadas obtenidas:', horasOcupadas);
 
     res.status(200).json(horasOcupadas);
   } catch (error) {
     console.error("Error al obtener las horas ocupadas", error);
     res.status(500).json({ error: 'Error al obtener las horas ocupadas' });
-  }
+  } 
 };

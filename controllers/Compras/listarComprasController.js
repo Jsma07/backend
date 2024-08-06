@@ -23,6 +23,7 @@ exports.listarCompras = async (req, res) => {
                 acc[row.IdCompra] = {
                     ...row,
                     fecha_compra: new Date(row.fecha_compra).toLocaleDateString(),
+                    total_compra: parseFloat(row.total_compra).toLocaleString('es-CO', { style: 'currency', currency: 'COP' }),
                     subtotal_compra: parseFloat(row.subtotal_compra).toLocaleString('es-CO', { style: 'currency', currency: 'COP' }),
                     descuento_compra: parseFloat(row.descuento_compra).toLocaleString('es-CO', { style: 'currency', currency: 'COP' }),
                     iva_compra: parseFloat(row.iva_compra).toLocaleString('es-CO', { style: 'currency', currency: 'COP' }),

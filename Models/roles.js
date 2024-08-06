@@ -16,15 +16,15 @@ const Roles = sequelize.define('roles', {
   },
   nombre: {
     type: DataTypes.STRING(30),
-    validate:{
+    validate: {
       len: [3, 30],
-     
       notEmpty: true
-    }  },
-    EstadoRol: {
-      type: Sequelize.INTEGER,
-      allowNull: false
-    },
+    }
+  },
+  EstadoRol: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
 }, {
   tableName: 'roles',
   timestamps: false,
@@ -47,10 +47,12 @@ const Roles = sequelize.define('roles', {
   ]
 });
 
+
+// Definir asociaciones
 Roles.belongsToMany(Permisos, {
   through: PermisosXRol,
-  foreignKey: 'rolId', // Nombre correcto del campo en la tabla permisos_roles que referencia a roles
-  otherKey: 'permisoId' // Nombre correcto del campo en la tabla permisos_roles que referencia a permisos
+  foreignKey: 'rolId',
+  otherKey: 'permisoId'
 });
 
 module.exports = Roles;

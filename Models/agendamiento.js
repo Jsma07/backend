@@ -4,15 +4,17 @@ const sequelize = new Sequelize(process.env.DB_DATABASE, process.env.DB_USER, pr
   dialect: 'mysql'
 });
 
+const Horario = require('./horario');
+
 const Agendamiento = sequelize.define('Agendamiento', {
   IdAgenda: {
     autoIncrement: true,
-    type: DataTypes.INTEGER,
+    type: Sequelize.INTEGER,
     allowNull: false,
     primaryKey: true
   },
   IdCliente: {
-    type: DataTypes.INTEGER,
+    type: Sequelize.INTEGER,
     allowNull: false,
     references: {
       model: 'clientes',
@@ -20,7 +22,7 @@ const Agendamiento = sequelize.define('Agendamiento', {
     }
   },
   IdServicio: {
-    type: DataTypes.INTEGER,
+    type: Sequelize.INTEGER,
     allowNull: false,
     references: {
       model: 'servicios',
@@ -28,15 +30,15 @@ const Agendamiento = sequelize.define('Agendamiento', {
     }
   },
   Fecha: {
-    type: DataTypes.DATEONLY,
+    type: Sequelize.DATEONLY,
     allowNull: false
   },
   Hora: {
-    type: DataTypes.TIME,
+    type: Sequelize.TIME,
     allowNull: false
   },
   IdEmpleado: {
-    type: DataTypes.INTEGER,
+    type: Sequelize.INTEGER,
     allowNull: false,
     references: {
       model: 'empleados',
@@ -44,7 +46,7 @@ const Agendamiento = sequelize.define('Agendamiento', {
     }
   },
   EstadoAgenda: {
-    type: DataTypes.INTEGER,
+    type: Sequelize.INTEGER,
     allowNull: false,
     defaultValue: 1 
   }
@@ -57,5 +59,7 @@ const Agendamiento = sequelize.define('Agendamiento', {
 Agendamiento.belongsTo(require('./clientes'), { foreignKey: 'IdCliente', as: 'cliente' });
 Agendamiento.belongsTo(require('./empleados'), { foreignKey: 'IdEmpleado', as: 'empleado' });
 Agendamiento.belongsTo(require('./servicios'), { foreignKey: 'IdServicio', as: 'servicio' });
+Agendamiento.belongsTo(Horario, { foreignKey: 'Fecha', targetKey: 'fecha' });
+
 
 module.exports = Agendamiento;

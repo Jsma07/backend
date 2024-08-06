@@ -1,6 +1,7 @@
-const Compra = require('../../models/compras');
-const DetalleCompra = require('../../models/detallecompra');
-const Insumo = require('../../models/insumos');
+const Compra = require('../../Models/compras');
+const DetalleCompra = require('../../Models/detallecompra');
+const Insumo = require('../../Models/insumos');
+const { Op } = require('sequelize');
 
 exports.anularCompra = async (req, res) => {
     const { id } = req.params; 
@@ -9,6 +10,15 @@ exports.anularCompra = async (req, res) => {
 
         if (!compra) {
             return res.status(404).json({ error: `Compra con ID ${id} no encontrada` });
+        }
+
+        const fechaCompra = new Date(compra.fecha_compra);
+        const hoy = new Date();
+        const diffTime = Math.abs(hoy - fechaCompra);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        if (diffDays > 7) {
+            return res.status(400).json({ error: 'La compra solo puede ser anulada dentro de los 7 días de su registro' });
         }
 
         compra.estado_compra = 'Anulada';
@@ -23,7 +33,12 @@ exports.anularCompra = async (req, res) => {
                 const insumo = await Insumo.findByPk(detalle.IdInsumo);
                 if (insumo) {
                     insumo.Cantidad -= detalle.cantidad_insumo;
-                    insumo.Estado = insumo.Cantidad > 0 ? 'Disponible' : 'Terminada';
+                    
+                    if (insumo.Cantidad <= 0) {
+                        insumo.Cantidad = 0;
+                    }
+
+                    insumo.Estado = insumo.Cantidad > 0 ? 'Disponible' : 'Agotado';
                     await insumo.save();
                 }
             }));

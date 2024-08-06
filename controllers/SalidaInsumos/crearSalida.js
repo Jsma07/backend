@@ -1,17 +1,20 @@
 const Insumo = require("../../Models/insumos");
 const Salida = require("../../Models/Salida");
-
 const crearSalida = async (req, res) => {
   try {
-    const salidas = Array.isArray(req.body) ? req.body : [req.body]; // Convertir a arreglo si no lo es
+    console.log("Datos recibidos:", req.body); // Log de los datos recibidos
+    const salidas = Array.isArray(req.body) ? req.body : [req.body];
 
     const resultados = [];
     for (const salida of salidas) {
       const { Idinsumos, Cantidad, Fecha_salida, Descripcion, Estado } = salida;
 
+      console.log("Procesando salida:", salida);
+
       // Validar que el insumo exista
       const insumo = await Insumo.findByPk(Idinsumos);
       if (!insumo) {
+        console.log(`Insumo con ID ${Idinsumos} no encontrado`);
         return res
           .status(404)
           .json({ mensaje: `Insumo con ID ${Idinsumos} no encontrado` });
@@ -20,6 +23,7 @@ const crearSalida = async (req, res) => {
       // Validar el estado
       const estadosValidos = ["Anulado", "Terminado"];
       if (!estadosValidos.includes(Estado)) {
+        console.log(`Estado no válido: ${Estado}`);
         return res
           .status(400)
           .json({ mensaje: 'El estado debe ser "Anulado" o "Terminado"' });
@@ -33,6 +37,8 @@ const crearSalida = async (req, res) => {
         Descripcion,
         Estado,
       });
+
+      console.log("Salida creada:", nuevaSalida);
 
       resultados.push(nuevaSalida);
     }

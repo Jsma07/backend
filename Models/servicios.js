@@ -44,15 +44,14 @@ const Servicio = sequelize.define('servicios', {
     }
   },
   Tiempo_Servicio: {
-    type: Sequelize.STRING(200),
+    type: Sequelize.INTEGER,
     allowNull: false,
     validate: {
       notEmpty: {
         msg: "El tiempo del servicio no puede estar vacío"
       },
-      len: {
-        args: [1, 50],
-        msg: "El tiempo del servicio debe tener entre 1 y 200 caracteres"
+      isInt: {
+        msg: "El tiempo del servicio debe ser un número entero"
       }
     }
   },

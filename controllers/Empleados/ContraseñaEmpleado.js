@@ -14,7 +14,7 @@ async function cambiarContrasena(req, res) {
     }
 
     // Cifra la nueva contraseña
-    const hashedPassword = await bcrypt.hash(Contrasena, 10);
+    const hashedPassword = await bcrypt.hash(Contrasena.trim(), 10);
 
     // Actualiza la contraseña del empleado
     empleado.Contrasena = hashedPassword;
