@@ -11,7 +11,7 @@ router.get('/api/verificarCorreo/:correo', crearUsuario.verificarCorreo)
 router.get('/api/verificarDocumento/:documento', crearUsuario.verificarDocumento)
 router.put('/api/actualizarContrasena/:id',authorize(['Usuarios']), editarUsuario.actualizarContrasena);
 router.get('/api/usuario',authorize([]),listarUsuario.getUser);
-router.put('/api/editarPerfil/:id', listarUsuario.editarPerfil)
+router.put('/api/editarPerfil/:id',authorize([]), listarUsuario.editarPerfil)
 
 module.exports = router;
 

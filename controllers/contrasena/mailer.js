@@ -1,7 +1,6 @@
 const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
 const Usuario = require('../../Models/usuarios'); // Asegúrate de que la ruta sea correcta
-
 // Función para generar una contraseña aleatoria
 const generarContrasenaAleatoria = (longitud = 12) => {
   const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+[]{}|;:,.<>?';

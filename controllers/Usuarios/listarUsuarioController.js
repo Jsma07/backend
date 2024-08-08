@@ -149,10 +149,14 @@ exports.getUser = async (req, res) => {
 
 exports.editarPerfil = async (req, res) => {
   const { nombre, apellido, telefono, correo, documento, tipo } = req.body;
-  
-  // Validar los datos recibidos
+
+  // Validar datos recibidos
   if (!nombre || !apellido || !telefono || !correo || !documento || !tipo) {
     return res.status(400).json({ error: 'Todos los campos son obligatorios.' });
+  }
+
+  if (!req.usuario || !req.usuario.id) {
+    return res.status(401).json({ error: 'No se ha autenticado correctamente.' });
   }
 
   try {
@@ -184,18 +188,13 @@ exports.editarPerfil = async (req, res) => {
     user.correo = correo;
     user.documento = documento;
 
-    // Si se incluye una nueva contraseña, cifrarla y actualizar
-    // if (contrasena) {
-    //   const bcrypt = require('bcrypt');
-    //   const hashedPassword = await bcrypt.hash(contrasena, 10);
-    //   user.contrasena = hashedPassword;
-    // }
-
+    // Guardar cambios en la base de datos
     await user.save();
 
     res.status(200).json({ message: 'Perfil actualizado correctamente.' });
   } catch (error) {
-    console.error('Error al actualizar el perfil:', error);
+    console.error('Error al actualizar el perfil:', error.message);
     res.status(500).json({ error: 'Error interno del servidor.' });
   }
 };
+
