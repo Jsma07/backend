@@ -21,7 +21,7 @@ exports.listarAgendamientos = async (req, res) => {
         {
           model: Servicio,
           as: 'servicio',
-          attributes: ['ImgServicio', 'Nombre_Servicio']
+          attributes: ['ImgServicio', 'Nombre_Servicio', ]
         }
       ]
     });
