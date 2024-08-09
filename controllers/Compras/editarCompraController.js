@@ -7,11 +7,9 @@ const editarEstadoCompra = async (req, res) => {
     try {
       const compra = await Compras.findByPk(IdCompra);
       console.log(compra); 
-  
-      if (!compra) {
+        if (!compra) {
         return res.status(404).json({ error: 'Compra no encontrada' });
       }
- s 
       compra.estado_compra = estado_compra;
       await compra.save();
   
