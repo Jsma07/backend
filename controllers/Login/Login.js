@@ -10,7 +10,7 @@ const Login = async (req, res) => {
   try {
     // Verificar si el usuario es un usuario, empleado o cliente
     const usuario = await Usuario.findOne({ where: { correo } });
-    const empleado = await Empleado.findOne({ where: { correo } });
+    const empleado = await Empleado.findOne({ where: { Correo: correo } });
     const cliente = await Cliente.findOne({ where: { correo } });
 
     let user = null;
@@ -31,17 +31,42 @@ const Login = async (req, res) => {
       return res.status(404).json({ mensaje: 'Usuario no encontrado' });
     }
 
-    if (user.estado != 1) {
-      return res.status(403).json({ mensaje: 'Usuario no está activo' });
+    // Accede a las propiedades a través de dataValues
+    const userData = user.dataValues;
+    console.log('Usuario encontrado:', userData); // Agregado para depuración
+
+    let contrasenaValida;
+    if (tipoUsuario === 'usuario') {
+      if (userData.estado !== 1) {
+        return res.status(403).json({ mensaje: 'Usuario no está activo' });
+      }
+      contrasenaValida = await bcrypt.compare(contrasena, userData.Contrasena);
+    } else if (tipoUsuario === 'empleado') {
+      if (userData.Estado !== 1) {
+        return res.status(403).json({ mensaje: 'Usuario no está activo' });
+      }
+      console.log('Contraseña para comparar:', contrasena); // Agregado para depuración
+      console.log('Contraseña almacenada:', userData.Contrasena); // Agregado para depuración
+      contrasenaValida = await bcrypt.compare(contrasena.trim(), userData.Contrasena);
+    } else if (tipoUsuario === 'cliente') {
+      if (userData.Estado !== 1) {
+        return res.status(403).json({ mensaje: 'Usuario no está activo' });
+      }
+      contrasenaValida = await bcrypt.compare(contrasena, userData.Contrasena);
     }
 
-    const contrasenaValida = await bcrypt.compare(contrasena, user.contrasena || user.Contrasena);
+    console.log('Contraseña válida:', contrasenaValida); // Agregado para depuración
+
     if (!contrasenaValida) {
       return res.status(401).json({ mensaje: 'Contraseña incorrecta' });
     }
 
     const token = jwt.sign(
-      { id: user.id || user.IdEmpleado || user.IdCliente, correo: user.correo || user.Correo, rolId: user.rolId || user.IdRol },
+      { 
+        id: userData.id || userData.IdEmpleado || userData.IdCliente, 
+        correo: userData.correo || userData.Correo, 
+        rolId: userData.rolId || userData.IdRol 
+      },
       process.env.JWT_SECRET,
       { expiresIn: '5h' }
     );
@@ -49,11 +74,11 @@ const Login = async (req, res) => {
     res.json({
       token,
       user: {
-        id: user.id || user.IdEmpleado || user.IdCliente,
-        nombre: user.nombre || user.Nombre,
-        apellido: user.apellido || user.Apellido,
-        correo: user.correo || user.Correo,
-        rolId: user.rolId || user.IdRol
+        id: userData.id || userData.IdEmpleado || userData.IdCliente,
+        nombre: userData.nombre || userData.Nombre,
+        apellido: userData.apellido || userData.Apellido,
+        correo: userData.correo || userData.Correo,
+        rolId: userData.rolId || userData.IdRol
       }
     });
 
@@ -62,6 +87,8 @@ const Login = async (req, res) => {
     res.status(500).json({ mensaje: 'Error en el servidor' });
   }
 }
+
+
 
 module.exports = {
   Login

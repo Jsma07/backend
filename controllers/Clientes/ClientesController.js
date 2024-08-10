@@ -1,8 +1,8 @@
 // VentasController.js
 const Cliente = require("../../Models/clientes");
 const bcrypt = require("bcrypt");
-const usuarios = require("../../Models/usuarios");
-const empleados = require("../../Models/empleados");
+const Usuario = require("../../Models/usuarios");
+const Empleado = require("../../Models/empleados");
 const { Op } = require("sequelize");
 
 async function Listar_Clientes() {
@@ -14,87 +14,59 @@ async function Listar_Clientes() {
     throw error;
   }
 }
+
 async function Crearclientes(req, res) {
   try {
     const datosCrearClientes = req.body;
 
-    const usuario = await usuarios.findOne({
-      where: {
-        [Op.or]: [
-          { Documento: datosCrearClientes.Documento },
-          { correo: datosCrearClientes.Correo },
-          { telefono: datosCrearClientes.Telefono },
-        ],
-      },
+    // Verificar si el correo ya está registrado
+    const usuarioExistente = await Usuario.findOne({
+      where: { Correo: datosCrearClientes.Correo },
+    });
+    const empleadoExistente = await Empleado.findOne({
+      where: { Correo: datosCrearClientes.Correo },
+    });
+    const clienteExistente = await Cliente.findOne({
+      where: { Correo: datosCrearClientes.Correo },
     });
 
-    const empleado = await empleados.findOne({
-      where: {
-        [Op.or]: [
-          { Documento: datosCrearClientes.Documento },
-          { Correo: datosCrearClientes.Correo },
-          { Telefono: datosCrearClientes.Telefono },
-        ],
-      },
+    if (usuarioExistente || empleadoExistente || clienteExistente) {
+      return res
+        .status(400)
+        .json({ mensaje: "El correo ya está registrado en el sistema." });
+    }
+
+    // Verificar si el documento ya está registrado
+    const documentoUsuarioExistente = await Usuario.findOne({
+      where: { Documento: datosCrearClientes.Documento },
+    });
+    const documentoEmpleadoExistente = await Empleado.findOne({
+      where: { Documento: datosCrearClientes.Documento },
+    });
+    const documentoClienteExistente = await Cliente.findOne({
+      where: { Documento: datosCrearClientes.Documento },
     });
 
-    if (usuario || empleado) {
-      let mensaje = "";
-      let campo = "";
-      let tabla = "";
-      let valorConflicto = "";
-
-      if (usuario) {
-        mensaje = "Ya existe";
-        tabla = "usuarios";
-
-        if (usuario.Documento === datosCrearClientes.Documento) {
-          campo = "Documento";
-          valorConflicto = datosCrearClientes.Documento;
-        } else if (usuario.correo === datosCrearClientes.Correo) {
-          campo = "correo";
-          valorConflicto = datosCrearClientes.Correo;
-        } else if (usuario.telefono === datosCrearClientes.Telefono) {
-          campo = "telefono";
-          valorConflicto = datosCrearClientes.Telefono;
-        }
-      } else if (empleado) {
-        mensaje = "Ya existe  ";
-        tabla = "empleados";
-
-        if (empleado.Documento === datosCrearClientes.Documento) {
-          campo = "Documento";
-          valorConflicto = datosCrearClientes.Documento;
-        } else if (empleado.Correo === datosCrearClientes.Correo) {
-          campo = "Correo";
-          valorConflicto = datosCrearClientes.Correo;
-        } else if (empleado.Telefono === datosCrearClientes.Telefono) {
-          campo = "Telefono";
-          valorConflicto = datosCrearClientes.Telefono;
-        }
-      }
-
-      if (campo && valorConflicto) {
-        res.status(400).json({
-          mensaje: `${mensaje} en la tabla ${tabla}, campo ${campo}: ${valorConflicto}`,
-        });
-      } else {
-        res.status(400).json({
-          mensaje: "Conflicto de datos en la creación del cliente",
-        });
-      }
-      return;
+    if (
+      documentoUsuarioExistente ||
+      documentoEmpleadoExistente ||
+      documentoClienteExistente
+    ) {
+      return res
+        .status(400)
+        .json({ mensaje: "El documento ya está registrado en el sistema." });
     }
 
     // Encriptar la contraseña
-    const saltRounds = 10; // Número de rondas para generar el salt
+    const saltRounds = 10;
     datosCrearClientes.Contrasena = await bcrypt.hash(
       datosCrearClientes.Contrasena,
       saltRounds
     );
 
+    // Crear el cliente
     const nuevoCliente = await Cliente.create(datosCrearClientes);
-    res.status(201).json({ mensaje: "Cliente creado", cliente: nuevoCliente });
+    res.status(200).json(nuevoCliente);
   } catch (error) {
     // Manejar el error de validación
     if (error.name === "SequelizeValidationError") {
@@ -104,199 +76,87 @@ async function Crearclientes(req, res) {
       }));
       res.status(400).json({ mensaje: "Error de validación", errores });
     } else {
-      console.log("OCURRIO UN ERROR AL CREAR EL CLIENTE: ", error);
+      console.log("Ocurrió un error al crear el cliente: ", error);
       res.status(500).json({ mensaje: "Ocurrió un error al crear el cliente" });
     }
   }
 }
 
-async function Crearclientes(req, res) {
+async function ActualizarCliente(req, res) {
   try {
-    const datosCrearClientes = req.body;
+    // Obtener el ID del cliente desde los parámetros de la URL y asegurarse de convertirlo a número
+    const idCliente = parseInt(req.params.idCliente, 10);
 
-    const usuario = await usuarios.findOne({
-      where: {
-        [Op.or]: [
-          { Documento: datosCrearClientes.Documento },
-          { correo: datosCrearClientes.Correo },
-          { telefono: datosCrearClientes.Telefono },
-        ],
-      },
-    });
-
-    const empleado = await empleados.findOne({
-      where: {
-        [Op.or]: [
-          { Documento: datosCrearClientes.Documento },
-          { Correo: datosCrearClientes.Correo },
-          { Telefono: datosCrearClientes.Telefono },
-        ],
-      },
-    });
-
-    if (usuario || empleado) {
-      let mensaje = "";
-      let campo = "";
-      let tabla = "";
-      let valorConflicto = "";
-
-      if (usuario) {
-        mensaje = "Ya existe";
-        tabla = "usuarios";
-
-        if (usuario.Documento === datosCrearClientes.Documento) {
-          campo = "Documento";
-          valorConflicto = datosCrearClientes.Documento;
-        } else if (usuario.correo === datosCrearClientes.Correo) {
-          campo = "correo";
-          valorConflicto = datosCrearClientes.Correo;
-        } else if (usuario.telefono === datosCrearClientes.Telefono) {
-          campo = "telefono";
-          valorConflicto = datosCrearClientes.Telefono;
-        }
-      } else if (empleado) {
-        mensaje = "Ya existe  ";
-        tabla = "empleados";
-
-        if (empleado.Documento === datosCrearClientes.Documento) {
-          campo = "Documento";
-          valorConflicto = datosCrearClientes.Documento;
-        } else if (empleado.Correo === datosCrearClientes.Correo) {
-          campo = "Correo";
-          valorConflicto = datosCrearClientes.Correo;
-        } else if (empleado.Telefono === datosCrearClientes.Telefono) {
-          campo = "Telefono";
-          valorConflicto = datosCrearClientes.Telefono;
-        }
-      }
-
-      if (campo && valorConflicto) {
-        res.status(400).json({
-          mensaje: `${mensaje} en la tabla ${tabla}, campo ${campo}: ${valorConflicto}`,
-        });
-      } else {
-        res.status(400).json({
-          mensaje: "Conflicto de datos en la creación del cliente",
-        });
-      }
-      return;
+    if (isNaN(idCliente)) {
+      return res.status(400).json({ mensaje: "ID de cliente inválido" });
     }
 
-    // Encriptar la contraseña
-    const saltRounds = 10; // Número de rondas para generar el salt
-    datosCrearClientes.Contrasena = await bcrypt.hash(
-      datosCrearClientes.Contrasena,
-      saltRounds
-    );
+    // Obtener los datos a actualizar desde el cuerpo de la solicitud
+    const datosActualizar = req.body;
 
-    const nuevoCliente = await Cliente.create(datosCrearClientes);
-    res.status(201).json({ mensaje: "Cliente creado", cliente: nuevoCliente });
-  } catch (error) {
-    // Manejar el error de validación
-    if (error.name === "SequelizeValidationError") {
-      const errores = error.errors.map((err) => ({
-        campo: err.path,
-        mensaje: err.message,
-      }));
-      res.status(400).json({ mensaje: "Error de validación", errores });
-    } else {
-      console.log("OCURRIO UN ERROR AL CREAR EL CLIENTE: ", error);
-      res.status(500).json({ mensaje: "Ocurrió un error al crear el cliente" });
+    // Verificar que datosActualizar no sea undefined
+    if (!datosActualizar) {
+      return res
+        .status(400)
+        .json({ mensaje: "No se proporcionaron datos para actualizar" });
     }
-  }
-}
 
-async function ActualizarCliente(idCliente, datosActualizar) {
-  try {
-    if (datosActualizar.Estado && !Number.isInteger(datosActualizar.Estado)) {
-      throw new Error("El campo Estado debe ser un número entero");
-    }
     const cliente = await Cliente.findByPk(idCliente);
     if (!cliente) {
-      throw new Error("Cliente no encontrado");
+      return res.status(404).json({ mensaje: "Cliente no encontrado" });
     }
 
-    // Validar si el documento, correo o teléfono ya existen en la tabla de usuarios o empleados
-    const usuario = await usuarios.findOne({
-      where: {
-        [Op.or]: [
-          { Documento: datosActualizar.Documento },
-          { correo: datosActualizar.Correo },
-          { telefono: datosActualizar.Telefono },
-        ],
-      },
-    });
+    // Validar si el correo está en uso solo si se proporciona
+    if (datosActualizar.Correo) {
+      const correoExistente =
+        (await Usuario.findOne({
+          where: { Correo: datosActualizar.Correo },
+        })) ||
+        (await Empleado.findOne({
+          where: { Correo: datosActualizar.Correo },
+        })) ||
+        (await Cliente.findOne({ where: { Correo: datosActualizar.Correo } }));
 
-    const empleado = await empleados.findOne({
-      where: {
-        [Op.or]: [
-          { Documento: datosActualizar.Documento },
-          { Correo: datosActualizar.Correo },
-          { Telefono: datosActualizar.Telefono },
-        ],
-      },
-    });
-
-    if (usuario || empleado) {
-      let mensaje = "";
-      let campo = "";
-      let tabla = "";
-      let valorConflicto = "";
-
-      if (usuario) {
-        mensaje = "Ya existe";
-        tabla = "usuarios";
-
-        if (usuario.Documento === datosActualizar.Documento) {
-          campo = "Documento";
-          valorConflicto = datosActualizar.Documento;
-        } else if (usuario.correo === datosActualizar.Correo) {
-          campo = "correo";
-          valorConflicto = datosActualizar.Correo;
-        } else if (usuario.telefono === datosActualizar.Telefono) {
-          campo = "telefono";
-          valorConflicto = datosActualizar.Telefono;
-        }
-      } else if (empleado) {
-        mensaje = "Ya existe  ";
-        tabla = "empleados";
-
-        if (empleado.Documento === datosActualizar.Documento) {
-          campo = "Documento";
-          valorConflicto = datosActualizar.Documento;
-        } else if (empleado.Correo === datosActualizar.Correo) {
-          campo = "Correo";
-          valorConflicto = datosActualizar.Correo;
-        } else if (empleado.Telefono === datosActualizar.Telefono) {
-          campo = "Telefono";
-          valorConflicto = datosActualizar.Telefono;
-        }
+      if (correoExistente && correoExistente.IdCliente !== idCliente) {
+        return res
+          .status(400)
+          .json({ mensaje: "El correo ya está registrado en el sistema." });
       }
-
-      if (campo && valorConflicto) {
-        res.status(400).json({
-          mensaje: `${mensaje} en la tabla ${tabla}, campo ${campo}: ${valorConflicto}`,
-        });
-      } else {
-        res.status(400).json({
-          mensaje: "Conflicto de datos en la actualización del cliente",
-        });
-      }
-      return;
     }
 
+    // Validar si el documento está en uso solo si se proporciona
+    if (datosActualizar.Documento) {
+      const documentoExistente =
+        (await Usuario.findOne({
+          where: { Documento: datosActualizar.Documento },
+        })) ||
+        (await Empleado.findOne({
+          where: { Documento: datosActualizar.Documento },
+        })) ||
+        (await Cliente.findOne({
+          where: { Documento: datosActualizar.Documento },
+        }));
+
+      if (documentoExistente && documentoExistente.IdCliente !== idCliente) {
+        return res
+          .status(400)
+          .json({ mensaje: "El documento ya está registrado en el sistema." });
+      }
+    }
+
+    // Actualizar el cliente
     await cliente.update(datosActualizar);
-    return cliente.id;
+    return res.status(200).json(cliente);
   } catch (error) {
+    console.log("Ocurrió un error al actualizar el cliente: ", error);
     if (error.name === "SequelizeValidationError") {
       const errores = error.errors.map((err) => ({
         campo: err.path,
         mensaje: err.message,
       }));
-      res.status(400).json({ mensaje: "Error de validación", errores });
+      return res.status(400).json({ mensaje: "Error de validación", errores });
     } else {
-      console.log("OCURRIO UN ERROR AL ACTUALIZAR EL CLIENTE: ", error);
-      res
+      return res
         .status(500)
         .json({ mensaje: "Ocurrió un error al actualizar el cliente" });
     }

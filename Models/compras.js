@@ -14,7 +14,7 @@ const Compras =  sequelize.define('compras', {
       primaryKey: true
     },
     fecha_compra: {
-      type: Sequelize.DATEONLY,
+      type: Sequelize.DATE,
       allowNull: false
     },
     descuento_compra: {

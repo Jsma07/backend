@@ -1,5 +1,5 @@
 const ConexionDB = require('../../Db/Conexion');
-const Agendamiento = require('../../Models/Agendamiento');
+const Agendamiento = require('../../Models/agendamiento');
 const Cliente = require('../../Models/clientes');
 const Empleado = require('../../Models/empleados');
 const Servicio = require('../../Models/servicios');
@@ -21,7 +21,7 @@ exports.listarAgendamientos = async (req, res) => {
         {
           model: Servicio,
           as: 'servicio',
-          attributes: ['ImgServicio', 'Nombre_Servicio']
+          attributes: ['ImgServicio', 'Nombre_Servicio', ]
         }
       ]
     });

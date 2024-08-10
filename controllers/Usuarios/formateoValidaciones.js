@@ -7,13 +7,13 @@ const DatosFormateados = (dato) => {
   };
   
   const CorreoFormateado = (correo) =>{
-    const nombreSinEspacios = dato.trim();
+    const nombreSinEspacios = correo.trim();
     const nombreMinusculas = nombreSinEspacios.toLowerCase();
   
     return nombreMinusculas;
   }
   const NumerosFormateados = (numero) =>{
-    const nombreSinEspacios = dato.trim();
+    const nombreSinEspacios = numero.trim();
   
    return nombreSinEspacios
   }

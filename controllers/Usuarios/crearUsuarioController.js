@@ -2,24 +2,25 @@ const Usuario = require('../../Models/usuarios'); //Importa el modelo de usuario
 const bcrypt = require('bcrypt');
 const Empleados = require('../../Models/empleados')
 const Clientes = require('../../Models/clientes')
-const { DatosFormateados } = require('./formateoValidaciones');
-const {CorreoFormateado} = require('./formateoValidaciones')
-const {NumerosFormateados} = require('./formateoValidaciones')
+// const { DatosFormateados, CorreoFormateado, NumerosFormateados } = require('./formateoValidaciones');
+
 
 
 exports.crearUsuario = async (req, res) => {
     console.log('Controlador crearUsuario alcanzado');
     try {
         // Extrae los datos del cuerpo de la solicitud
-        const { nombre, apellido, correo, telefono, rolId, contrasena,Documento, tipoDocumento, estado } = req.body;
-        console.log('Datos del cuerpo de la solicitud:', req.body);
+        
+        let { nombre, apellido, correo, telefono, rolId, contrasena, Documento, tipoDocumento, estado } = req.body;
+
+    // Formatea los datos
+    nombre = nombre.trim().toLowerCase().charAt(0).toUpperCase() + nombre.trim().toLowerCase().slice(1);
+    apellido = apellido.trim().toLowerCase().charAt(0).toUpperCase() + apellido.trim().toLowerCase().slice(1);
+    correo = correo.trim().toLowerCase();
+    telefono = telefono.trim();
+    Documento = Documento.trim();
         const contrasenaCifrada = await bcrypt.hash(contrasena, 10);
 
-      nombre = DatosFormateados(nombre)
-      apellido = DatosFormateados(apellido)
-      correo = CorreoFormateado(correo)
-      telefono = NumerosFormateados(telefono)
-      Documento = NumerosFormateados(Documento)
 
         const nuevoUsuario = await Usuario.create({
             nombre,
