@@ -1,4 +1,4 @@
-const Compra = require('../../Models/compras');
+const Compra = require('../../models/compras');
 const DetalleCompra = require('../../Models/detallecompra');
 const Insumo = require('../../Models/insumos');
 
@@ -41,7 +41,7 @@ exports.guardarCompra = async (req, res) => {
 
         const iva_compra = 0.19 * totalValorInsumos;
         const total_compra = totalValorInsumos - descuento_compra;
-        const subtotal_compra = totalValorInsumos;
+        const subtotal_compra = total_compra - iva_compra;
 
         // Crear nueva compra
         const nuevaCompra = await Compra.create({

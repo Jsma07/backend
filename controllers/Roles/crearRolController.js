@@ -5,7 +5,7 @@ const { DatosFormateados } = require('../Usuarios/formateoValidaciones');
 
 
 const crearRol = async (req, res) => {
-    const { nombre, permisos } = req.body;
+    let { nombre, permisos } = req.body;
     nombre = DatosFormateados(nombre)
 
     try {
