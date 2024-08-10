@@ -33,16 +33,26 @@ const Login = async (req, res) => {
     console.log('Usuario encontrado:', userData);
 
     let contrasenaValida;
-    let hashAlmacenado = userData.Contrasena || userData.contrasena; // Ajusta si es necesario
-
-    if (!hashAlmacenado) {
-      return res.status(500).json({ mensaje: 'Error en el servidor: Contraseña no encontrada' });
+    if (tipoUsuario === 'usuario') {
+      if (userData.estado !== 1) {
+        return res.status(403).json({ mensaje: 'Usuario no está activo' });
+      }
+      contrasenaValida = await bcrypt.compare(contrasena, userData.contrasena);
+    } else if (tipoUsuario === 'empleado') {
+      if (userData.Estado !== 1) {
+        return res.status(403).json({ mensaje: 'Usuario no está activo' });
+      }
+      console.log('Contraseña para comparar:', contrasena); // Agregado para depuración
+      console.log('Contraseña almacenada:', userData.Contrasena); // Agregado para depuración
+      contrasenaValida = await bcrypt.compare(contrasena.trim(), userData.Contrasena);
+    } else if (tipoUsuario === 'cliente') {
+      if (userData.Estado !== 1) {
+        return res.status(403).json({ mensaje: 'Usuario no está activo' });
+      }
+      contrasenaValida = await bcrypt.compare(contrasena, userData.Contrasena);
     }
 
-    console.log('Contraseña ingresada:', contrasena);
-    console.log('Contraseña almacenada:', hashAlmacenado);
-
-    contrasenaValida = await bcrypt.compare(contrasena, hashAlmacenado);
+    console.log('Contraseña válida:', contrasenaValida); // Agregado para depuración
 
     if (!contrasenaValida) {
       return res.status(401).json({ mensaje: 'Contraseña incorrecta' });
