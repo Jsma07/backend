@@ -6,7 +6,7 @@ const Cliente = require('../../Models/clientes');
 
 const Login = async (req, res) => {
   const { correo, contrasena } = req.body;
-  correo = correo.trim()
+  //correo = correo.trim()
   try {
     // Verificar si el usuario es un usuario, empleado o cliente
     const usuario = await Usuario.findOne({ where: { correo } });
