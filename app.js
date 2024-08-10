@@ -38,6 +38,7 @@ if (!fs.existsSync(insumosDir)) {
 }
 
 // Importar y configurar las rutas
+const PanelRoutes = require("./routes/panelRouter");
 const usuarioRoutes = require("./routes/usuarioRoute");
 const rolesRoutes = require("./routes/rolesRoutes");
 const VentasRoutes = require("./routes/VentasRoutes");
@@ -56,6 +57,7 @@ const LoginRoutes = require("./routes/loginRouter");
 const transferAgendamientosToVentas = require("./Models/transferencia");
 const adicionesrouter = require("./routes/adicionesrouter");
 const Salida = require("./routes/Salida");
+
 
 // Configuración del puerto
 const PORT = process.env.PORT || 3000;
@@ -93,6 +95,7 @@ app.use("/static", express.static("public/static"));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Configurar las rutas
+app.use(PanelRoutes);
 app.use(usuarioRoutes);
 app.use(LoginRoutes);
 app.use(rolesRoutes);

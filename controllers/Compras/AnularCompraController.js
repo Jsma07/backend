@@ -17,8 +17,8 @@ exports.anularCompra = async (req, res) => {
         const diffTime = Math.abs(hoy - fechaCompra);
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-        if (diffDays > 7) {
-            return res.status(400).json({ error: 'La compra solo puede ser anulada dentro de los 7 días de su registro' });
+        if (diffDays > 3) {
+            return res.status(400).json({ error: 'La compra solo puede ser anulada dentro de los 3 días de su registro' });
         }
 
         compra.estado_compra = 'Anulada';
