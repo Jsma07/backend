@@ -40,7 +40,7 @@ const Login = async (req, res) => {
       if (userData.estado !== 1) {
         return res.status(403).json({ mensaje: 'Usuario no está activo' });
       }
-      contrasenaValida = await bcrypt.compare(contrasena, userData.Contrasena);
+      contrasenaValida = await bcrypt.compare(contrasena, userData.contrasena);
     } else if (tipoUsuario === 'empleado') {
       if (userData.Estado !== 1) {
         return res.status(403).json({ mensaje: 'Usuario no está activo' });

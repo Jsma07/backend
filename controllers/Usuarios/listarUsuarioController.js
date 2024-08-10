@@ -44,8 +44,11 @@ exports.getUser = async (req, res) => {
   try {
     let user = null;
 
+    const { correo, documento } = req.usuario;
+
     // Buscar en la tabla de usuarios
-    user = await Usuario.findByPk(req.usuario.id, {
+    user = await Usuario.findOne({
+      where: { [correo ? 'correo' : 'documento']: correo || documento },
       include: [
         {
           model: Roles,
@@ -64,7 +67,8 @@ exports.getUser = async (req, res) => {
 
     // Si no se encuentra en la tabla de usuarios, buscar en empleados
     if (!user) {
-      user = await Empleado.findByPk(req.usuario.id, {
+      user = await Empleado.findOne({
+        where: { Correo: correo },
         include: [
           {
             model: Roles,
@@ -84,7 +88,8 @@ exports.getUser = async (req, res) => {
 
     // Si no se encuentra en la tabla de empleados, buscar en clientes
     if (!user) {
-      user = await Cliente.findByPk(req.usuario.id, {
+      user = await Cliente.findOne({
+        where: { Correo: correo },
         include: [
           {
             model: Roles,
@@ -141,7 +146,7 @@ exports.getUser = async (req, res) => {
     });
   } catch (error) {
     console.error('Error al obtener el usuario:', error);
-    res.status(500).json({ error: 'Error interno del servidor' });
+    res.status(500).json({ error: 'Error interno del servidor.' });
   }
 };
 
