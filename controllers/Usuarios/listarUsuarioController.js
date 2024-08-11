@@ -186,15 +186,41 @@ exports.editarPerfil = async (req, res) => {
       return res.status(404).json({ error: 'Usuario no encontrado.' });
     }
 
-    // Actualizar los campos del usuario
-    user.nombre = nombre;
-    user.apellido = apellido;
-    user.telefono = telefono;
-    user.correo = correo;
-    user.documento = documento;
+    // Mostrar los datos antes de la actualización
+    console.log('Datos antes de la actualización:', user.dataValues);
+
+    // Actualizar los campos del usuario, teniendo en cuenta el formato de los campos en la base de datos
+    if (tipo === 'empleado') {
+      user.set({
+        Nombre: nombre,
+        Apellido: apellido,
+        Telefono: telefono,
+        Correo: correo,
+        Documento: documento
+      });
+    } else if (tipo === 'cliente') {
+      user.set({
+        Nombre: nombre,
+        Apellido: apellido,
+        Telefono: telefono,
+        Correo: correo,
+        Documento: documento
+      });
+    } else { // Para 'usuario' que puede tener campos en minúsculas
+      user.set({
+        nombre: nombre,
+        apellido: apellido,
+        telefono: telefono,
+        correo: correo,
+        documento: documento
+      });
+    }
 
     // Guardar cambios en la base de datos
     await user.save();
+
+    // Mostrar los datos después de la actualización
+    console.log('Datos después de la actualización:', user.dataValues);
 
     res.status(200).json({ message: 'Perfil actualizado correctamente.' });
   } catch (error) {
@@ -202,4 +228,6 @@ exports.editarPerfil = async (req, res) => {
     res.status(500).json({ error: 'Error interno del servidor.' });
   }
 };
+
+
 
