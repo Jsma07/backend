@@ -4,6 +4,8 @@ const Ventas = require('../../Models/ventas');
 const Compras = require('../../Models/compras');
 const Servicios = require('../../Models/servicios');
 const Agenda = require('../../Models/agendamiento');
+const Empleados = require('../../Models/empleados');
+
 
 const contarClientes = async (req, res) => {
     try {
@@ -67,6 +69,22 @@ const contarServicios = async (req, res) => {
     }
 };
 
+const contarEmpleados = async (req, res) => {
+    try {
+        const totalEmpleados = await Empleados.count({
+            where: {
+                Estado: 1
+            }
+        });
+        console.log("Total empleados con estado 'En espera' o 'Terminada':", totalEmpleados);
+
+        res.json({ totalEmpleados });
+    } catch (error) {
+        console.error('Error al contar las empleados:', error);
+        res.status(500).json({ error: 'Error al contar las empleados' });
+    }
+};
+
 const obtenerServiciosMasAgendados = async (req, res) => {
     try {
         console.log("Iniciando consulta de agendamientos...");
@@ -114,4 +132,4 @@ const obtenerServiciosMasAgendados = async (req, res) => {
     }
 };
 
-module.exports = { contarClientes, contarVentas, contarCompras, contarServicios, obtenerServiciosMasAgendados };
+module.exports = { contarClientes, contarVentas, contarCompras, contarServicios, contarEmpleados, obtenerServiciosMasAgendados };
