@@ -20,7 +20,7 @@ const contarVentas = async (req, res) => {
     try {
         const totalVentas = await Ventas.count({
             where: {
-                Estado: 3
+                Estado: 1
             }
         });
         console.log("Total ventas con Estado 3:", totalVentas);
