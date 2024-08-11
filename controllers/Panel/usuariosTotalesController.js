@@ -1,8 +1,9 @@
-const { Op } = require('sequelize');
-const  Clientes  = require('../../Models/clientes'); 
+const { Op, fn, col, literal } = require('sequelize');
+const Clientes = require('../../Models/clientes'); 
 const Ventas = require('../../Models/ventas');
 const Compras = require('../../Models/compras');
 const Servicios = require('../../Models/servicios');
+const Agenda = require('../../Models/agendamiento');
 
 const contarClientes = async (req, res) => {
     try {
@@ -66,6 +67,51 @@ const contarServicios = async (req, res) => {
     }
 };
 
+const obtenerServiciosMasAgendados = async (req, res) => {
+    try {
+        console.log("Iniciando consulta de agendamientos...");
+        const agendamientos = await Agenda.findAll({
+            attributes: ['IdServicio'],
+            raw: true
+        });
 
+        console.log("Agendamientos obtenidos:", agendamientos);
+        const conteos = {};
+        for (const agendamiento of agendamientos) {
+            const servicioId = agendamiento.IdServicio;
+            if (conteos[servicioId]) {
+                conteos[servicioId]++;
+            } else {
+                conteos[servicioId] = 1;
+            }
+        }
 
-module.exports = { contarClientes, contarVentas, contarCompras, contarServicios };
+        console.log("Conteos de agendamientos:", conteos);
+        const serviciosMasAgendados = await Servicios.findAll({
+            where: {
+                IdServicio: Object.keys(conteos)
+            }
+        });
+
+        console.log("Servicios obtenidos:", serviciosMasAgendados);
+        const serviciosConConteos = serviciosMasAgendados.map(servicio => ({
+            IdServicio: servicio.IdServicio,
+            Nombre_Servicio: servicio.Nombre_Servicio,
+            cantidadAgendamientos: conteos[servicio.IdServicio] || 0
+        }));
+
+        serviciosConConteos.sort((a, b) => b.cantidadAgendamientos - a.cantidadAgendamientos);
+
+        console.log("Servicios ordenados:", serviciosConConteos);
+
+        const topServicios = serviciosConConteos.slice(0, 4);
+
+        console.log("Servicios más agendados:", topServicios);
+        res.json(topServicios);
+    } catch (error) {
+        console.error('Error al obtener los servicios más agendados:', error);
+        res.status(500).json({ error: 'Error al obtener los servicios más agendados' });
+    }
+};
+
+module.exports = { contarClientes, contarVentas, contarCompras, contarServicios, obtenerServiciosMasAgendados };
