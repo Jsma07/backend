@@ -7,7 +7,6 @@ const Cliente = require('../../Models/clientes');
 const Login = async (req, res) => {
   const { correo, contrasena } = req.body;
   try {
-    // Verificar si el usuario es un usuario, empleado o cliente
     const usuario = await Usuario.findOne({ where: { correo } });
     const empleado = await Empleado.findOne({ where: { Correo: correo } });
     const cliente = await Cliente.findOne({ where: { correo } });
@@ -30,16 +29,15 @@ const Login = async (req, res) => {
       return res.status(404).json({ mensaje: 'Usuario no encontrado' });
     }
 
-    // Accede a las propiedades a través de dataValues
     const userData = user.dataValues;
-    console.log('Usuario encontrado:', userData); // Agregado para depuración
+    console.log('Usuario encontrado:', userData);
 
     let contrasenaValida;
     if (tipoUsuario === 'usuario') {
       if (userData.estado !== 1) {
         return res.status(403).json({ mensaje: 'Usuario no está activo' });
       }
-      contrasenaValida = await bcrypt.compare(contrasena, userData.Contrasena);
+      contrasenaValida = await bcrypt.compare(contrasena, userData.contrasena);
     } else if (tipoUsuario === 'empleado') {
       if (userData.Estado !== 1) {
         return res.status(403).json({ mensaje: 'Usuario no está activo' });
@@ -85,10 +83,8 @@ const Login = async (req, res) => {
     console.error('Error en el inicio de sesión:', error);
     res.status(500).json({ mensaje: 'Error en el servidor' });
   }
-}
+};
 
-
-
-module.exports = {
-  Login
+module.exports = {
+  Login
 };
