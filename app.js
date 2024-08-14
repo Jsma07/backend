@@ -76,6 +76,7 @@ const LoginRoutes = require("./routes/loginRouter");
 const horarioRouter = require("./routes/horarioRouter");
 const adicionesrouter = require("./routes/adicionesrouter")(uploadAdiciones); // Usar el middleware de subida para adiciones
 const Salida = require("./routes/Salida");
+const transferAgendamientosToVentas = require("./Models/transferencia");
 
 // Configuración del puerto
 const PORT = process.env.PORT || 3000;
@@ -131,6 +132,22 @@ app.use(DetalleventasRouter);
 app.use(horarioRouter);
 app.use(adicionesrouter); // Importar y usar las rutas de adiciones con middleware de subida de imágenes
 app.use(Salida);
+
+
+
+
+
+async function executeTransfer() {
+  try {
+    console.log('Ejecutando transferencia de agendamientos a ventas...');
+    await transferAgendamientosToVentas();
+  } catch (error) {
+    console.error('Error durante la ejecución de la transferencia:', error);
+  }
+}
+
+setInterval(executeTransfer, 50000); 
+
 
 // Manejo de errores
 app.use((err, req, res, next) => {
