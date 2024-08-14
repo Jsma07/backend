@@ -1,12 +1,24 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const authorize = require('../middleware/auth')
 
-const { listarAdiciones,cambiarEstadoAdicion } = require('../controllers/Adiciones/listarAdiciones');
-const { registrarAdicion } = require('../controllers/Adiciones/registrarAdicion');
-router.get('/Jackenail/Listarventas/adiciones', listarAdiciones);
+const {
+  listarAdiciones,
+  cambiarEstadoAdicion,
+} = require("../controllers/Adiciones/listarAdiciones");
+const {
+  registrarAdicion,
+} = require("../controllers/Adiciones/registrarAdicion");
 
-router.post('/Jackenail/Registraradiciones', registrarAdicion);
+module.exports = (uploadAdiciones) => {
+  router.get("/Jackenail/Listarventas/adiciones", listarAdiciones);
 
-router.put('/Jackenail/CambiaEstado/:adiciones', cambiarEstadoAdicion);
-module.exports = router;
+  router.post(
+    "/Jackenail/Registraradiciones",
+    uploadAdiciones.single("Img"), // Aquí "Img" es el nombre del campo en el formulario que contiene la imagen
+    registrarAdicion
+  );
+
+  router.put("/Jackenail/CambiaEstado/:id", cambiarEstadoAdicion);
+
+  return router;
+};
