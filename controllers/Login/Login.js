@@ -42,8 +42,8 @@ const Login = async (req, res) => {
       if (userData.Estado !== 1) {
         return res.status(403).json({ mensaje: 'Usuario no está activo' });
       }
-      console.log('Contraseña para comparar:', contrasena); // Agregado para depuración
-      console.log('Contraseña almacenada:', userData.Contrasena); // Agregado para depuración
+      console.log('Contraseña para comparar:', contrasena); 
+      console.log('Contraseña almacenada:', userData.Contrasena);
       contrasenaValida = await bcrypt.compare(contrasena.trim(), userData.Contrasena);
     } else if (tipoUsuario === 'cliente') {
       if (userData.Estado !== 1) {
@@ -52,7 +52,7 @@ const Login = async (req, res) => {
       contrasenaValida = await bcrypt.compare(contrasena, userData.Contrasena);
     }
 
-    console.log('Contraseña válida:', contrasenaValida); // Agregado para depuración
+    console.log('Contraseña válida:', contrasenaValida);
 
     if (!contrasenaValida) {
       return res.status(401).json({ mensaje: 'Contraseña incorrecta' });
