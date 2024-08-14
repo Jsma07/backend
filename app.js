@@ -31,6 +31,25 @@ const storageInsumos = multer.diskStorage({
 
 const uploadInsumos = multer({ storage: storageInsumos });
 
+// Configuración de Multer específica para adiciones
+const storageAdiciones = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const adicionesDir = path.join(__dirname, "uploads/Adiciones");
+
+    // Verificar si la carpeta existe, si no, crearla
+    if (!fs.existsSync(adicionesDir)) {
+      fs.mkdirSync(adicionesDir, { recursive: true });
+    }
+
+    cb(null, adicionesDir); // Carpeta específica para imágenes de adiciones
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + path.extname(file.originalname)); // Nombre único para cada imagen
+  },
+});
+
+const uploadAdiciones = multer({ storage: storageAdiciones });
+
 // Crear la carpeta de insumos si no existe
 const insumosDir = path.join(__dirname, "uploads/insumos");
 if (!fs.existsSync(insumosDir)) {
@@ -52,12 +71,11 @@ const CategoriasRouters = require("./routes/categoriasRouter");
 const DetalleventasRouter = require("./routes/DetalleventasRouter");
 const ServiciosRouters = require("./routes/serviciosRouter")(upload); // Usar el middleware de subida para servicios
 const AgendasRouters = require("./routes/AgendasRouter");
-const horarioRouter = require("./routes/horarioRouter");
 const LoginRoutes = require("./routes/loginRouter");
-const transferAgendamientosToVentas = require("./Models/transferencia");
-const adicionesrouter = require("./routes/adicionesrouter");
-const Salida = require("./routes/Salida");
 
+const horarioRouter = require("./routes/horarioRouter");
+const adicionesrouter = require("./routes/adicionesrouter")(uploadAdiciones); // Usar el middleware de subida para adiciones
+const Salida = require("./routes/Salida");
 
 // Configuración del puerto
 const PORT = process.env.PORT || 3000;
@@ -111,20 +129,8 @@ app.use(ServiciosRouters); // Importar y usar las rutas de servicios con middlew
 app.use(AgendasRouters);
 app.use(DetalleventasRouter);
 app.use(horarioRouter);
-app.use(adicionesrouter);
+app.use(adicionesrouter); // Importar y usar las rutas de adiciones con middleware de subida de imágenes
 app.use(Salida);
-
-// async function executeTransfer() {
-//   try {
-//     console.log('Ejecutando transferencia de agendamientos a ventas...');
-//     await transferAgendamientosToVentas();
-//   } catch (error) {
-//     console.error('Error durante la ejecución de la transferencia:', error);
-//   }
-// }
-
-// sirvepara ejercutar la función inicialmente y luego repetirla cada 3 segundos
-// setInterval(executeTransfer, 50000); // 2000 milisegundos = 3 segundos
 
 // Manejo de errores
 app.use((err, req, res, next) => {
