@@ -1,11 +1,13 @@
 const DetalleCompra = require('../../../Models/detallecompra');
-const Compras = require('../../../Models/compras');
+const Compras = require('../../../models/compras');
 const Insumos = require('../../../Models/insumos');
 
+// Función para formatear valores monetarios
 const formatCurrency = (value) => {
     return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(value);
 };
 
+// Controlador para listar detalles de compras
 async function listarDetalleCompras(req, res) {
     try {
         const listaDetalleCompras = await DetalleCompra.findAll({
@@ -14,17 +16,21 @@ async function listarDetalleCompras(req, res) {
                 {
                     model: Insumos.scope('notDeleted'),
                     as: 'insumo',
-                    attributes: ['NombreInsumos', 'Imagen', 'PrecioUnitario']
+                    attributes: ['NombreInsumos', 'Imagen'] // No incluir PrecioUnitario aquí
                 }
             ]
         });
 
+        // Formatear los datos para incluir el PrecioUnitario de detallecompra
         const listaDetalleComprasFormatted = listaDetalleCompras.map(detalle => ({
             ...detalle.toJSON(),
-            insumo: {
-                ...detalle.insumo,
-                PrecioUnitario: detalle.insumo ? formatCurrency(detalle.insumo.PrecioUnitario) : null
-            },
+            insumos: detalle.insumo.map(insumo => ({
+                NombreInsumos: insumo.NombreInsumos,
+                imagen: insumo.Imagen,
+                PrecioUnitario: formatCurrency(detalle.precio_unitario), // Usa el precio_unitario de DetalleCompra
+                cantidad_insumo: detalle.cantidad_insumo,
+                totalValorInsumos: formatCurrency(detalle.totalValorInsumos)
+            })),
             totalValorInsumos: formatCurrency(detalle.totalValorInsumos)
         }));
 
@@ -35,6 +41,7 @@ async function listarDetalleCompras(req, res) {
     }
 }
 
+// Controlador para buscar detalle de compra por ID
 async function BuscarDetalleCompraPorId(req, res) {
     const { id } = req.params;
     console.log("ID ENCONTRADO:", id);
@@ -51,8 +58,7 @@ async function BuscarDetalleCompraPorId(req, res) {
                 {
                     model: Insumos,
                     as: 'insumo',
-                    attributes: ['NombreInsumos', 'Imagen', 'PrecioUnitario'],
-                    required: false
+                    attributes: ['NombreInsumos', 'Imagen'] // No incluir PrecioUnitario aquí
                 }
             ]
         });
@@ -80,7 +86,7 @@ async function BuscarDetalleCompraPorId(req, res) {
             acc[idCompra].insumos.push({
                 NombreInsumos: curr.insumo ? curr.insumo.NombreInsumos : 'Insumo eliminado',
                 imagen: curr.insumo ? curr.insumo.Imagen : null,
-                PrecioUnitario: curr.insumo ? formatCurrency(curr.insumo.PrecioUnitario) : null,
+                PrecioUnitario: formatCurrency(curr.precio_unitario), 
                 cantidad_insumo: curr.cantidad_insumo,
                 totalValorInsumos: formatCurrency(curr.totalValorInsumos)
             });
