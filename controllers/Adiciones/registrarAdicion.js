@@ -6,7 +6,10 @@ const MAX_FILE_SIZE = 20000 * 20000; // Ajusta el tamaño máximo según sea nec
 
 const registrarAdicion = async (req, res) => {
   try {
-    const { NombreAdiciones, Precio, Estado } = req.body;
+    console.log("Datos recibidos:", req.body);
+    console.log("Archivo recibido:", req.file);
+
+    const { NombreAdiciones, Precio } = req.body;
 
     // Ruta donde se guardarán las imágenes
     const imgDirectory = path.join(__dirname, "../../uploads/Adiciones");
@@ -33,7 +36,7 @@ const registrarAdicion = async (req, res) => {
       Img,
       NombreAdiciones,
       Precio,
-      Estado,
+      Estado: 1,
     });
 
     res.status(201).json({
