@@ -148,7 +148,8 @@ exports.listarFechasConHorasInactivas = async (req, res) => {
             .filter(horario => horario.horas_inactivas && horario.horas_inactivas.split(',').length > 0)
             .map(horario => ({
                 fecha: horario.fecha,
-                horas_inactivas: horario.horas_inactivas ? horario.horas_inactivas.split(',') : []
+                horas_inactivas: horario.horas_inactivas ? horario.horas_inactivas.split(',') : [],
+                estado: horario.estado // Agregar el estado del día
             }));
 
         res.status(200).json(fechasConHorasInactivas);

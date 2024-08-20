@@ -4,14 +4,14 @@ const path = require('path');
 const fs = require('fs');
 
 // Definir el tamaño máximo permitido en bytes (1 MB en este caso)
-const MAX_FILE_SIZE = 20000 * 20000; // 1 MB en bytes
+const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1
 
 exports.guardarServicio = async (req, res) => {
     try {
       console.log("Body:", req.body);
       console.log("File:", req.file);
   
-      const { Nombre_Servicio, Precio_Servicio, Tiempo_Servicio, EstadoServicio } = req.body;
+      const { Nombre_Servicio, Precio_Servicio, Tiempo_Servicio, EstadoServicio, Descripcion_Servicio } = req.body;
       const ImgServicio = req.file ? `/uploads/${req.file.filename}` : null;
   
       // Verificar el tamaño del archivo
@@ -33,7 +33,8 @@ exports.guardarServicio = async (req, res) => {
           Nombre_Servicio,
           Precio_Servicio,
           Tiempo_Servicio,
-          EstadoServicio
+          EstadoServicio,
+          Descripcion_Servicio	
       });
   
       res.status(200).json({ Estado: 'guardado correctamente', servicio: nuevoServicio });

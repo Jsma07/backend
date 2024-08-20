@@ -79,6 +79,18 @@ const Servicio = sequelize.define('servicios', {
         msg: "El estado del servicio debe ser 0 (inactivo) o 1 (activo)"
       }
     }
+  }, Descripcion_Servicio: {
+    type: Sequelize.STRING(1000),
+    allowNull: false,
+    validate: {
+      notEmpty: {
+        msg: "La descripción del servicio no puede estar vacía"
+      },
+      len: {
+        args: [1, 1000],
+        msg: "La descripción del servicio debe tener entre 1 y 1000 caracteres"
+      }
+    }
   }
 }, {
   sequelize,
