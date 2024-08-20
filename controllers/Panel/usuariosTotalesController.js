@@ -6,7 +6,6 @@ const Servicios = require('../../Models/servicios');
 const Agenda = require('../../Models/agendamiento');
 const Empleados = require('../../Models/empleados');
 
-
 const contarClientes = async (req, res) => {
     try {
         const totalClientes = await Clientes.count(); 
@@ -88,12 +87,16 @@ const contarEmpleados = async (req, res) => {
 const obtenerServiciosMasAgendados = async (req, res) => {
     try {
         console.log("Iniciando consulta de agendamientos...");
+
+        //Obtener todos los agendamientos
         const agendamientos = await Agenda.findAll({
             attributes: ['IdServicio'],
             raw: true
         });
 
         console.log("Agendamientos obtenidos:", agendamientos);
+
+        //Contabilizar los agendamientos por servicio
         const conteos = {};
         for (const agendamiento of agendamientos) {
             const servicioId = agendamiento.IdServicio;
@@ -105,26 +108,38 @@ const obtenerServiciosMasAgendados = async (req, res) => {
         }
 
         console.log("Conteos de agendamientos:", conteos);
+
+        //Obtener los servicios con su precio
         const serviciosMasAgendados = await Servicios.findAll({
             where: {
                 IdServicio: Object.keys(conteos)
-            }
+            },
+            attributes: ['IdServicio', 'Nombre_Servicio', 'Precio_servicio', 'ImgServicio'],
+            raw: true
         });
 
         console.log("Servicios obtenidos:", serviciosMasAgendados);
+
+        //Combinar los servicios con los conteos de agendamientos
         const serviciosConConteos = serviciosMasAgendados.map(servicio => ({
             IdServicio: servicio.IdServicio,
+            ImgServicio : servicio.ImgServicio,
             Nombre_Servicio: servicio.Nombre_Servicio,
+            Precio_servicio: servicio.Precio_servicio,
             cantidadAgendamientos: conteos[servicio.IdServicio] || 0
         }));
 
+        //Ordenar los servicios por cantidad de agendamientos
         serviciosConConteos.sort((a, b) => b.cantidadAgendamientos - a.cantidadAgendamientos);
 
         console.log("Servicios ordenados:", serviciosConConteos);
 
+        //Seleccionar los 4 servicios más agendados
         const topServicios = serviciosConConteos.slice(0, 4);
 
         console.log("Servicios más agendados:", topServicios);
+
+        //Enviar la respuesta al cliente
         res.json(topServicios);
     } catch (error) {
         console.error('Error al obtener los servicios más agendados:', error);
