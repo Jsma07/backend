@@ -113,7 +113,6 @@ app.use(express.json());
 app.use("/static", express.static("public/static"));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Configurar las rutas
 app.use(PanelRoutes);
 app.use(usuarioRoutes);
 app.use(LoginRoutes);
@@ -133,16 +132,16 @@ app.use(horarioRouter);
 app.use(adicionesrouter);
 app.use(Salida);
 
-// async function executeTransfer() {
-//   try {
-//     console.log('Ejecutando transferencia de agendamientos a ventas...');
-//     await transferAgendamientosToVentas();
-//   } catch (error) {
-//     console.error('Error durante la ejecución de la transferencia:', error);
-//   }
-// }
+async function executeTransfer() {
+  try {
+    console.log("Ejecutando transferencia de agendamientos a ventas...");
+    await transferAgendamientosToVentas();
+  } catch (error) {
+    console.error("Error durante la ejecución de la transferencia:", error);
+  }
+}
 
-// setInterval(executeTransfer, 50000);
+setInterval(executeTransfer, 50000);
 
 // Manejo de errores
 app.use((err, req, res, next) => {
