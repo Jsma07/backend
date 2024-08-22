@@ -8,10 +8,15 @@ const Empleado = require("../../Models/empleados");
 
 async function Listar_Empleados() {
   try {
-    const Empleados = await empleado.findAll();
+    const Empleados = await Empleado.findAll({
+      include: {
+        model: Rol,
+        attributes: ["idRol", "nombre"],
+      },
+    });
     return Empleados;
   } catch (error) {
-    console.log("OCURRIO UN ERROR AL LISTAR LOS empleados: ", error);
+    console.log("OCURRIO UN ERROR AL LISTAR LOS EMPLEADOS: ", error);
     throw error;
   }
 }
@@ -83,6 +88,7 @@ async function CrearEmpleados(DatosCrearEmpleados, res) {
           "Estado",
           "IdRol",
           "Documento",
+          "Tip_Documento", // Incluir el tipo de documento
           "Direccion",
         ],
       }
@@ -109,24 +115,22 @@ async function CrearEmpleados(DatosCrearEmpleados, res) {
 
 async function ActualizarEmpleado(req, res) {
   try {
-    // Obtener el ID del empleado desde los parámetros de la URL y asegurarse de convertirlo a número
     const idEmpleado = parseInt(req.params.idEmpleado, 10);
 
     if (isNaN(idEmpleado)) {
       return res.status(400).json({ mensaje: "ID de empleado inválido" });
     }
 
-    // Obtener los datos a actualizar desde el cuerpo de la solicitud
     const datosActualizar = req.body;
 
-    // Verificar que datosActualizar no sea undefined
+    console.log("Datos a actualizar:", datosActualizar);
+
     if (!datosActualizar) {
       return res
         .status(400)
         .json({ mensaje: "No se proporcionaron datos para actualizar" });
     }
 
-    // Encontrar el empleado existente
     const empleado = await Empleado.findByPk(idEmpleado);
     if (!empleado) {
       return res.status(404).json({ mensaje: "Empleado no encontrado" });
@@ -173,7 +177,6 @@ async function ActualizarEmpleado(req, res) {
     // Actualizar el empleado con los nuevos datos
     await empleado.update(datosActualizar);
 
-    // Recuperar el empleado actualizado incluyendo los campos necesarios
     const empleadoActualizado = await Empleado.findByPk(idEmpleado, {
       attributes: [
         "IdEmpleado",
@@ -184,16 +187,15 @@ async function ActualizarEmpleado(req, res) {
         "Estado",
         "IdRol",
         "Documento",
+        "Tip_Documento", // Incluir el tipo de documento
         "Direccion",
       ],
     });
 
-    // Enviar el empleado actualizado al cliente
     return res.status(200).json(empleadoActualizado);
   } catch (error) {
     console.error("Ocurrió un error al actualizar el empleado:", error);
 
-    // Verificar el tipo de error y manejar adecuadamente
     if (error.name === "SequelizeValidationError") {
       const errores = error.errors.map((err) => ({
         campo: err.path,
@@ -201,15 +203,9 @@ async function ActualizarEmpleado(req, res) {
       }));
       return res.status(400).json({ mensaje: "Error de validación", errores });
     } else {
-      // Asegurarse de que `res` esté disponible
-      if (res) {
-        return res
-          .status(500)
-          .json({ mensaje: "Ocurrió un error al actualizar el empleado" });
-      } else {
-        // Manejo de errores sin `res` disponible
-        console.error("Respuesta no disponible para enviar error");
-      }
+      return res
+        .status(500)
+        .json({ mensaje: "Ocurrió un error al actualizar el empleado" });
     }
   }
 }
