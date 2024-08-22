@@ -50,7 +50,6 @@ async function BuscarDetalleVentaPorId(req, res) {
   console.log("ID ENCONTRADO:", id);
 
   try {
-    // Intenta obtener los detalles de la venta
     const detalleVenta = await DetalleVentas.findAll({
       where: { Idventa: id },
       include: [
@@ -85,7 +84,6 @@ async function BuscarDetalleVentaPorId(req, res) {
     });
 
     if (detalleVenta.length > 0) {
-      // Agrupa las adiciones por Idventa si se encuentran detalles
       const ventasAgrupadas = detalleVenta.reduce((acc, curr) => {
         const idVenta = curr.Idventa;
         if (!acc[idVenta]) {
@@ -95,14 +93,15 @@ async function BuscarDetalleVentaPorId(req, res) {
             adiciones: [],
           };
         }
-        acc[idVenta].adiciones.push(curr.adicion);
+        if (curr.adicion) {
+          acc[idVenta].adiciones.push(curr.adicion);
+        }
         return acc;
       }, {});
 
       const resultado = Object.values(ventasAgrupadas);
       return res.json(resultado);
     } else {
-      // Si no hay detalles, busca el resumen de la venta
       const ventaResumen = await Ventas.findOne({
         where: { idVentas: id },
         include: [
@@ -129,9 +128,7 @@ async function BuscarDetalleVentaPorId(req, res) {
         return res.status(404).json({ error: "Venta no encontrada" });
       }
 
-      // Devuelve solo el resumen de la venta con una lista vacía de adiciones
       return res.json({
-        idVenta: ventaResumen.idVentas,
         venta: ventaResumen,
         adiciones: [], // Vacío porque no hay detalles
       });

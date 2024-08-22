@@ -19,7 +19,7 @@ const Adiciones = sequelize.define(
       primaryKey: true,
     },
     Img: {
-      type: DataTypes.STRING(200),
+      type: DataTypes.STRING(500),
       allowNull: false,
     },
     NombreAdiciones: {
