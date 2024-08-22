@@ -9,7 +9,7 @@ const Login = async (req, res) => {
   try {
     const usuario = await Usuario.findOne({ where: { correo } });
     const empleado = await Empleado.findOne({ where: { Correo: correo } });
-    const cliente = await Cliente.findOne({ where: { correo } });
+    const cliente = await Cliente.findOne({ where: { Correo: correo } });
 
     let user = null;
     let tipoUsuario = '';
@@ -42,8 +42,8 @@ const Login = async (req, res) => {
       if (userData.Estado !== 1) {
         return res.status(403).json({ mensaje: 'Usuario no está activo' });
       }
-      console.log('Contraseña para comparar:', contrasena); 
-      console.log('Contraseña almacenada:', userData.Contrasena);
+      // console.log('Contraseña para comparar:', contrasena); 
+      // console.log('Contraseña almacenada:', userData.Contrasena);
       contrasenaValida = await bcrypt.compare(contrasena.trim(), userData.Contrasena);
     } else if (tipoUsuario === 'cliente') {
       if (userData.Estado !== 1) {
