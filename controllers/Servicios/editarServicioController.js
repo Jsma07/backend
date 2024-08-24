@@ -13,7 +13,7 @@ const ALLOWED_EXTENSIONS = ['.png', '.jpg', '.jpeg'];
 exports.editarServicio = async (req, res) => {
     try {
         const { IdServicio } = req.params;
-        const { Nombre_Servicio, Precio_Servicio, Tiempo_Servicio, EstadoServicio } = req.body;
+        const { Nombre_Servicio, Precio_Servicio, Tiempo_Servicio, EstadoServicio, Descripcion_Servicio	 } = req.body;
         const file = req.file;
         const newImgPath = file ? `/uploads/${file.filename}` : null;
 
@@ -65,7 +65,8 @@ exports.editarServicio = async (req, res) => {
             Precio_Servicio: Precio_Servicio ?? servicio.Precio_Servicio,
             Tiempo_Servicio: Tiempo_Servicio ?? servicio.Tiempo_Servicio,
             ImgServicio: newImgPath ?? servicio.ImgServicio,
-            EstadoServicio: EstadoServicio ?? servicio.EstadoServicio
+            EstadoServicio: EstadoServicio ?? servicio.EstadoServicio,
+            Descripcion_Servicio: Descripcion_Servicio ?? servicio.Descripcion_Servicio
         });
 
         res.status(200).json({ mensaje: 'Servicio actualizado correctamente', servicio });

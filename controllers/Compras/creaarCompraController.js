@@ -1,47 +1,64 @@
-const Compra = require('../../Models/compras');
+const Compra = require('../../models/compras');
 const DetalleCompra = require('../../Models/detallecompra');
 const Insumo = require('../../Models/insumos');
 
-exports.guardarCompra = async (req, res) => {
+async function procesarInsumo(detalle) {
+    try {
+        const insumoExistente = await Insumo.findOne({ where: { IdInsumos: detalle.IdInsumo } });
+
+        if (!insumoExistente) {
+            throw new Error(`Insumo con ID ${detalle.IdInsumo} no encontrado`);
+        }
+
+        // Actualizar la cantidad y el estado del insumo
+        insumoExistente.Cantidad += detalle.cantidad_insumo;
+        insumoExistente.Estado = insumoExistente.Cantidad > 0 ? 'Disponible' : 'Agotado';
+
+        // Solo actualizar el precio unitario si se envió en el detalle
+        if (detalle.precio_unitario !== undefined) {
+            insumoExistente.PrecioUnitario = detalle.precio_unitario;
+        }
+
+        await insumoExistente.save();
+
+        const valorInsumo = insumoExistente.PrecioUnitario * detalle.cantidad_insumo;
+
+        return {
+            IdInsumo: insumoExistente.IdInsumos,
+            precio_unitario: insumoExistente.PrecioUnitario,
+            cantidad_insumo: detalle.cantidad_insumo,
+            totalValorInsumos: valorInsumo,
+        };
+    } catch (error) {
+        console.error("Error al procesar insumo:", error);
+        throw error;
+    }
+}
+
+async function guardarCompra(req, res) {
     try {
         const { fecha_compra, descuento_compra, estado_compra, detallesCompra } = req.body;
+
         console.log("Datos recibidos:", req.body);
 
-        let totalValorInsumos = 0;
-
-        console.log("Detalles de la compra recibidos:", detallesCompra);
-
-        // Validar detallesCompra
         if (!Array.isArray(detallesCompra) || detallesCompra.length === 0) {
             return res.status(400).json({ error: 'Detalles de compra vacíos o inválidos' });
         }
 
-        const detallesCompraGuardados = await Promise.all(detallesCompra.map(async detalle => {
-            let insumoExistente = await Insumo.findOne({ where: { IdInsumos: detalle.IdInsumo } });
+        let totalValorInsumos = 0;
+        const detallesCompraGuardados = [];
 
-            if (insumoExistente) {
-                insumoExistente.Cantidad += detalle.cantidad_insumo;
-                insumoExistente.Estado = insumoExistente.Cantidad > 0 ? 'Disponible' : 'Agotado';
-                insumoExistente.PrecioUnitario = detalle.precio_unitario;
-                await insumoExistente.save();
-
-                const valorInsumo = detalle.precio_unitario * detalle.cantidad_insumo;
-                totalValorInsumos += valorInsumo;
-
-                return {
-                    IdInsumo: insumoExistente.IdInsumos,
-                    precio_unitario: detalle.precio_unitario,
-                    cantidad_insumo: detalle.cantidad_insumo,
-                    totalValorInsumos: valorInsumo,
-                };
-            } else {
-                return res.status(400).json({ error: `Insumo con ID ${detalle.IdInsumo} no encontrado` });
-            }
-        }));
+        for (const detalle of detallesCompra) {
+            console.log(`Procesando insumo ID ${detalle.IdInsumo} con precio_unitario ${detalle.precio_unitario}`);
+            const detalleProcesado = await procesarInsumo(detalle);
+            console.log(`Detalle procesado: ${JSON.stringify(detalleProcesado)}`);
+            totalValorInsumos += detalleProcesado.totalValorInsumos;
+            detallesCompraGuardados.push(detalleProcesado);
+        }
 
         const iva_compra = 0.19 * totalValorInsumos;
         const total_compra = totalValorInsumos - descuento_compra;
-        const subtotal_compra = totalValorInsumos;
+        const subtotal_compra = total_compra - iva_compra;
 
         // Crear nueva compra
         const nuevaCompra = await Compra.create({
@@ -53,17 +70,15 @@ exports.guardarCompra = async (req, res) => {
             estado_compra
         });
 
-        // Crear detalles de compra
+        // Crear detalles de compra asociados a la nueva compra
         const detallesCompraGuardadosConId = await Promise.all(detallesCompraGuardados.map(async detalle => {
-            const nuevoDetalleCompra = await DetalleCompra.create({
+            return await DetalleCompra.create({
                 IdCompra: nuevaCompra.IdCompra,
                 IdInsumo: detalle.IdInsumo,
                 precio_unitario: detalle.precio_unitario,
                 cantidad_insumo: detalle.cantidad_insumo,
                 totalValorInsumos: detalle.totalValorInsumos
             });
-
-            return nuevoDetalleCompra;
         }));
 
         res.status(200).json({
@@ -75,4 +90,8 @@ exports.guardarCompra = async (req, res) => {
         console.error("Error al guardar la compra", error);
         res.status(500).json({ error: 'Error al guardar la compra' });
     }
+}
+
+module.exports = {
+    guardarCompra
 };

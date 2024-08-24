@@ -144,6 +144,17 @@ async function ActualizarCliente(req, res) {
       }
     }
 
+    // Validar el tipo de documento solo si se proporciona
+    if (datosActualizar.tipoDocumento) {
+      const tiposDocumentoValidos = ["C.C", "C.E"];
+      if (!tiposDocumentoValidos.includes(datosActualizar.tipoDocumento)) {
+        return res.status(400).json({
+          mensaje:
+            "Tipo de documento inválido. Los tipos permitidos son: C.C, C.E.",
+        });
+      }
+    }
+
     // Actualizar el cliente
     await cliente.update(datosActualizar);
     return res.status(200).json(cliente);

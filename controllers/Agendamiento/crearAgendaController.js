@@ -13,15 +13,20 @@ exports.crearAgendamiento = async (req, res) => {
       return res.status(400).json({ errores: errors.array() });
     }
 
-    const { IdCliente, IdServicio, Fecha, Hora, IdEmpleado, EstadoAgenda } = req.body;
+    // Obtener los datos del cuerpo de la solicitud
+    const { IdCliente, IdServicio, Fecha, Hora, IdEmpleado, EstadoAgenda,  } = req.body;
+    
+    // Si IdCliente no viene en el cuerpo de la solicitud, utilizar el id del cliente logueado
+    const clienteId = IdCliente || req.usuario.id;
 
-    const cliente = await Cliente.findByPk(IdCliente);
-    const empleado = await Empleado.findByPk(IdEmpleado);
-    const servicio = await Servicio.findByPk(IdServicio);
-
+    const cliente = await Cliente.findByPk(clienteId);
     if (!cliente) {
       return res.status(404).json({ error: 'Cliente no encontrado' });
     }
+
+    const empleado = await Empleado.findByPk(IdEmpleado);
+    const servicio = await Servicio.findByPk(IdServicio);
+
     if (!empleado) {
       return res.status(404).json({ error: 'Empleado no encontrado' });
     }
@@ -29,19 +34,17 @@ exports.crearAgendamiento = async (req, res) => {
       return res.status(404).json({ error: 'Servicio no encontrado' });
     }
 
-    // Verificar si la fecha está inactiva
     const horario = await Horario.findOne({
       where: {
         fecha: dayjs(Fecha).format('YYYY-MM-DD')
       }
     });
-    
+
     if (horario && horario.estado === 'inactivo') {
       return res.status(400).json({ error: 'Esta Fecha está inactiva, No se pueden crear citas' });
     }
 
-    // Calcular las horas que ocupará el servicio
-    const duracion = servicio.Tiempo_Servicio; // Duración en minutos
+    const duracion = servicio.Tiempo_Servicio;
     const horasOcupadas = [];
     const horaInicio = dayjs(`${Fecha} ${Hora}`);
 
@@ -49,10 +52,6 @@ exports.crearAgendamiento = async (req, res) => {
       horasOcupadas.push(horaInicio.add(i, 'hour').format('HH:mm'));
     }
 
-    // Mostrar las horas ocupadas calculadas en la consola
-    console.log('Horas ocupadas calculadas:', horasOcupadas);
-
-    // Verificar si alguna de las horas ya está ocupada
     const citasExistentes = await Agendamiento.findAll({
       where: {
         Fecha,
@@ -64,9 +63,8 @@ exports.crearAgendamiento = async (req, res) => {
       return res.status(400).json({ error: 'Ya existe una cita en una de las horas seleccionadas' });
     }
 
-    // Crear el nuevo agendamiento
     const nuevoAgendamiento = await Agendamiento.create({
-      IdCliente,
+      IdCliente: clienteId,
       IdServicio,
       Fecha,
       Hora,
