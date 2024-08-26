@@ -76,7 +76,26 @@ exports.eliminarHorario = async (req, res) => {
 exports.inactivarHoras = async (req, res) => {
     const { fecha, horas } = req.body;
     try {
+        // Verificar si el día está marcado como inactivo
         const horario = await Horario.findOne({ where: { fecha } });
+
+        if (horario && horario.estado === 'inactivo') {
+            return res.status(400).json({ error: 'El día está inactivo, no se pueden inactivar horas.' });
+        }
+
+        // Verificar si alguna de las horas que se quieren inactivar ya está ocupada
+        const agendamientos = await Agendamiento.findAll({
+            where: {
+                Fecha: fecha,
+                Hora: horas
+            }
+        });
+
+        if (agendamientos.length > 0) {
+            return res.status(400).json({
+                error: 'No se pueden inactivar horas que ya están ocupadas.'
+            });
+        }
 
         if (!horario) {
             // Crear el horario si no existe
@@ -88,6 +107,7 @@ exports.inactivarHoras = async (req, res) => {
             return res.status(201).json(nuevoHorario);
         }
 
+        // Actualizar las horas inactivas si el día no está inactivo
         const horasInactivasActuales = horario.horas_inactivas ? horario.horas_inactivas.split(',') : [];
         const nuevasHorasInactivas = [...new Set([...horasInactivasActuales, ...horas])];
         horario.horas_inactivas = nuevasHorasInactivas.join(',');
