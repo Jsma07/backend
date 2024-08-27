@@ -1,31 +1,51 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const ClientesController = require("../controllers/ClientesController")
+const authorize = require("../middleware/auth");
+const ClientesController = require("../controllers/Clientes/ClientesController");
+const cambiarContrasenan = require("../controllers/Clientes/Contraseña");
 
+const { recuperarContrasena } = require("../controllers/contrasena/mailer");
 
-router.get('/jackenail/Listar_Clientes', async (req, res) => {
-    try {
-        const ventas = await ClientesController.Listar_Clientes();
-        res.json(ventas);
-    } catch (error) {
-        res.status(500).json({ message: 'Error al listar los clietnes' });
-    }
+router.post("/api/recuperarContrasena", recuperarContrasena);
 
+router.get("/jackenail/Listar_Clientes", async (req, res) => {
+  try {
+    const ventas = await ClientesController.Listar_Clientes();
+    res.json(ventas);
+  } catch (error) {
+    res.status(500).json({ message: "Error al listar los clietnes" });
+  }
 });
 
+router.post("/Jackenail/RegistrarClientes", ClientesController.Crearclientes);
 
-router.post('/Jackenail/RegistrarClientes', async (req, res) => {
-    const DatosCrearEmpleados = req.body;
+router.put(
+  "/Jackenail/Actualizar/:idCliente",
+  ClientesController.ActualizarCliente
+);
 
-    try {
-        const resultadoCliente = await ClientesController.Crearclientes(DatosCrearEmpleados);
-        res.status(201).json({ message: 'Cliente creado correctamente', IdCliente: resultadoCliente });
-    } catch (error) {
-        console.error("Error al crear cliente:", error);
-        res.status(500).json({ message: 'Error al crear cliente' });
-    }
+router.put("/Jackenail/CambiarEstadocliente/:id", async (req, res) => {
+  const idCliente = req.params.id;
+  const nuevoEstado = req.body.Estado;
+
+  try {
+    const clienteActualizadoId = await ClientesController.cambiarEstadoCliente(
+      idCliente,
+      nuevoEstado
+    );
+    res.json({
+      message: "Estado del cliente actualizado correctamente",
+      id: clienteActualizadoId,
+    });
+  } catch (error) {
+    console.error("Error al cambiar el estado del cliente:", error);
+    res.status(500).json({ message: "Error al cambiar el estado del cliente" });
+  }
 });
 
+router.put(
+  "/Jackenail/CambiarContrasena/:idCliente",
+  cambiarContrasenan.cambiarContrasena
+);
 
-
-module.exports = router
+module.exports = router;

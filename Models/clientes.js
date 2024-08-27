@@ -1,64 +1,134 @@
-const Sequelize = require('sequelize');
-module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('clientes', {
+const Sequelize = require("sequelize");
+
+const sequelize = new Sequelize(
+  process.env.DB_NAME,
+  process.env.DB_USER,
+  process.env.DB_PASSWORD,
+  {
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT, // Opcional, solo si necesitas especificar el puerto
+    dialect: "mysql",
+  }
+);
+
+const Roles = require("./roles");
+const Cliente = sequelize.define(
+  "clientes",
+  {
     IdCliente: {
       autoIncrement: true,
-      type: DataTypes.INTEGER,
+      type: Sequelize.INTEGER,
       allowNull: false,
-      primaryKey: true
+      primaryKey: true,
+    },
+    tipoDocumento: {
+      type: Sequelize.STRING(10),
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: "El campo tipo de documento es obligatorio",
+        },
+      },
     },
     Nombre: {
-      type: DataTypes.STRING(50),
-      allowNull: false
+      type: Sequelize.STRING(50),
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: "El campo nombre es obligatorio",
+        },
+
+        is: /^[a-zA-Z\s]*$/,
+      },
     },
     Apellido: {
-      type: DataTypes.STRING(50),
-      allowNull: false
+      type: Sequelize.STRING(50),
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: "El campo Apellido es obligatorio",
+        },
+        is: /^[a-zA-Z\s]*$/,
+      },
     },
     Correo: {
-      type: DataTypes.STRING(60),
-      allowNull: false
+      type: Sequelize.STRING(60),
+      allowNull: false,
+      validate: {
+        isEmail: true,
+      },
     },
     Telefono: {
-      type: DataTypes.INTEGER,
-      allowNull: false
+      type: Sequelize.STRING(20),
+      allowNull: false,
+      validate: {
+        is: /^[0-9]*$/,
+      },
     },
     Estado: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
-    FotoPerfil: {
-      type: DataTypes.STRING(250),
-      allowNull: false
+      type: Sequelize.INTEGER,
+      allowNull: false,
+      validate: {
+        isInt: {
+          msg: "El campo Estado debe ser un número entero",
+        },
+      },
     },
     IdRol: {
-      type: DataTypes.INTEGER,
+      type: Sequelize.INTEGER,
       allowNull: false,
       references: {
-        model: 'roles',
-        key: 'idRol'
-      }
-    }
-  }, {
+        model: "roles",
+        key: "idRol",
+      },
+    },
+    Documento: {
+      type: Sequelize.STRING(20),
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: "El campo Documento es obligatorio",
+        },
+        len: {
+          args: [8, 20],
+          msg: "El campo Documento debe tener entre 8 y 20 caracteres",
+        },
+      },
+    },
+
+    Contrasena: {
+      type: Sequelize.STRING(100),
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: "El campo Contrasena es obligatorio",
+        },
+        len: {
+          args: [8, 100],
+          msg: "El campo Contrasena debe tener entre 8 y 100 caracteres",
+        },
+      },
+    },
+  },
+  {
     sequelize,
-    tableName: 'clientes',
+    tableName: "clientes",
     timestamps: false,
     indexes: [
       {
         name: "PRIMARY",
         unique: true,
         using: "BTREE",
-        fields: [
-          { name: "IdCliente" },
-        ]
+        fields: [{ name: "IdCliente" }],
       },
       {
         name: "IdRol",
         using: "BTREE",
-        fields: [
-          { name: "IdRol" },
-        ]
+        fields: [{ name: "IdRol" }],
       },
-    ]
-  });
-};
+    ],
+  }
+);
+Cliente.belongsTo(Roles, { foreignKey: "IdRol" });
+
+module.exports = Cliente;
