@@ -4,3 +4,4 @@ node_modules/
 
 # Ignorar archivos específicos
 .vercel/
+.vercel

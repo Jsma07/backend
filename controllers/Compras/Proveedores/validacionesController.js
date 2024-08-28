@@ -1,17 +1,24 @@
-const Proveedores = require('../../../models/proveedores'); 
-const ConexionDB = require('../../../Db/Conexion');
+const Proveedores = require("../../../Models/proveedores");
+const ConexionDB = require("../../../Db/Conexion");
 
 exports.verificarCorreoProveedor = async (req, res) => {
-    try {
-      console.log('Correo a verificar:', req.params.correo_proveedor);
-      const correoExiste = await Usuario.findOne({ where: { correo_proveedor: req.params.correo_proveedor } });
-      console.log('Resultado de la consulta:', correoExiste);
-      res.status(200).json({ existe: correoExiste !== null });
-    } catch (error) {
-      console.error('Error al verificar correo:', error);
-      res.status(500).json({ error: 'Hubo un error al verificar el correo. Por favor, inténtalo de nuevo más tarde.' });
-    }
-  };
+  try {
+    console.log("Correo a verificar:", req.params.correo_proveedor);
+    const correoExiste = await Usuario.findOne({
+      where: { correo_proveedor: req.params.correo_proveedor },
+    });
+    console.log("Resultado de la consulta:", correoExiste);
+    res.status(200).json({ existe: correoExiste !== null });
+  } catch (error) {
+    console.error("Error al verificar correo:", error);
+    res
+      .status(500)
+      .json({
+        error:
+          "Hubo un error al verificar el correo. Por favor, inténtalo de nuevo más tarde.",
+      });
+  }
+};
 
 // exports.validarEmpresaProveedor = async(req, res) => {
 //     try {
@@ -25,19 +32,12 @@ exports.verificarCorreoProveedor = async (req, res) => {
 //       }
 // }
 
+exports.validarCorreoProveedor = async (req, res) => {
+  try {
+  } catch (error) {}
+};
 
-exports.validarCorreoProveedor = async(req, res) => {
-    try{
-        
-    }catch (error){
-
-    }
-}
-
-exports.validarEmpresaProveedor = async(req, res) => {
-    try{
-        
-    }catch (error){
-
-    }
-}
+exports.validarEmpresaProveedor = async (req, res) => {
+  try {
+  } catch (error) {}
+};
