@@ -1,4 +1,4 @@
-const Compras = require("../../models/compras");
+const Compras = require("../../Models/compras");
 
 const editarEstadoCompra = async (req, res) => {
   const { IdCompra } = req.params;
