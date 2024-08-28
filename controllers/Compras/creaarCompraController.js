@@ -1,6 +1,6 @@
 const Compra = require("../../Models/compras");
-const DetalleCompra = require("../../models/detallecompra");
-const Insumo = require("../../models/insumos");
+const DetalleCompra = require("../../Models/detallecompra");
+const Insumo = require("../../Models/insumos");
 
 async function procesarInsumo(detalle) {
   try {

@@ -1,6 +1,6 @@
-const DetalleCompra = require("../../../models/detallecompra");
-const Compras = require("../../../models/compras");
-const Insumos = require("../../../models/insumos");
+const DetalleCompra = require("../../../Models/detallecompra");
+const Compras = require("../../../Models/compras");
+const Insumos = require("../../../Models/insumos");
 
 // Función para formatear valores monetarios
 const formatCurrency = (value) => {

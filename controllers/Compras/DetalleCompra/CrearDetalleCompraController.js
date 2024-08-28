@@ -1,4 +1,4 @@
-const DetalleCompra = require("../../../models/detallecompra");
+const DetalleCompra = require("../../../Models/detallecompra");
 
 const registrarDetalleCompra = async (req, res) => {
   try {
@@ -23,12 +23,10 @@ const registrarDetalleCompra = async (req, res) => {
       .json({ mensaje: "Detalle de compra registrado", detalleCompra });
   } catch (error) {
     console.error("Error al registrar detalle de venta:", error);
-    res
-      .status(500)
-      .json({
-        mensaje: "Error al registrar detalle de venta",
-        error: error.message,
-      });
+    res.status(500).json({
+      mensaje: "Error al registrar detalle de venta",
+      error: error.message,
+    });
   }
 };
 

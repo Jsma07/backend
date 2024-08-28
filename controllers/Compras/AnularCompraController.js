@@ -1,6 +1,6 @@
 const Compra = require("../../Models/compras");
-const DetalleCompra = require("../../models/detallecompra");
-const Insumo = require("../../models/insumos");
+const DetalleCompra = require("../../Models/detallecompra");
+const Insumo = require("../../Models/insumos");
 const { Op } = require("sequelize");
 
 exports.anularCompra = async (req, res) => {
@@ -20,12 +20,10 @@ exports.anularCompra = async (req, res) => {
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
     if (diffDays > 3) {
-      return res
-        .status(400)
-        .json({
-          error:
-            "La compra solo puede ser anulada dentro de los 3 días de su registro",
-        });
+      return res.status(400).json({
+        error:
+          "La compra solo puede ser anulada dentro de los 3 días de su registro",
+      });
     }
 
     compra.estado_compra = "Anulada";
