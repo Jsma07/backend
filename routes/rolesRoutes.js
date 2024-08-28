@@ -7,7 +7,7 @@ const {
   editarRol,
   traerRol,
 } = require("../controllers/Roles/editarRolController");
-const permisos = require("../controllers/Permisos/listarPermisosController");
+const permisos = require("../controllers/permisos/listarPermisosController");
 
 router.get("/api/roles", authorize(["Configuracion"]), listarRol.listarRoles);
 router.post(
