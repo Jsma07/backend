@@ -52,12 +52,10 @@ exports.crearUsuario = async (req, res) => {
       .json({ mensaje: "Usuario creado correctamente", usuario: nuevoUsuario });
   } catch (error) {
     console.log("Error al crear usuario", error);
-    res
-      .status(500)
-      .json({
-        error:
-          "Hubo un error al crear el usuario. Por favor, inténtalo de nuevo más tarde.",
-      });
+    res.status(500).json({
+      error:
+        "Hubo un error al crear el usuario. Por favor, inténtalo de nuevo más tarde.",
+    });
   }
 };
 exports.verificarCorreo = async (req, res) => {
