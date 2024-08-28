@@ -1,6 +1,7 @@
 const Proveedores = require("../../../Models/proveedores");
 const ConexionDB = require("../../../Db/Conexion");
 
+//despligegue limpio
 exports.verificarCorreoProveedor = async (req, res) => {
   try {
     console.log("Correo a verificar:", req.params.correo_proveedor);
@@ -11,12 +12,10 @@ exports.verificarCorreoProveedor = async (req, res) => {
     res.status(200).json({ existe: correoExiste !== null });
   } catch (error) {
     console.error("Error al verificar correo:", error);
-    res
-      .status(500)
-      .json({
-        error:
-          "Hubo un error al verificar el correo. Por favor, inténtalo de nuevo más tarde.",
-      });
+    res.status(500).json({
+      error:
+        "Hubo un error al verificar el correo. Por favor, inténtalo de nuevo más tarde.",
+    });
   }
 };
 
