@@ -1,1 +1,6 @@
-.vercel
+# Ignorar directorios comunes
+node_modules/
+.env
+
+# Ignorar archivos específicos
+.vercel/
