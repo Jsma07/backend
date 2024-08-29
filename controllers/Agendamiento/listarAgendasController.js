@@ -6,18 +6,17 @@ const Servicio = require('../../Models/servicios');
 
 exports.listarAgendamientos = async (req, res) => {
   try {
-    
     const listarAgendamientos = await Agendamiento.findAll({
       include: [
         {
           model: Cliente,
           as: 'cliente',
-          attributes: ['IdCliente','Nombre', 'Apellido']
+          attributes: ['Nombre', 'Apellido']
         },
         {
           model: Empleado,
           as: 'empleado',
-          attributes: ['Nombre', 'Apellido']  
+          attributes: ['Nombre', 'Apellido']
         },
         {
           model: Servicio,
