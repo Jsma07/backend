@@ -13,6 +13,18 @@ const Compras =  sequelize.define('compras', {
       allowNull: false,
       primaryKey: true
     },
+    IdProveedor: {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: "El ID del proveedor no puede estar vacío.",
+        },
+        isInt: {
+          msg: "El ID del proveedor debe ser un número entero.",
+        },
+      },
+    },
     fecha_compra: {
       type: Sequelize.DATE,
       allowNull: false
@@ -49,8 +61,14 @@ const Compras =  sequelize.define('compras', {
         fields: [
           { name: "IdCompra" },
         ]
-      }
+      },
+      {
+        name: "IdProveedor",
+        using: "BTREE",
+        fields: [{ name: "IdProveedor" }],
+      },
     ]
-  });
+  }
+);
   
   module.exports = Compras;

@@ -1,7 +1,7 @@
 const DetalleCompra = require('../../../Models/detallecompra');
 
 
-const registrarDetalleCompra= async (req, res) => {
+exports.registrarDetalleCompra= async (req, res) => {
   try {
     const {IdCompra, IdInsumo, camtidad_insumo, precio_unitario, totalValorInsumos } = req.body;
 
@@ -20,6 +20,3 @@ const registrarDetalleCompra= async (req, res) => {
   }
 };
 
-module.exports = {
-  registrarDetalleCompra
-};

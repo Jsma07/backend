@@ -4,10 +4,9 @@ exports.listarInsumos = async (req, res) => {
     try {
         const connection = await ConexionDB(); 
         const [rows, fields] = await connection.query(`
-            SELECT insumos.*, categorias.nombre_categoria, proveedores.nombre_proveedor
+            SELECT insumos.*, categorias.nombre_categoria
             FROM insumos
             JOIN categorias ON insumos.IdCategoria = categorias.IdCategoria
-            JOIN proveedores ON insumos.Idproveedor = proveedores.IdProveedor
         `);
 
         const formattedRows = rows.map(row => ({
