@@ -9,7 +9,7 @@ const editarAgenda = require('../controllers/Agendamiento/editarAgendaController
 const { obtenerHorasDisponibles, obtenerHorasOcupadas } = require('../controllers/Agendamiento/horasController');
 const AnularAgenda = require('../controllers/Agendamiento/anularAgendaController');
 
-router.get('/api/agendas', listarAgendas.listarAgendamientos);
+router.get('/api/agendas',  listarAgendas.listarAgendamientos);
 router.post('/api/agendas/crearAgenda',authorize([]), crearAgenda.crearAgendamiento);
 router.put('/api/agendas/editar/:id', editarAgenda.editarAgendamiento); // Añadir la ruta de edición
 router.get('/api/agendas/horasOcupadas', obtenerHorasOcupadas);

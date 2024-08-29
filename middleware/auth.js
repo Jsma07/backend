@@ -12,7 +12,7 @@ const authorize = (requiredPermissions) => {
 
     console.log('Token recibido:', token);
 
-    if (!token) {
+    if (!token) { 
       console.log('Acceso denegado. No hay token proporcionado.');
       return res.status(401).json({ mensaje: 'Acceso denegado. No hay token proporcionado.' });
     }
