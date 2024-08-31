@@ -32,14 +32,14 @@ function initModels(sequelize) {
   var usuarios = _usuarios(sequelize, DataTypes);
   var ventas = _ventas(sequelize, DataTypes);
 
-  agendamiento.belongsTo(clientes, { as: "Cliente", foreignKey: "ClienteId"});
-  clientes.hasMany(agendamiento, { as: "agendamientos", foreignKey: "ClienteId"});
+  agendamiento.belongsTo(clientes, { as: "IdCliente_cliente", foreignKey: "IdCliente"});
+  clientes.hasMany(agendamiento, { as: "agendamientos", foreignKey: "IdCliente"});
   ventas.belongsTo(clientes, { as: "idCliente_cliente", foreignKey: "idCliente"});
   clientes.hasMany(ventas, { as: "venta", foreignKey: "idCliente"});
   detallecompra.belongsTo(compras, { as: "IdCompra_compra", foreignKey: "IdCompra"});
   compras.hasMany(detallecompra, { as: "detallecompras", foreignKey: "IdCompra"});
-  agendamiento.belongsTo(empleados, { as: "Empleado", foreignKey: "EmpleadoId"});
-  empleados.hasMany(agendamiento, { as: "agendamientos", foreignKey: "EmpleadoId"});
+  agendamiento.belongsTo(empleados, { as: "IdEmpleado_empleado", foreignKey: "IdEmpleado"});
+  empleados.hasMany(agendamiento, { as: "agendamientos", foreignKey: "IdEmpleado"});
   ventas.belongsTo(empleados, { as: "idEmpleado_empleado", foreignKey: "idEmpleado"});
   empleados.hasMany(ventas, { as: "venta", foreignKey: "idEmpleado"});
   detallecompra.belongsTo(insumos, { as: "IdInsumo_insumo", foreignKey: "IdInsumo"});
@@ -58,8 +58,8 @@ function initModels(sequelize) {
   roles.hasMany(permisos_roles, { as: "permisos_roles", foreignKey: "rolId"});
   usuarios.belongsTo(roles, { as: "rol", foreignKey: "rolId"});
   roles.hasMany(usuarios, { as: "usuarios", foreignKey: "rolId"});
-  agendamiento.belongsTo(servicios, { as: "Servicio", foreignKey: "ServicioId"});
-  servicios.hasMany(agendamiento, { as: "agendamientos", foreignKey: "ServicioId"});
+  agendamiento.belongsTo(servicios, { as: "IdServicio_servicio", foreignKey: "IdServicio"});
+  servicios.hasMany(agendamiento, { as: "agendamientos", foreignKey: "IdServicio"});
   ventas.belongsTo(servicios, { as: "idServico_servicio", foreignKey: "idServico"});
   servicios.hasMany(ventas, { as: "venta", foreignKey: "idServico"});
   detalleventas.belongsTo(ventas, { as: "Idventa_venta", foreignKey: "Idventa"});

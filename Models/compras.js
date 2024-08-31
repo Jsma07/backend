@@ -1,30 +1,52 @@
 const Sequelize = require('sequelize');
-module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('compras', {
+
+// Conexión a la base de datos
+const sequelize = new Sequelize(process.env.DB_DATABASE, process.env.DB_USER, process.env.DB_PASSWORD, {
+  host: process.env.DB_HOST,
+  dialect: 'mysql'
+});
+
+const Compras =  sequelize.define('compras', {
     IdCompra: {
       autoIncrement: true,
-      type: DataTypes.INTEGER,
+      type: Sequelize.INTEGER,
       allowNull: false,
       primaryKey: true
     },
+    IdProveedor: {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: "El ID del proveedor no puede estar vacío.",
+        },
+        isInt: {
+          msg: "El ID del proveedor debe ser un número entero.",
+        },
+      },
+    },
     fecha_compra: {
-      type: DataTypes.DATEONLY,
+      type: Sequelize.DATE,
       allowNull: false
     },
     descuento_compra: {
-      type: DataTypes.FLOAT,
+      type: Sequelize.FLOAT,
       allowNull: false
     },
     iva_compra: {
-      type: DataTypes.FLOAT,
+      type: Sequelize.FLOAT,
       allowNull: false
     },
     subtotal_compra: {
-      type: DataTypes.FLOAT,
+      type: Sequelize.FLOAT,
+      allowNull: false
+    },
+    total_compra: {
+      type: Sequelize.FLOAT,
       allowNull: false
     },
     estado_compra: {
-      type: DataTypes.STRING(20),
+      type: Sequelize.STRING(20),
       allowNull: false
     }
   }, {
@@ -40,6 +62,13 @@ module.exports = function(sequelize, DataTypes) {
           { name: "IdCompra" },
         ]
       },
+      {
+        name: "IdProveedor",
+        using: "BTREE",
+        fields: [{ name: "IdProveedor" }],
+      },
     ]
-  });
-};
+  }
+);
+  
+  module.exports = Compras;

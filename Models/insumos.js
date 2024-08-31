@@ -1,56 +1,97 @@
-const Sequelize = require('sequelize');
-module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('insumos', {
+const Sequelize = require("sequelize");
+const Categorias = require("./categorias");
+const sequelize = new Sequelize(
+  process.env.DB_DATABASE,
+  process.env.DB_USER,
+  process.env.DB_PASSWORD,
+  {
+    host: process.env.DB_HOST,
+    dialect: "mysql",
+  }
+);
+
+const Insumo = sequelize.define(
+  "insumos",
+  {
     IdInsumos: {
       autoIncrement: true,
-      type: DataTypes.INTEGER,
+      type: Sequelize.INTEGER,
       allowNull: false,
-      primaryKey: true
+      primaryKey: true,
     },
     NombreInsumos: {
-      type: DataTypes.STRING(60),
-      allowNull: false
+      type: Sequelize.STRING(60),
+      allowNull: false,
     },
     Cantidad: {
-      type: DataTypes.FLOAT,
-      allowNull: false
+      type: Sequelize.FLOAT,
+      allowNull: false,
     },
-    UsosDisponibles: {
-      type: DataTypes.INTEGER,
-      allowNull: false
+    PrecioUnitario: {
+      type: Sequelize.FLOAT,
+      allowNull: false,
     },
     Estado: {
-      type: DataTypes.INTEGER,
-      allowNull: false
+      type: Sequelize.STRING(20),
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: "El estado no puede estar vacío.",
+        },
+        isIn: {
+          args: [["Disponible", "Agotado"]],
+          msg: 'El estado debe ser "Disponible" o "Agotado".',
+        },
+      },
     },
-    'Id categoria': {
-      type: DataTypes.INTEGER,
-      allowNull: false
+    IdCategoria: {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: "El ID de categoría no puede estar vacío.",
+        },
+        isInt: {
+          msg: "El ID de categoría debe ser un número entero.",
+        },
+      },
     },
     Imagen: {
-      type: DataTypes.TEXT,
-      allowNull: false
-    }
-  }, {
-    sequelize,
-    tableName: 'insumos',
+      type: Sequelize.STRING(2000),
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: "La imagen no puede estar vacía.",
+        },
+      },
+    },
+    isDeleted: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false,
+    },
+  },
+  {
+    tableName: "insumos",
     timestamps: false,
     indexes: [
       {
         name: "PRIMARY",
         unique: true,
         using: "BTREE",
-        fields: [
-          { name: "IdInsumos" },
-        ]
+        fields: [{ name: "IdInsumos" }],
       },
       {
-        name: "Id categoria",
+        name: "IdCategoria",
         using: "BTREE",
-        fields: [
-          { name: "Id categoria" },
-        ]
+        fields: [{ name: "IdCategoria" }],
       },
-    ]
-  });
-};
+    ],
+  }
+);
+
+Insumo.belongsTo(Categorias, {
+  foreignKey: "IdCategoria",
+  as: "categoria",
+});
+
+module.exports = Insumo;
