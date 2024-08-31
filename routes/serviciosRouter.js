@@ -1,15 +1,11 @@
 const express = require('express');
-// const authorize = require('../middleware/auth')
-const listarServicios = require('../controllers/Servicios/listarServiciosController');
-const crearServicio = require('../controllers/Servicios/crearServicioController');
-const editarServicio = require('../controllers/Servicios/editarServicioController');
+const router = express.Router();
 
-module.exports = (upload) => {
-    const routes = express.Router();
+const listarServicio = require("../controllers/Agendamiento/Servicio/listarServicioController");
+const crearServicio = require("../controllers/Agendamiento/Servicio/crearServicioController");
+const editarServicio = require("../controllers/Agendamiento/Servicio/EditarServicioController");
 
-    routes.get('/api/servicios',  listarServicios.listarServicios);
-    routes.post('/api/servicios/guardarServicio', upload.single('ImgServicio'), crearServicio.guardarServicio);
-    routes.put('/api/servicios/editar/:IdServicio',  upload.single('ImgServicio'), editarServicio.editarServicio);
-
-    return routes;
-};
+router.get('/api/service' , listarServicio.getAllService);
+router.post('/api/createService', crearServicio.crearServicio);
+router.put('/api/editarService/:id', editarServicio.editarServicio)
+module.exports = router;
