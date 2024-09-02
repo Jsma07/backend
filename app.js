@@ -34,7 +34,7 @@ const uploadInsumos = multer({ storage: storageInsumos });
 // Configuración de Multer específica para adiciones
 const storageAdiciones = multer.diskStorage({
   destination: function (req, file, cb) {
-    const adicionesDir = path.join(__dirname, "uploads/Adiciones");
+    const adicionesDir = path.join(__dirname, "./uploads/Adiciones");
 
     // Verificar si la carpeta existe, si no, crearla
     if (!fs.existsSync(adicionesDir)) {
