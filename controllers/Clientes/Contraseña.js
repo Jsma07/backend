@@ -1,4 +1,4 @@
-const bcrypt = require("bcryptjs");
+const bcrypt = require("bcrypt");
 const Cliente = require("../../Models/clientes");
 
 async function cambiarContrasena(req, res) {
@@ -14,11 +14,9 @@ async function cambiarContrasena(req, res) {
   try {
     // Validar el formato de la nueva contraseña si es necesario
     if (nuevaContrasena.length < 8 || nuevaContrasena.length > 100) {
-      return res
-        .status(400)
-        .json({
-          message: "La contraseña debe tener entre 8 y 100 caracteres.",
-        });
+      return res.status(400).json({
+        message: "La contraseña debe tener entre 8 y 100 caracteres.",
+      });
     }
 
     // Buscar el cliente por ID

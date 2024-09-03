@@ -1,6 +1,6 @@
 // VentasController.js
 const Cliente = require("../../Models/clientes");
-const bcrypt = require("bcryptjs");
+const bcrypt = require("bcrypt");
 const Usuario = require("../../Models/usuarios");
 const Empleado = require("../../Models/empleados");
 const { Op } = require("sequelize");
