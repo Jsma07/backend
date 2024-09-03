@@ -1,5 +1,5 @@
 const Usuario = require("../../Models/usuarios");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const { DatosFormateados } = require("./formateoValidaciones");
 const { CorreoFormateado } = require("./formateoValidaciones");
 const { NumerosFormateados } = require("./formateoValidaciones");

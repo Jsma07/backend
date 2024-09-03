@@ -1,7 +1,7 @@
 // VentasController.js
 const empleado = require("../../Models/empleados");
 const Rol = require("../../Models/roles");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const Cliente = require("../../Models/clientes");
 const Usuario = require("../../Models/usuarios");
 const Empleado = require("../../Models/empleados");
