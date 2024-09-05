@@ -6,9 +6,11 @@ exports.listarCompras = async (req, res) => {
         console.log('Conexión a la base de datos establecida');
 
         const query = `
-            SELECT c.*, dc.* 
-            FROM compras c
-            INNER JOIN detallecompra dc ON c.IdCompra = dc.IdCompra
+        SELECT c.*, dc.*, p.nombre_proveedor, p.empresa_proveedor
+        FROM compras c
+        INNER JOIN detallecompra dc ON c.IdCompra = dc.IdCompra
+        INNER JOIN proveedores p ON c.IdProveedor = p.IdProveedor
+        ORDER BY c.IdCompra DESC
         `;
         const [rows, fields] = await connection.query(query);
         console.log('Resultado de la consulta:', rows);
@@ -27,6 +29,8 @@ exports.listarCompras = async (req, res) => {
                     subtotal_compra: parseFloat(row.subtotal_compra).toLocaleString('es-CO', { style: 'currency', currency: 'COP' }),
                     descuento_compra: parseFloat(row.descuento_compra).toLocaleString('es-CO', { style: 'currency', currency: 'COP' }),
                     iva_compra: parseFloat(row.iva_compra).toLocaleString('es-CO', { style: 'currency', currency: 'COP' }),
+                    nombre_proveedor: row.nombre_proveedor, // Nombre del proveedor
+                    empresa_proveedor: row.empresa_proveedor, // Nombre de la empresa del proveedor
                     detalles: []
                 };
             }

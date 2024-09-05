@@ -1,4 +1,4 @@
-const Categoria = require('../../../models/categorias');
+const Categoria = require('../../../Models/categorias');
 const { Op } = require('sequelize');
 
 const formatNombreCategoria = (nombre) => {
