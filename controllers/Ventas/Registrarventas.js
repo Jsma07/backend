@@ -10,7 +10,6 @@ async function registrarVenta(req, res) {
       IdCliente,
       idEmpleado,
       idServicio,
-
       Subtotal,
       Descuento,
       Total,
@@ -41,7 +40,6 @@ async function registrarVenta(req, res) {
       IdCliente,
       idEmpleado,
       idServicio,
-
       Subtotal,
       Fecha: fechaActual, // Usar la fecha y hora actuales sin ajustar
       Descuento,
