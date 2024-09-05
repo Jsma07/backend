@@ -147,4 +147,83 @@ const obtenerServiciosMasAgendados = async (req, res) => {
     }
 };
 
-module.exports = { contarClientes, contarVentas, contarCompras, contarServicios, contarEmpleados, obtenerServiciosMasAgendados };
+const obtenerServicioMasVendido = async (req, res) => {
+    try {
+        console.log("Iniciando consulta de ventas...");
+
+        // Obtener todos los registros de ventas con estado igual a 1
+        const ventas = await Ventas.findAll({
+            attributes: ['IdServicio'],
+            where: {
+                estado: 1  // Filtrar por estado igual a 1
+            },
+            raw: true
+        });
+
+        console.log("Ventas obtenidas:", ventas);
+
+        if (ventas.length === 0) {
+            console.log("No hay ventas con el estado indicado.");
+            return res.json(null);  // No hay ventas para procesar
+        }
+
+        // Contabilizar las ventas por servicio
+        const conteos = {};
+        for (const venta of ventas) {
+            const servicioId = venta.IdServicio;
+            if (conteos[servicioId]) {
+                conteos[servicioId]++;
+            } else {
+                conteos[servicioId] = 1;
+            }
+        }
+
+        console.log("Conteos de ventas:", conteos);
+
+        // Obtener los servicios con su precio
+        const servicios = await Servicios.findAll({
+            where: {
+                IdServicio: Object.keys(conteos)
+            },
+            attributes: ['IdServicio', 'Nombre_Servicio', 'Precio_servicio', 'ImgServicio'],
+            raw: true
+        });
+
+        console.log("Servicios obtenidos:", servicios);
+
+        if (servicios.length === 0) {
+            console.log("No se encontraron servicios correspondientes a las ventas.");
+            return res.json(null);  // No hay servicios para procesar
+        }
+
+        // Combinar los servicios con los conteos de ventas
+        const serviciosConConteos = servicios.map(servicio => ({
+            IdServicio: servicio.IdServicio,
+            ImgServicio: servicio.ImgServicio,
+            Nombre_Servicio: servicio.Nombre_Servicio,
+            Precio_servicio: servicio.Precio_servicio,
+            cantidadVentas: conteos[servicio.IdServicio] || 0
+        }));
+
+        console.log("Servicios con conteos:", serviciosConConteos);
+
+        // Ordenar los servicios por cantidad de ventas
+        serviciosConConteos.sort((a, b) => b.cantidadVentas - a.cantidadVentas);
+
+        console.log("Servicios ordenados:", serviciosConConteos);
+
+        // Seleccionar el servicio más vendido
+        const servicioMasVendido = serviciosConConteos.length > 0 ? serviciosConConteos[0] : null;
+
+        console.log("Servicio más vendido:", servicioMasVendido);
+
+        // Enviar la respuesta al cliente
+        res.json(servicioMasVendido);
+    } catch (error) {
+        console.error('Error al obtener el servicio más vendido:', error);
+        res.status(500).json({ error: 'Error al obtener el servicio más vendido' });
+    }
+};
+
+
+module.exports = { contarClientes, contarVentas, contarCompras, contarServicios, contarEmpleados, obtenerServiciosMasAgendados, obtenerServicioMasVendido};

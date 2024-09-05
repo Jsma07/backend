@@ -77,6 +77,7 @@ async function guardarCompra(req, res) {
                 IdCompra: nuevaCompra.IdCompra,
                 IdInsumo: detalle.IdInsumo,
                 precio_unitario: detalle.precio_unitario,
+                precio_unitario_original: detalle.precio_unitario,
                 cantidad_insumo: detalle.cantidad_insumo,
                 totalValorInsumos: detalle.totalValorInsumos
             });

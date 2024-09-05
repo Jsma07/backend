@@ -11,7 +11,7 @@ exports.listarServicios = async (req, res) => {
         CONCAT(FLOOR(Tiempo_Servicio / 60), ' Hora(s)') AS Tiempo_Servicio, 
         EstadoServicio, 
         Descripcion_Servicio,
-        FORMAT(Precio_Servicio, 2, 'es_CO') AS Precio_Servicio 
+        Precio_Servicio
       FROM servicios
     `;
     const [rows, fields] = await connection.query(query);
