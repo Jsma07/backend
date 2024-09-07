@@ -1,7 +1,7 @@
 const { Op, fn, col, literal } = require('sequelize');
 const Clientes = require('../../Models/clientes'); 
 const Ventas = require('../../Models/ventas');
-const Compras = require('../../models/compras');
+const Compras = require('../../Models/compras');
 const Servicios = require('../../Models/servicios');
 const Agenda = require('../../Models/agendamiento');
 const Empleados = require('../../Models/empleados');

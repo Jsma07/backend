@@ -99,7 +99,11 @@ const Cliente = sequelize.define('clientes', {
         msg: 'El campo Contrasena debe tener entre 8 y 100 caracteres'
       }
     }
-  }
+  },
+  codigoVerificacion: {
+    type: Sequelize.INTEGER(6),
+    allowNull: true,
+  },
 }, {
   sequelize,
   tableName: 'clientes',
