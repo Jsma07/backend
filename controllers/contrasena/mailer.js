@@ -2,7 +2,7 @@ const nodemailer = require('nodemailer');
 const fs = require('fs');
 const path = require('path');
 const Cliente = require('../../Models/clientes'); // Asegúrate de que la ruta sea correcta
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const enviarCorreo = async (correo, codigo) => {
   const transporter = nodemailer.createTransport({
     service: 'gmail',

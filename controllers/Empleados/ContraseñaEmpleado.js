@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const Empleado = require("../../Models/empleados");
 
 async function cambiarContrasena(req, res) {

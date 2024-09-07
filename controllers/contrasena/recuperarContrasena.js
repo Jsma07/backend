@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const Cliente = require('../../Models/clientes'); // Asegúrate de importar tu modelo
 
 const actualizarContrasena = async (req, res) => {
