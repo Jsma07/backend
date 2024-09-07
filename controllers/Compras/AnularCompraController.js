@@ -21,6 +21,7 @@ exports.anularCompra = async (req, res) => {
             return res.status(400).json({ error: 'La compra solo puede ser anulada dentro de los 3 días de su registro' });
         }
 
+        // Cambiar estado de la compra a 'Anulada'
         compra.estado_compra = 'Anulada';
         await compra.save();
 
@@ -33,9 +34,21 @@ exports.anularCompra = async (req, res) => {
                 const insumo = await Insumo.findByPk(detalle.IdInsumo);
                 if (insumo) {
                     insumo.Cantidad -= detalle.cantidad_insumo;
-                    
                     if (insumo.Cantidad <= 0) {
                         insumo.Cantidad = 0;
+                    }
+
+                    // Obtener el detalle de compra más reciente antes de la compra actual
+                    const detalleAnterior = await DetalleCompra.findOne({
+                        where: {
+                            IdCompra: { [Op.lt]: id }, // IdCompra menor que el actual
+                            IdInsumo: detalle.IdInsumo
+                        },
+                        order: [['IdCompra', 'DESC']] // Ordenar por IdCompra de manera descendente
+                    });
+
+                    if (detalleAnterior) {
+                        insumo.PrecioUnitario = detalleAnterior.precio_unitario_original;
                     }
 
                     insumo.Estado = insumo.Cantidad > 0 ? 'Disponible' : 'Agotado';
