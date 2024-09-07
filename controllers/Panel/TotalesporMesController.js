@@ -1,9 +1,9 @@
 const { Op, fn, col } = require('sequelize');
-const Compras = require('../../models/compras'); 
+const Compras = require('../../Models/compras'); 
 const Ventas = require('../../Models/ventas'); 
 const Agenda = require('../../Models/agendamiento'); 
 const Insumos = require('../../models/insumos');
-const DetalleCompra = require('../../models/detallecompra');
+const DetalleCompra = require('../../Models/detallecompra');
 
 const compararSemana = async (req, res) => {
     try {
