@@ -83,15 +83,13 @@ const PORT = process.env.PORT || 3000;
 
 // Conectar con la base de datos
 const Sequelize = require("sequelize");
-const sequelize = new Sequelize(
-  process.env.DB_NAME,
-  process.env.DB_USER,
-  process.env.DB_PASSWORD,
-  {
-    host: process.env.DB_HOST,
-    dialect: "mysql",
-  }
-);
+const sequelize = new Sequelize(process.env.DB_DATABASE, process.env.DB_USER, process.env.DB_PASSWORD, {
+  host: process.env.DB_HOST,
+  dialect: 'mysql',
+  port: process.env.DB_PORT || 3306,
+  logging: console.log,
+  
+});
 
 // Inicializar la conexión a la base de datos
 sequelize
