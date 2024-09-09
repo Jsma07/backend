@@ -56,12 +56,53 @@ if (!fs.existsSync(insumosDir)) {
   fs.mkdirSync(insumosDir, { recursive: true });
 }
 
+
+
+// Configuración de Multer específica para clientes
+const storageClientes = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, "uploads/clientes")); // Carpeta específica para imágenes de clientes
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + path.extname(file.originalname)); // Nombre único para cada imagen
+  },
+});
+
+const uploadClientes = multer({ storage: storageClientes });
+
+// Crear la carpeta de clientes si no existe
+const clientesDir = path.join(__dirname, "uploads/clientes");
+if (!fs.existsSync(clientesDir)) {
+  fs.mkdirSync(clientesDir, { recursive: true });
+}
+
+
+const storageEmpleados = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, "uploads/Empleados")); 
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
+});
+
+const uploadEmpleados = multer({ storage: storageEmpleados });
+
+// Crear la carpeta de clientes si no existe
+const Empleado = path.join(__dirname, "uploads/Empleados");
+if (!fs.existsSync(Empleado)) {
+  fs.mkdirSync(Empleado, { recursive: true });
+}
+
 // Importar y configurar las rutas
+const ClientesRouter = require("./routes/ClientesRouter");
+const EmpleadosRoutesimg = require("./routes/Empleadosimg")(uploadEmpleados);
+
+const ClienteRouter = require("./routes/clienterouter")(uploadClientes); 
 const PanelRoutes = require("./routes/panelRouter");
 const usuarioRoutes = require("./routes/usuarioRoute");
 const rolesRoutes = require("./routes/rolesRoutes");
 const VentasRoutes = require("./routes/VentasRoutes");
-const ClientesRouter = require("./routes/ClientesRouter");
 const EmpleadosRoute = require("./routes/EmpleadosRoute");
 const ProveedoresRouters = require("./routes/proveedoresRouter");
 const ComprasRouters = require("./routes/comprasRouter");
@@ -119,8 +160,6 @@ app.use(usuarioRoutes);
 app.use(LoginRoutes);
 app.use(rolesRoutes);
 app.use(VentasRoutes);
-app.use(ClientesRouter);
-app.use(EmpleadosRoute);
 app.use(ProveedoresRouters);
 app.use(ComprasRouters);
 app.use(DetalleComprasRouters);
@@ -134,7 +173,9 @@ app.use(adicionesrouter); // Importar y usar las rutas de adiciones con middlewa
 app.use(Salida);
 
 
-
+app.use(EmpleadosRoutesimg);
+app.use(ClientesRouter);
+app.use(EmpleadosRoute);
 
 
 async function executeTransfer() {
