@@ -13,10 +13,8 @@ exports.crearAgendamiento = async (req, res) => {
       return res.status(400).json({ errores: errors.array() });
     }
 
-    // Obtener los datos del cuerpo de la solicitud
-    const { IdCliente, IdServicio, Fecha, Hora, IdEmpleado, EstadoAgenda,  } = req.body;
+    const { IdCliente, IdServicio, Fecha, Hora, IdEmpleado, EstadoAgenda } = req.body;
     
-    // Si IdCliente no viene en el cuerpo de la solicitud, utilizar el id del cliente logueado
     const clienteId = IdCliente || req.usuario.id;
 
     const cliente = await Cliente.findByPk(clienteId);
@@ -34,6 +32,17 @@ exports.crearAgendamiento = async (req, res) => {
       return res.status(404).json({ error: 'Servicio no encontrado' });
     }
 
+    const fechaActual = dayjs();
+    const fechaSeleccionada = dayjs(Fecha);
+
+    // Verificar si la fecha seleccionada es el mismo día
+    if (fechaSeleccionada.isSame(fechaActual, 'day')) {
+      const horaSeleccionada = dayjs(`${Fecha} ${Hora}`);
+      if (horaSeleccionada.isBefore(fechaActual, 'minute')) {
+        return res.status(400).json({ error: 'No se puede seleccionar una hora pasada en el día actual' });
+      }
+    }
+
     const horario = await Horario.findOne({
       where: {
         fecha: dayjs(Fecha).format('YYYY-MM-DD')
@@ -44,6 +53,18 @@ exports.crearAgendamiento = async (req, res) => {
       return res.status(400).json({ error: 'Esta Fecha está inactiva, No se pueden crear citas' });
     }
 
+    // Verificar si ya existe una cita para el cliente en la fecha seleccionada
+    const citasExistentesCliente = await Agendamiento.findOne({
+      where: {
+        IdCliente: clienteId,
+        Fecha: dayjs(Fecha).format('YYYY-MM-DD')
+      }
+    });
+
+    if (citasExistentesCliente) {
+      return res.status(400).json({ error: 'El cliente ya tiene una cita en esta fecha' });
+    }
+
     const duracion = servicio.Tiempo_Servicio;
     const horasOcupadas = [];
     const horaInicio = dayjs(`${Fecha} ${Hora}`);
@@ -52,14 +73,14 @@ exports.crearAgendamiento = async (req, res) => {
       horasOcupadas.push(horaInicio.add(i, 'hour').format('HH:mm'));
     }
 
-    const citasExistentes = await Agendamiento.findAll({
+    const citasExistentesHoras = await Agendamiento.findAll({
       where: {
         Fecha,
         Hora: horasOcupadas
       }
     });
 
-    if (citasExistentes.length > 0) {
+    if (citasExistentesHoras.length > 0) {
       return res.status(400).json({ error: 'Ya existe una cita en una de las horas seleccionadas' });
     }
 

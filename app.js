@@ -34,7 +34,7 @@ const uploadInsumos = multer({ storage: storageInsumos });
 // Configuración de Multer específica para adiciones
 const storageAdiciones = multer.diskStorage({
   destination: function (req, file, cb) {
-    const adicionesDir = path.join(__dirname, "uploads/Adiciones");
+    const adicionesDir = path.join(__dirname, "./uploads/Adiciones");
 
     // Verificar si la carpeta existe, si no, crearla
     if (!fs.existsSync(adicionesDir)) {
@@ -124,15 +124,12 @@ const PORT = process.env.PORT || 3000;
 
 // Conectar con la base de datos
 const Sequelize = require("sequelize");
-const sequelize = new Sequelize(
-  process.env.DB_NAME,
-  process.env.DB_USER,
-  process.env.DB_PASSWORD,
-  {
-    host: process.env.DB_HOST,
-    dialect: "mysql",
-  }
-);
+const sequelize = new Sequelize(process.env.DB_DATABASE, process.env.DB_USER, process.env.DB_PASSWORD, {
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT, // Asegúrate de incluir el puerto aquí
+  dialect: 'mysql',
+  logging: false // Puedes desactivar el logging si es necesario
+});
 
 // Inicializar la conexión a la base de datos
 sequelize
@@ -154,7 +151,6 @@ app.use(express.json());
 app.use("/static", express.static("public/static"));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Configurar las rutas
 app.use(PanelRoutes);
 app.use(usuarioRoutes);
 app.use(LoginRoutes);
@@ -169,13 +165,11 @@ app.use(ServiciosRouters); // Importar y usar las rutas de servicios con middlew
 app.use(AgendasRouters);
 app.use(DetalleventasRouter);
 app.use(horarioRouter);
-app.use(adicionesrouter); // Importar y usar las rutas de adiciones con middleware de subida de imágenes
+app.use(adicionesrouter);
 app.use(Salida);
 
 
-app.use(EmpleadosRoutesimg);
-app.use(ClientesRouter);
-app.use(EmpleadosRoute);
+
 
 
 async function executeTransfer() {
@@ -187,8 +181,7 @@ async function executeTransfer() {
   }
 }
 
-setInterval(executeTransfer, 50000); 
-
+// setInterval(executeTransfer, 50000);
 
 // Manejo de errores
 app.use((err, req, res, next) => {

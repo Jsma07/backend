@@ -14,7 +14,7 @@ module.exports = (uploadAdiciones) => {
 
   router.post(
     "/Jackenail/Registraradiciones",
-    uploadAdiciones.single("Img"), // Aquí "Img" es el nombre del campo en el formulario que contiene la imagen
+    uploadAdiciones.single("Img"),
     registrarAdicion
   );
 

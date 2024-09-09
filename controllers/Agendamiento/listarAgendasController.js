@@ -32,17 +32,3 @@ exports.listarAgendamientos = async (req, res) => {
   }
 };
 
-
-
-
-    // const connection = await ConexionDB();
-    // const [rows, fields] = await connection.execute('SELECT * FROM agendamiento');
-    // await connection.end(); // Cierra la conexión después de usarla
-
-    // // Renombrar campo "Fecha/Hora" a "FechaHora" en cada registro
-    // const formattedRows = rows.map(row => ({
-    //   ...row,
-    //   FechaHora: row['Fecha/Hora']
-    // }));
-
-    // res.status(200).json(formattedRows);

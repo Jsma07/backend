@@ -1,4 +1,4 @@
-const Compra = require('../../models/compras');
+const Compra = require('../../Models/compras');
 const DetalleCompra = require('../../Models/detallecompra');
 const Insumo = require('../../Models/insumos');
 
@@ -37,7 +37,7 @@ async function procesarInsumo(detalle) {
 
 async function guardarCompra(req, res) {
     try {
-        const { fecha_compra, descuento_compra, estado_compra, detallesCompra } = req.body;
+        const { fecha_compra, descuento_compra, estado_compra, IdProveedor, detallesCompra} = req.body;
 
         console.log("Datos recibidos:", req.body);
 
@@ -67,7 +67,8 @@ async function guardarCompra(req, res) {
             iva_compra,
             subtotal_compra,
             total_compra,
-            estado_compra
+            estado_compra,
+            IdProveedor
         });
 
         // Crear detalles de compra asociados a la nueva compra
@@ -76,6 +77,7 @@ async function guardarCompra(req, res) {
                 IdCompra: nuevaCompra.IdCompra,
                 IdInsumo: detalle.IdInsumo,
                 precio_unitario: detalle.precio_unitario,
+                precio_unitario_original: detalle.precio_unitario,
                 cantidad_insumo: detalle.cantidad_insumo,
                 totalValorInsumos: detalle.totalValorInsumos
             });
