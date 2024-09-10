@@ -15,7 +15,7 @@ const formatNombreCategoria = (nombre) => {
 exports.editarInsumo = async (req, res) => {
   try {
     const { IdInsumos } = req.params;
-    const { NombreInsumos, Cantidad, PrecioUnitario, Estado, IdCategoria } =
+    const { NombreInsumos, Cantidad, PrecioUnitario, Estado, estado_insumo, IdCategoria } =
       req.body;
 
     // Verificar si el nombre del insumo ya está registrado para otro insumo
@@ -46,6 +46,7 @@ exports.editarInsumo = async (req, res) => {
       Cantidad,
       PrecioUnitario,
       Estado,
+      estado_insumo,
       IdCategoria,
     };
 

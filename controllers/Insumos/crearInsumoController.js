@@ -18,9 +18,9 @@ exports.guardarInsumo = async (req, res) => {
         console.log("Body:", req.body);
         console.log("File:", req.file);
 
-        let { NombreInsumos, Estado, IdCategoria} = req.body;
+        let { NombreInsumos, Estado, estado_insumo, IdCategoria} = req.body;
 
-        if (!NombreInsumos || !IdCategoria) {
+        if (!NombreInsumos || !IdCategoria || estado_insumo) {
             return res.status(400).json({ error: 'Todos los campos son requeridos' });
         }
 
@@ -55,6 +55,7 @@ exports.guardarInsumo = async (req, res) => {
             Cantidad,
             PrecioUnitario,
             Estado,
+            estado_insumo,
             IdCategoria
         });
 

@@ -69,6 +69,19 @@ const Insumo = sequelize.define(
       type: Sequelize.BOOLEAN,
       defaultValue: false,
     },
+    estado_insumo: {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+      validate: {
+        isIn: {
+          args: [[0, 1]], 
+          msg: "El estado del insumo debe ser 0 (inactivo) o 1 (activo)"
+        },
+        notEmpty: {
+          msg: "El estado del insumo no puede estar vacío."
+        }
+      }
+    }
   },
   {
     tableName: "insumos",
