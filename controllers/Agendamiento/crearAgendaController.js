@@ -1,4 +1,5 @@
 const { validationResult } = require('express-validator');
+const { Op } = require('sequelize');  // Asegúrate de importar Op de Sequelize
 const Agendamiento = require('../../Models/agendamiento');
 const Cliente = require('../../Models/clientes');
 const Empleado = require('../../Models/empleados');
@@ -75,8 +76,9 @@ exports.crearAgendamiento = async (req, res) => {
 
     const citasExistentesHoras = await Agendamiento.findAll({
       where: {
-        Fecha,
-        Hora: horasOcupadas
+        IdEmpleado,
+        Fecha: dayjs(Fecha).format('YYYY-MM-DD'),
+        Hora: { [Op.in]: horasOcupadas }, // Uso de operador `IN` para verificar múltiples horas
       }
     });
 

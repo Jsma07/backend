@@ -37,6 +37,10 @@ const Agendamiento = sequelize.define('Agendamiento', {
     type: Sequelize.TIME,
     allowNull: false
   },
+  HoraFin: {
+    type: Sequelize.TIME,
+    allowNull: true // La hora fin puede ser null si aún no está calculada
+  },
   IdEmpleado: {
     type: Sequelize.INTEGER,
     allowNull: false,

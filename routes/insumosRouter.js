@@ -13,7 +13,6 @@ module.exports = (uploadInsumos) => {
   // Rutas para insumos
   router.get(
     "/api/insumos",
-    authorize(["Insumos"]),
     listarInsumos.listarInsumos
   );
   router.post(
@@ -24,7 +23,7 @@ module.exports = (uploadInsumos) => {
   ); // Usar el middleware de multer para subir imágenes
   router.put(
     "/api/insumos/editar/:IdInsumos",
-    authorize(["Insumos"]),
+   
     uploadInsumos.single("Imagen"),
     editarInsumo
   ); // Usar el middleware de multer para subir imágenes
