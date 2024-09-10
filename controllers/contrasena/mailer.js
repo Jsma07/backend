@@ -7,8 +7,8 @@ const enviarCorreo = async (correo, codigo) => {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: 'eduardomosquera12346@gmail.com', // Reemplaza con tu email
-      pass: 'exnl cumb oeme cudy' // Reemplaza con la contraseña de tu email
+      user: 'jakenailscol@gmail.com', // Reemplaza con tu email
+      pass: 'xsmu nrlf fjqq nfrw' // Reemplaza con la contraseña de tu email
     }
   });
 
@@ -24,7 +24,7 @@ const enviarCorreo = async (correo, codigo) => {
     .replace('{{codigo_6}}', codigo[5]);
 
   const mailOptions = {
-    from: 'eduardomosquera12346@gmail.com', // Cambia esto por tu correo
+    from: 'jakenailscol@gmail.com', 
     to: correo,
     subject: 'Código de Verificación Jake Nails',
     html: htmlContent
