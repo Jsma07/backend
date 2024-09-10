@@ -52,8 +52,7 @@ async function transferAgendamientosToVentas() {
         Estado: 2,
       });
 
-      // Actualizar el estado del agendamiento
-      agenda.EstadoAgenda = 4;
+      agenda.EstadoAgenda = 1;
       await agenda.save();
     }
 

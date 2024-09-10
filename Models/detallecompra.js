@@ -25,10 +25,6 @@ const DetalleCompra = sequelize.define('detallecompra', {
     type: Sequelize.FLOAT,
     allowNull: false
   },
-  precio_unitario_original: {  
-    type: Sequelize.FLOAT,
-    allowNull: false
-  },
   cantidad_insumo: {
     type: Sequelize.INTEGER,
     allowNull: false

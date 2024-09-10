@@ -23,13 +23,12 @@ async function Listar_Empleados() {
 
 async function CrearEmpleados(DatosCrearEmpleados, res) {
   try {
-    // Verifica si el rol especificado existe en la tabla de roles
+
     const rolExistente = await Rol.findByPk(DatosCrearEmpleados.IdRol);
     if (!rolExistente) {
       return res.status(400).json({ mensaje: "El rol especificado no existe" });
     }
 
-    // Verificar si el correo ya está registrado
     const correoExistente =
       (await Usuario.findOne({
         where: { Correo: DatosCrearEmpleados.Correo },
@@ -47,7 +46,7 @@ async function CrearEmpleados(DatosCrearEmpleados, res) {
         .json({ mensaje: "El correo ya está registrado en el sistema." });
     }
 
-    // Verificar si el documento ya está registrado
+
     const documentoExistente =
       (await Usuario.findOne({
         where: { Documento: DatosCrearEmpleados.Documento },
@@ -72,10 +71,17 @@ async function CrearEmpleados(DatosCrearEmpleados, res) {
       saltRounds
     );
 
-    // Crea el empleado solo si el rol existe y las validaciones pasaron
+
+    const Img=req.file ? `/uploads/Empleados/${req.file.filename}` : null;
+
+    if (Img) {
+      datosCrearClientes.Img = Img;
+    }
+
+
     const empleadoCreado = await Empleado.create(DatosCrearEmpleados);
 
-    // Recupera el empleado completo incluyendo los campos necesarios
+
     const empleadoCompleto = await Empleado.findByPk(
       empleadoCreado.IdEmpleado,
       {
@@ -90,6 +96,7 @@ async function CrearEmpleados(DatosCrearEmpleados, res) {
           "Documento",
           "Tip_Documento", // Incluir el tipo de documento
           "Direccion",
+          "Img"
         ],
       }
     );
@@ -112,6 +119,8 @@ async function CrearEmpleados(DatosCrearEmpleados, res) {
     }
   }
 }
+
+
 
 async function ActualizarEmpleado(req, res) {
   try {

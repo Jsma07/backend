@@ -9,7 +9,7 @@ const sequelize = new Sequelize(
   }
 );
 
-const Roles = require("./roles"); // Asegúrate de que la ruta sea correcta
+const Roles = require("./roles");
 
 const Empleado = sequelize.define(
   "empleados",
@@ -19,6 +19,10 @@ const Empleado = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
+    },
+    Img: {
+      type: Sequelize.STRING(500),
+      allowNull: false,
     },
     Nombre: {
       type: DataTypes.STRING(50),
@@ -38,7 +42,6 @@ const Empleado = sequelize.define(
         notEmpty: true,
       },
     },
-
     Apellido: {
       type: DataTypes.STRING(50),
       allowNull: false,
@@ -127,6 +130,10 @@ const Empleado = sequelize.define(
         },
       },
     },
+    
+   
+   
+   
   },
   {
     tableName: "empleados",
@@ -135,6 +142,5 @@ const Empleado = sequelize.define(
 );
 
 Empleado.belongsTo(Roles, { foreignKey: "IdRol" });
-// Definir la asociación
 
 module.exports = Empleado;

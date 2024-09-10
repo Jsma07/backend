@@ -29,32 +29,20 @@ exports.anularCompra = async (req, res) => {
             where: { IdCompra: id }
         });
 
-        if (detallesCompra.length > 0) {
-            await Promise.all(detallesCompra.map(async detalle => {
-                const insumo = await Insumo.findByPk(detalle.IdInsumo);
-                if (insumo) {
-                    insumo.Cantidad -= detalle.cantidad_insumo;
-                    if (insumo.Cantidad <= 0) {
-                        insumo.Cantidad = 0;
-                    }
-
-                    // Obtener el detalle de compra más reciente antes de la compra actual
-                    const detalleAnterior = await DetalleCompra.findOne({
-                        where: {
-                            IdCompra: { [Op.lt]: id }, // IdCompra menor que el actual
-                            IdInsumo: detalle.IdInsumo
-                        },
-                        order: [['IdCompra', 'DESC']] // Ordenar por IdCompra de manera descendente
-                    });
-
-                    if (detalleAnterior) {
-                        insumo.PrecioUnitario = detalleAnterior.precio_unitario_original;
-                    }
-
-                    insumo.Estado = insumo.Cantidad > 0 ? 'Disponible' : 'Agotado';
-                    await insumo.save();
+        // Bucle para restar las cantidades de insumos
+        for (const detalle of detallesCompra) {
+            const insumo = await Insumo.findByPk(detalle.IdInsumo);
+            if (insumo) {
+                // Restar la cantidad del insumo
+                insumo.Cantidad -= detalle.cantidad_insumo;
+                if (insumo.Cantidad <= 0) {
+                    insumo.Cantidad = 0;
                 }
-            }));
+
+                // Actualizar el estado del insumo basado en la cantidad
+                insumo.Estado = insumo.Cantidad > 0 ? 'Disponible' : 'Agotado';
+                await insumo.save();
+            }
         }
 
         res.status(200).json({

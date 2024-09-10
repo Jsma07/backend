@@ -1,4 +1,4 @@
-const Categoria = require('../../../Models/categorias');
+const Categoria = require('../../../models/categorias');
 
 const formatNombreCategoria = (nombre) => {
     const nombreSinEspacios = nombre.trim();
@@ -11,8 +11,8 @@ const formatNombreCategoria = (nombre) => {
 exports.guardarCategoria = async (req, res) => {
     console.log('Controlador guardarCategoria alcanzado');
     try {
-        let { nombre_categoria, estado_categoria } = req.body;
-        console.log('Datos recibidos:', { nombre_categoria, estado_categoria });
+        let { nombre_categoria, descripcion_categoria, estado_categoria } = req.body;
+        console.log('Datos recibidos:', { nombre_categoria, descripcion_categoria, estado_categoria });
 
         nombre_categoria = formatNombreCategoria(nombre_categoria);
         console.log('Nombre formateado:', nombre_categoria);
@@ -25,6 +25,7 @@ exports.guardarCategoria = async (req, res) => {
 
         const nuevaCategoria = await Categoria.create({
             nombre_categoria,
+            descripcion_categoria,
             estado_categoria,
         });
 

@@ -4,9 +4,13 @@ const Insumos = require('../../../Models/insumos');
 
 // Función para formatear valores monetarios
 const formatCurrency = (value) => {
-    return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(value);
-};
-
+    return parseFloat(value).toLocaleString('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      maximumFractionDigits: 0, 
+    });
+  };
+  
 // Controlador para listar detalles de compras
 async function listarDetalleCompras(req, res) {
     try {
@@ -27,8 +31,7 @@ async function listarDetalleCompras(req, res) {
             insumos: detalle.insumo.map(insumo => ({
                 NombreInsumos: insumo.NombreInsumos,
                 imagen: insumo.Imagen,
-                PrecioUnitario: formatCurrency(detalle.precio_unitario), // Usa el precio_unitario de DetalleCompra
-                cantidad_insumo: detalle.cantidad_insumo,
+                PrecioUnitario: formatCurrency(detalle.precio_unitario), 
                 totalValorInsumos: formatCurrency(detalle.totalValorInsumos)
             })),
             totalValorInsumos: formatCurrency(detalle.totalValorInsumos)
