@@ -26,7 +26,7 @@ const Cliente = sequelize.define('clientes', {
   },
   Img: {
     type: Sequelize.STRING(500),
-    allowNull: false,
+    allowNull: true,
   },
   Nombre: {
     type: Sequelize.STRING(50),
