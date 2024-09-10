@@ -109,6 +109,10 @@ const Cliente = sequelize.define('clientes', {
     type: Sequelize.STRING(40), // Ajusta el tamaño según sea necesario
     allowNull: true
   },
+  codigoContrasena: {
+    type: Sequelize.INTEGER(10),
+    allowNull: true
+  },
   FechaInicio: {
     type: Sequelize.DATE,
     allowNull: true

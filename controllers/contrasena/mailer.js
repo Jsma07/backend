@@ -54,7 +54,7 @@ const recuperarContrasena = async (req, res) => {
     console.log('Código de verificación generado:', codigo);
 
     // Guarda el código de verificación en la base de datos
-    cliente.codigoVerificacion = codigo;
+    cliente.codigoContrasena = codigo;
     await cliente.save();
 
     // Envía el código por correo
@@ -85,7 +85,7 @@ const verificarCodigo = async (req, res) => {
     }
 
     const codigoRecibido = parseInt(codigo, 10);
-    const codigoGuardado = cliente.codigoVerificacion;
+    const codigoGuardado = cliente.codigoContrasena;
 
     console.log(`Código recibido (tipo: ${typeof codigoRecibido}): ${codigoRecibido}`);
     console.log(`Código guardado (tipo: ${typeof codigoGuardado}): ${codigoGuardado}`);
@@ -120,7 +120,7 @@ const actualizarContrasena = async (req, res) => {
 
     // Actualiza la contraseña en la base de datos
     cliente.Contrasena = contrasenaCifrada;
-    cliente.codigoVerificacion = null; // Limpia el código de verificación
+    cliente.codigoContrasena = 0; // Limpia el código de verificación
     await cliente.save();
 
     res.json({ mensaje: 'Contraseña actualizada exitosamente' });
