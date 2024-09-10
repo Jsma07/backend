@@ -10,11 +10,9 @@ const Empleado = require("../../Models/empleados");
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: 'Eduardomosquera12346@gmail.com',
-    pass: 'exnl cumb oeme cudy'
-  },
-  logger: true, 
-  debug: true   
+    user: 'jakenailscol@gmail.com',
+    pass: 'xsmu nrlf fjqq nfrw'
+  },  
 });
 
 async function Crearclientes(req, res) {

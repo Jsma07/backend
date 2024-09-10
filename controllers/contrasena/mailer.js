@@ -120,7 +120,7 @@ const actualizarContrasena = async (req, res) => {
 
     // Actualiza la contraseña en la base de datos
     cliente.Contrasena = contrasenaCifrada;
-    cliente.codigoContrasena = 0; // Limpia el código de verificación
+    cliente.codigoContrasena = null; // Limpia el código de verificación
     await cliente.save();
 
     res.json({ mensaje: 'Contraseña actualizada exitosamente' });

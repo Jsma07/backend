@@ -150,7 +150,10 @@ app.use(express.json());
 // Configuración de archivos estáticos
 app.use("/static", express.static("public/static"));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
+app.use(ClientesRouter)
+app.use(ClienteRouter)
+app.use(EmpleadosRoutesimg)
+app.use(EmpleadosRoute)
 app.use(PanelRoutes);
 app.use(usuarioRoutes);
 app.use(LoginRoutes);
