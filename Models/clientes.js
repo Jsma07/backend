@@ -1,10 +1,13 @@
 const Sequelize = require('sequelize');
 
 const sequelize = new Sequelize(process.env.DB_DATABASE, process.env.DB_USER, process.env.DB_PASSWORD, {
-  host: process.env.DB_HOST, 
-  dialect: 'mysql'
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT, // Asegúrate de incluir el puerto aquí
+  dialect: 'mysql',
+  logging: false // Puedes desactivar el logging si es necesario
 });
-const Roles = require('./roles')
+const Roles = require('./roles');
+
 const Cliente = sequelize.define('clientes', {
   IdCliente: {
     autoIncrement: true,
@@ -21,6 +24,10 @@ const Cliente = sequelize.define('clientes', {
       },
     }
   },
+  Img: {
+    type: Sequelize.STRING(500),
+    allowNull: false,
+  },
   Nombre: {
     type: Sequelize.STRING(50),
     allowNull: false,
@@ -28,7 +35,6 @@ const Cliente = sequelize.define('clientes', {
       notNull: {
         msg: 'El campo nombre es obligatorio'
       },
-
       is: /^[a-zA-Z\s]*$/, 
     }
   },
@@ -64,7 +70,7 @@ const Cliente = sequelize.define('clientes', {
             msg: 'El campo Estado debe ser un número entero'
         }
     }
-},
+  },
   IdRol: {
     type: Sequelize.INTEGER,
     allowNull: false,
@@ -86,7 +92,6 @@ const Cliente = sequelize.define('clientes', {
       }
     }
   },
- 
   Contrasena: {
     type: Sequelize.STRING(100),
     allowNull: false,
@@ -99,6 +104,23 @@ const Cliente = sequelize.define('clientes', {
         msg: 'El campo Contrasena debe tener entre 8 y 100 caracteres'
       }
     }
+  },
+  CodigoVerificacion: {
+    type: Sequelize.STRING(40), // Ajusta el tamaño según sea necesario
+    allowNull: true
+  },
+  codigoContrasena: {
+    type: Sequelize.INTEGER(10),
+    allowNull: true
+  },
+  FechaInicio: {
+    type: Sequelize.DATE,
+    allowNull: true
+  },
+  Verificado: {
+    type: Sequelize.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
   }
 }, {
   sequelize,
@@ -122,7 +144,7 @@ const Cliente = sequelize.define('clientes', {
     },
   ]
 });
-Cliente.belongsTo(Roles, { foreignKey: 'IdRol' });
 
+Cliente.belongsTo(Roles, { foreignKey: 'IdRol' });
 
 module.exports = Cliente;

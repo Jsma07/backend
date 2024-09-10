@@ -14,8 +14,7 @@ exports.listarInsumos = async (req, res) => {
             PrecioUnitario: new Intl.NumberFormat('es-CO', {
                 style: 'currency',
                 currency: 'COP',
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
+                maximumFractionDigits: 0
             }).format(row.PrecioUnitario)
         }));
 

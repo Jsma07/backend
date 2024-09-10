@@ -21,6 +21,7 @@ exports.anularCompra = async (req, res) => {
             return res.status(400).json({ error: 'La compra solo puede ser anulada dentro de los 3 días de su registro' });
         }
 
+        // Cambiar estado de la compra a 'Anulada'
         compra.estado_compra = 'Anulada';
         await compra.save();
 
@@ -28,20 +29,20 @@ exports.anularCompra = async (req, res) => {
             where: { IdCompra: id }
         });
 
-        if (detallesCompra.length > 0) {
-            await Promise.all(detallesCompra.map(async detalle => {
-                const insumo = await Insumo.findByPk(detalle.IdInsumo);
-                if (insumo) {
-                    insumo.Cantidad -= detalle.cantidad_insumo;
-                    
-                    if (insumo.Cantidad <= 0) {
-                        insumo.Cantidad = 0;
-                    }
-
-                    insumo.Estado = insumo.Cantidad > 0 ? 'Disponible' : 'Agotado';
-                    await insumo.save();
+        // Bucle para restar las cantidades de insumos
+        for (const detalle of detallesCompra) {
+            const insumo = await Insumo.findByPk(detalle.IdInsumo);
+            if (insumo) {
+                // Restar la cantidad del insumo
+                insumo.Cantidad -= detalle.cantidad_insumo;
+                if (insumo.Cantidad <= 0) {
+                    insumo.Cantidad = 0;
                 }
-            }));
+
+                // Actualizar el estado del insumo basado en la cantidad
+                insumo.Estado = insumo.Cantidad > 0 ? 'Disponible' : 'Agotado';
+                await insumo.save();
+            }
         }
 
         res.status(200).json({

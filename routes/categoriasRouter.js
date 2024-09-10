@@ -7,6 +7,6 @@ const editarCategoria = require('../controllers/Insumos/Categorias/editarCategor
 
 routes.get('/api/categorias', authorize(['Categorias']), listarCategorias.listarCategorias);
 routes.post('/api/categorias/guardarCategoria', authorize(['Categorias']), crearCategoria.guardarCategoria);
-routes.put('/api/categorias/editar/:IdCategoria', authorize(['Categorias']), editarCategoria.editarCategoria);
+routes.put('/api/categorias/editar/:IdCategoria', editarCategoria.editarCategoria);
 
 module.exports = routes;
