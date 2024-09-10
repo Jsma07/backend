@@ -1,4 +1,4 @@
-const Proveedor = require('../../../models/proveedores');
+const Proveedor = require('../../../Models/proveedores');
 const { Op } = require('sequelize');
 
 exports.editarProveedor = async (req, res) => {

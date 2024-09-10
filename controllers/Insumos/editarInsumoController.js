@@ -1,83 +1,102 @@
 const Insumo = require("../../Models/insumos");
+const Detallecompra = require("../../Models/detallecompra"); // Asegúrate de tener este modelo si es necesario
 const { Op } = require("sequelize");
 const fs = require("fs");
 const path = require("path");
 
-// Tamaño máximo permitido en bytes (2 MB)
-const MAX_FILE_SIZE = 2000000;
+const MAX_FILE_SIZE = 1000000;
 
-// Extensiones de archivo permitidas
-const ALLOWED_EXTENSIONS = ['.png', '.jpg', '.jpeg'];
-
-const formatNombreCategoria = (nombre) => {
+const formatNombreInsumo = (nombre) => {
   const nombreSinEspacios = nombre.trim();
   const nombreMinusculas = nombreSinEspacios.toLowerCase();
-  const nombreFormateado =
-    nombreMinusculas.charAt(0).toUpperCase() + nombreMinusculas.slice(1);
-
-  return nombreFormateado;
+  return nombreMinusculas.charAt(0).toUpperCase() + nombreMinusculas.slice(1);
 };
 
 exports.editarInsumo = async (req, res) => {
   try {
+    console.log('req.body:', req.body); // Log para depuración
     const { IdInsumos } = req.params;
-    const { NombreInsumos, Cantidad, PrecioUnitario, Estado, IdCategoria } = req.body;
-    const file = req.file;
-    const newImgPath = file ? `/uploads/insumos/${file.filename}` : null;
+    const { NombreInsumos, Cantidad, PrecioUnitario, Estado, estado_insumo, IdCategoria } = req.body;
 
-    // Validar si el archivo es una imagen permitida
-    if (file) {
-      const fileExtension = path.extname(file.originalname).toLowerCase();
-      if (!ALLOWED_EXTENSIONS.includes(fileExtension)) {
-        fs.unlinkSync(file.path);
-        return res.status(400).json({ error: 'Solo se permiten imágenes en formato PNG, JPG o JPEG.' });
-      }
-
-      if (file.size > MAX_FILE_SIZE) {
-        fs.unlinkSync(file.path);
-        return res.status(400).json({ error: 'El tamaño de la imagen excede el límite permitido (2 MB).' });
-      }
+    if (!IdInsumos) {
+      return res.status(400).json({ error: "Faltan parámetros requeridos." });
     }
 
-    const existingInsumo = await Insumo.findOne({
-      where: {
-        NombreInsumos,
-        IdInsumos: { [Op.ne]: IdInsumos }
-      }
-    });
-
-    if (existingInsumo) {
-      if (file) {
-        fs.unlinkSync(file.path);
-      }
-      return res.status(400).json({ error: 'El nombre del insumo ya está registrado para otro insumo.' });
-    }
+    console.log('IdInsumos:', IdInsumos); // Log para depuración
 
     const updateInsumo = await Insumo.findByPk(IdInsumos);
     if (!updateInsumo) {
-      if (file) {
-        fs.unlinkSync(file.path);
-      }
-      return res.status(404).json({ error: 'Insumo no encontrado' });
+      return res.status(404).json({ error: "Insumo no encontrado" });
     }
 
-    // Eliminar la imagen anterior si existe y se está cargando una nueva
-    if (file && updateInsumo.Imagen) {
-      const oldImgPath = path.join(__dirname, '../../', updateInsumo.Imagen);
-      if (fs.existsSync(oldImgPath)) {
-        fs.unlinkSync(oldImgPath);
+    // Verificar si el insumo está asociado con alguna compra
+    const asociadoDetalleCompras = await Detallecompra.findOne({
+      where: {
+        IdInsumo: IdInsumos,
+      },
+    });
+
+    console.log('asociadoDetalleCompras:', asociadoDetalleCompras); // Log para depuración
+
+    // Validar si se puede inactivar el estado
+    if (estado_insumo === 0) {
+      if (asociadoDetalleCompras) {
+        return res.status(400).json({ error: "No se puede inactivar este insumo porque está asociado a una compra." });
+      }
+      if (updateInsumo.Cantidad > 0) {
+        return res.status(400).json({ error: "No se puede inactivar este insumo porque su cantidad es mayor a 0." });
       }
     }
 
     // Construir objeto con los campos actualizados
-    let updatedFields = {
-      NombreInsumos: NombreInsumos ?? updateInsumo.NombreInsumos,
-      Cantidad: Cantidad ?? updateInsumo.Cantidad,
-      PrecioUnitario: PrecioUnitario ?? updateInsumo.PrecioUnitario,
-      Estado: Estado ?? updateInsumo.Estado,
-      IdCategoria: IdCategoria ?? updateInsumo.IdCategoria,
-      Imagen: newImgPath ?? updateInsumo.Imagen
-    };
+    let updatedFields = {};
+
+    if (NombreInsumos) {
+      const nombreFormateado = formatNombreInsumo(NombreInsumos);
+
+      // Verificar si el nombre del insumo ya está registrado para otro insumo
+      const existingInsumo = await Insumo.findOne({
+        where: {
+          NombreInsumos: nombreFormateado,
+          IdInsumos: {
+            [Op.ne]: IdInsumos,
+          },
+        },
+      });
+
+      if (existingInsumo) {
+        return res.status(400).json({
+          error: "El nombre del insumo ya está registrado para otro insumo.",
+        });
+      }
+
+      updatedFields.NombreInsumos = nombreFormateado;
+    }
+
+    if (Cantidad !== undefined) updatedFields.Cantidad = Cantidad;
+    if (PrecioUnitario !== undefined) updatedFields.PrecioUnitario = PrecioUnitario;
+    if (Estado !== undefined) updatedFields.Estado = Estado;
+    if (estado_insumo !== undefined) updatedFields.estado_insumo = estado_insumo;
+    if (IdCategoria !== undefined) updatedFields.IdCategoria = IdCategoria;
+
+    // Verificar si se subió una nueva imagen
+    if (req.file) {
+      if (req.file.size > MAX_FILE_SIZE) {
+        fs.unlinkSync(req.file.path);
+        return res.status(400).json({ error: 'El tamaño del archivo excede el límite permitido (1 MB).' });
+      }
+
+      const newImagePath = `/uploads/insumos/${req.file.filename}`;
+      updatedFields.Imagen = newImagePath;
+
+      // Eliminar la imagen anterior si existe
+      if (updateInsumo.Imagen) {
+        const oldImagePath = path.join(__dirname, "../../", updateInsumo.Imagen);
+        if (fs.existsSync(oldImagePath)) {
+          fs.unlinkSync(oldImagePath);
+        }
+      }
+    }
 
     // Actualizar el insumo con los campos actualizados
     await updateInsumo.update(updatedFields);
@@ -87,16 +106,12 @@ exports.editarInsumo = async (req, res) => {
       insumo: updateInsumo
     });
   } catch (error) {
-    if (error.name === 'SequelizeValidationError') {
-      // Manejo de errores de validación de Sequelize
-      const errores = error.errors.map(err => err.message);
-      return res.status(400).json({ errores });
-    } else {
-      console.error('Error al editar el insumo', error);
-      res.status(500).json({ error: 'Error al editar el insumo' });
-    }
+    console.error("Error al editar el insumo", error);
+    res.status(500).json({ error: "Error al editar el insumo" });
   }
 };
+
+
 
 // Controlador para actualizar las existencias de un insumo
 exports.existenciaseditar = async (req, res) => {

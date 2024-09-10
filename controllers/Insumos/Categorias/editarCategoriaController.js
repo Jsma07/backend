@@ -12,7 +12,7 @@ const formatNombreCategoria = (nombre) => {
 exports.editarCategoria = async (req, res) => {
     try {
         const { IdCategoria } = req.params;
-        const { nombre_categoria, estado_categoria } = req.body;
+        const { nombre_categoria, descripcion_categoria, estado_categoria } = req.body;
 
         const updateCategoria = await Categoria.findByPk(IdCategoria);
         if (!updateCategoria) {
@@ -37,6 +37,7 @@ exports.editarCategoria = async (req, res) => {
 
             await updateCategoria.update({
                 nombre_categoria: formattedNombre,
+                descripcion_categoria: descripcion_categoria,
                 estado_categoria: estado_categoria ?? updateCategoria.estado_categoria,
             });
         } else {

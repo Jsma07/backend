@@ -4,10 +4,15 @@ const authorize = require("../middleware/auth");
 const ClientesController = require("../controllers/Clientes/ClientesController");
 const cambiarContrasenan = require("../controllers/Clientes/Contraseña");
 
-const { recuperarContrasena } = require("../controllers/contrasena/mailer");
+const {actualizarContrasena} = require("../controllers/contrasena/mailer")
+const { recuperarContrasena, verificarCodigo } = require('../controllers/contrasena/mailer');
 
-router.post("/api/recuperarContrasena", recuperarContrasena);
+router.post('/api/actualizarContrasena', actualizarContrasena);
 
+router.post('/api/recuperarContrasena', recuperarContrasena);
+
+// Ruta para verificar el código y actualizar la contraseña
+router.post('/api/verificar-codigo', verificarCodigo);
 router.get("/jackenail/Listar_Clientes", async (req, res) => {
   try {
     const ventas = await ClientesController.Listar_Clientes();

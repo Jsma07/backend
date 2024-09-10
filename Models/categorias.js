@@ -28,7 +28,17 @@ const Categoria = sequelize.define('categorias', {
               msg: 'El nombre de la categoria debe tener entre 1 y 30 caracteres'
           }
       }
-  },
+    },
+    descripcion_categoria: {
+      type: Sequelize.STRING(225),
+      allowNull: true,
+      validate: {
+          len: {
+              args: [0, 225],
+              msg: 'La descripción debe tener hasta 225 caracteres.'
+          }
+      }
+    },
     estado_categoria: {
       type: Sequelize.INTEGER,
       allowNull: false,
@@ -59,4 +69,3 @@ const Categoria = sequelize.define('categorias', {
   });
 
   module.exports = Categoria;
-
