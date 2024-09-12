@@ -17,11 +17,35 @@ const transporter = nodemailer.createTransport({
 
 async function CrearEmpleados(req, res) {
   try {
+
+    console.log("Datos recibidos en el backend:", req.body);
+
+    console.log("Archivo recibido en el backend:", req.file);
+
     const datosCrearEmpleados = req.body;
+
+    const Img = req.file ? `/uploads/Empleados/${req.file.filename}` : null;
+    if (Img) {
+      datosCrearEmpleados.Img = Img;
+    }
+
+    if (!datosCrearEmpleados.Correo) {
+      console.log("El campo Correo está vacío o no existe.");
+      return res.status(400).json({ mensaje: "El campo Correo es obligatorio" });
+    }
+    if (!datosCrearEmpleados.Estado) {
+      console.log("El campo Estado está vacío o no existe. Estableciendo valor predeterminado en 1.");
+      datosCrearEmpleados.Estado = 1; 
+    }
+    if (!datosCrearEmpleados.IdRol) {
+      console.log("El campo IdRol está vacío o no existe.");
+      return res.status(400).json({ mensaje: "El campo IdRol es obligatorio" });
+    }
 
     // Verificar si el rol especificado existe en la tabla de roles
     const rolExistente = await Rol.findByPk(datosCrearEmpleados.IdRol);
     if (!rolExistente) {
+      console.log("El rol especificado no existe.");
       return res.status(400).json({ mensaje: "El rol especificado no existe" });
     }
 
@@ -35,6 +59,7 @@ async function CrearEmpleados(req, res) {
     });
 
     if (correoExistente) {
+      console.log("El correo ya está registrado en el sistema.");
       return res.status(400).json({ mensaje: "El correo ya está registrado en el sistema." });
     }
 
@@ -48,6 +73,7 @@ async function CrearEmpleados(req, res) {
     });
 
     if (documentoExistente) {
+      console.log("El documento ya está registrado en el sistema.");
       return res.status(400).json({ mensaje: "El documento ya está registrado en el sistema." });
     }
 
@@ -58,67 +84,16 @@ async function CrearEmpleados(req, res) {
       saltRounds
     );
 
-    // Obtener la información de la imagen (si se ha subido)
-    const imagen = req.file ? `/uploads/empleados/${req.file.filename}` : null;
-
-    // Generar un código de verificación de 6 dígitos
-    const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-
     // Crear el empleado con el código de verificación
     const nuevoEmpleado = await Empleado.create({
       ...datosCrearEmpleados,
-      CodigoVerificacion: verificationCode,
-      FechaInicio: new Date(),
-      Verificado: false,
-      Img: imagen, // Guardar la ruta de la imagen en la base de datos
     });
 
-    // // Configurar el correo de verificación
-    // const mailOptions = {
-    //   from: 'Eduardomosquera12346@gmail.com',
-    //   to: datosCrearEmpleados.Correo,
-    //   subject: 'Código de Verificación',
-    //   html: `
-    //     <html>
-    //     <head>
-    //       <style>
-    //         /* Estilos del correo */
-    //       </style>
-    //     </head>
-    //     <body>
-    //       <div class="container">
-    //         <div class="header">
-    //           <img src="http://localhost:3000/jacke.png" alt="Logo">
-    //         </div>
-    //         <div class="content">
-    //           <h1>¡Hola ${datosCrearEmpleados.Nombre}!</h1>
-    //           <p>Gracias por registrarte con nosotros. Para completar el proceso, por favor, utiliza el siguiente código de verificación:</p>
-    //           <h2>${verificationCode}</h2>
-    //           <p>Este código expira en 30 minutos.</p>
-    //           <a href="http://localhost:3000/Verificacion" class="button">Verificar mi cuenta</a>
-    //         </div>
-    //         <div class="footer">
-    //           <p>Si tienes problemas con el botón de verificación, copia y pega el siguiente enlace en tu navegador:</p>
-    //           <p><a href="http://localhost:3000/Verificacion">http://localhost:3000/Verificacion</a></p>
-    //           <p>&copy; 2024 Tu Empresa. Todos los derechos reservados.</p>
-    //         </div>
-    //       </div>
-    //     </body>
-    //     </html>
-    //   `
-    // };
-
-    // transporter.sendMail(mailOptions, (error, info) => {
-    //   if (error) {
-    //     console.log('Error al enviar el correo:', error);
-    //     return res.status(500).json({ mensaje: 'Error al enviar el correo' });
-    //   } else {
-    //     console.log('Correo enviado:', info.response);
-    //     return res.status(200).json(nuevoEmpleado);
-    //   }
-    // });
+    console.log("Empleado creado exitosamente:", nuevoEmpleado);
+    return res.status(200).json(nuevoEmpleado);
 
   } catch (error) {
+    console.error("Ocurrió un error al crear el empleado:", error);
     // Manejar el error de validación
     if (error.name === "SequelizeValidationError") {
       const errores = error.errors.map((err) => ({
@@ -127,7 +102,7 @@ async function CrearEmpleados(req, res) {
       }));
       res.status(400).json({ mensaje: "Error de validación", errores });
     } else {
-      console.log("Ocurrió un error al crear el empleado: ", error);
+      console.error("Ocurrió un error al crear el empleado:", error);
       res.status(500).json({ mensaje: "Ocurrió un error al crear el empleado" });
     }
   }
