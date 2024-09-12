@@ -143,7 +143,7 @@ sequelize
   });
 
 // Middleware
-app.use(cors());
+app.use(cors({origin: 'https://front-end-ebon-kappa.vercel.app'}));
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.json());
