@@ -2,9 +2,16 @@ const Sequelize = require('sequelize');
 
 const sequelize = new Sequelize(process.env.DB_DATABASE, process.env.DB_USER, process.env.DB_PASSWORD, {
   host: process.env.DB_HOST,
-  port: process.env.DB_PORT, // Asegúrate de incluir el puerto aquí
   dialect: 'mysql',
-  logging: false // Puedes desactivar el logging si es necesario
+  dialectOptions: {
+    connectTimeout: 60000 // 60 segundos de tiempo de espera para la conexión
+  },
+  pool: {
+    max: 5,
+    min: 0,
+    acquire: 30000, // Tiempo máximo de espera para obtener una conexión
+    idle: 10000 // Tiempo máximo de espera para una conexión inactiva
+  }
 });
 const Roles = require('./roles');
 
