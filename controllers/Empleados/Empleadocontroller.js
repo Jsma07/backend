@@ -1,7 +1,7 @@
 // VentasController.js
 const empleado = require("../../Models/empleados");
 const Rol = require("../../Models/roles");
-const bcrypt = require('bcryptjs');
+const bcrypt = require("bcryptjs");
 const Cliente = require("../../Models/clientes");
 const Usuario = require("../../Models/usuarios");
 const Empleado = require("../../Models/empleados");
@@ -94,7 +94,7 @@ async function CrearEmpleados(DatosCrearEmpleados, res) {
           "Estado",
           "IdRol",
           "Documento",
-          "Tip_Documento", // Incluir el tipo de documento
+          "Tip_Documento", 
           "Direccion",
           "Img"
         ],
